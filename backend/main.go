@@ -41,16 +41,20 @@ func main() {
 }
 
 func filterAndDedup(departures []Departure) []Departure {
-	departures = slices.DeleteFunc(
+	seen := make(map[string]bool)
+	return slices.DeleteFunc(
 		departures,
 		func(d Departure) bool {
-			return !strings.HasPrefix(d.Label, "U")
-		},
-	)
-	return slices.CompactFunc(
-		departures,
-		func(dA, dB Departure) bool {
-			return dA.Label+dA.Destination == dB.Label+dB.Destination
+			if !strings.HasPrefix(d.Label, "U") {
+				return true
+			}
+
+			lookupKey := d.Label + d.Destination
+			if _, ok := seen[lookupKey]; ok {
+				return true
+			}
+			seen[lookupKey] = true
+			return false
 		},
 	)
 }

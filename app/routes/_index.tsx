@@ -24,7 +24,7 @@ export default function Index() {
 
       setDepartures((prevDepartures) => ({
         ...prevDepartures,  // Copy previous state
-        [payload[0]["station"]]: payload // Update specific station
+        [payload["station"]]: payload // Update specific station
       }));
     };
 
@@ -51,7 +51,7 @@ export function DepartureTable({departures}: {departures: any}) {
       <tbody>
         {
           Object.entries(departures)
-          .map( ([key, value]) => <tr key={key}><td className="p-4 border-b border-blue-gray-50">{key}</td><td className="p-4 border-b border-blue-gray-5"><DepartureValue value={value}/></td></tr>)
+          .map( ([key, value]) => <tr key={key}><td className="p-4 border-b border-blue-gray-50">{key}</td><td className="p-4 border-b border-blue-gray-5"><DepartureValue value={value["departures"]}/></td></tr>)
         }
       </tbody>
     </table>
