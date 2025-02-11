@@ -6,22 +6,114 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"slices"
 	"strings"
+	"sync"
 
-	"github.com/go-redis/redis/v8"
-	"github.com/gorilla/mux"
+	"github.com/google/uuid"
+	"github.com/redis/go-redis/v9"
 )
 
 type Departure struct {
 	PlannedDepartureTime  int    `json:"plannedDepartureTime"`
 	RealtimeDepartureTime int    `json:"realtimeDepartureTime"`
-	Station               string `json:"station"`
 	Label                 string `json:"label"`
 	DelayInMinutes        int    `json:"delayInMinutes"`
 	Destination           string `json:"destination"`
 }
 
-func sseHandler(w http.ResponseWriter, r *http.Request) {
+func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	eb := &EventBroadcaster{
+		mu:      new(sync.Mutex),
+		writers: make(map[string]http.ResponseWriter),
+		redisClient: redis.NewClient(&redis.Options{
+			Addr: "127.0.0.1:6379",
+		}),
+	}
+	go eb.redisEventProcessor(ctx)
+
+	http.HandleFunc("/events", eb.sseHandler)
+	log.Println("Server started on :8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func filterAndDedup(departures []Departure) []Departure {
+	departures = slices.DeleteFunc(
+		departures,
+		func(d Departure) bool {
+			return !strings.HasPrefix(d.Label, "U")
+		},
+	)
+	return slices.CompactFunc(
+		departures,
+		func(dA, dB Departure) bool {
+			return dA.Label+dA.Destination == dB.Label+dB.Destination
+		},
+	)
+}
+
+type EventBroadcaster struct {
+	mu          *sync.Mutex
+	writers     map[string]http.ResponseWriter
+	redisClient *redis.Client
+}
+
+func (eb *EventBroadcaster) redisEventProcessor(ctx context.Context) {
+	sub := eb.redisClient.PSubscribe(ctx, "__keyevent*__:*")
+	defer sub.Close()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case msg := <-sub.Channel():
+			log.Printf("received redis keyevent %v\n", msg)
+			stationID := strings.Split(msg.Payload, "_")[1]
+			value, err := eb.redisClient.Get(ctx, msg.Payload).Result()
+			if err != nil {
+				log.Printf("failed to fetch redis key: %s\n", err)
+				continue
+			}
+
+			var departures []Departure
+			if err := json.Unmarshal([]byte(value), &departures); err != nil {
+				log.Printf("failed to unmarshal departures: %s\n", err)
+				continue
+			}
+
+			departures = filterAndDedup(departures)
+
+			data := struct {
+				Station    string      `json:"station"`
+				Departures []Departure `json:"departures"`
+			}{
+				Station:    stationID,
+				Departures: departures,
+			}
+			raw, err := json.Marshal(data)
+			if err != nil {
+				log.Printf("failed to marshal departures: %s\n", err)
+				continue
+			}
+
+			eb.mu.Lock()
+			for connID, rw := range eb.writers {
+				log.Printf("send event to %q\n", connID)
+				_, err := fmt.Fprintf(rw, "data: %s\n\n", raw)
+				if err != nil {
+					log.Printf("failed to write json to response-writer: %s\n", err)
+				}
+				rw.(http.Flusher).Flush()
+			}
+			eb.mu.Unlock()
+		}
+	}
+}
+
+func (eb *EventBroadcaster) sseHandler(w http.ResponseWriter, r *http.Request) {
 	// Set http headers required for SSE
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
@@ -30,73 +122,15 @@ func sseHandler(w http.ResponseWriter, r *http.Request) {
 	// You may need this locally for CORS requests
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	sub := rdb.PSubscribe(ctx, "__keyevent*__:*")
-	defer sub.Close()
-	ch := sub.Channel()
+	connID := uuid.New().String()
+	eb.mu.Lock()
+	eb.writers[connID] = w
+	eb.mu.Unlock()
+	log.Printf("added a new connection %q\n", connID)
 
-	for msg := range ch {
-		stationId := strings.Split(msg.Payload, "_")[1]
-		value, _ := rdb.Get(ctx, msg.Payload).Result()
-
-		var departures []Departure
-		if err := json.Unmarshal([]byte(value), &departures); err != nil {
-			panic(err)
-		}
-
-		enhancedDepartures := []Departure{}
-		for _, departure := range departures {
-			departure.Station = stationId
-
-			enhancedDepartures = append(enhancedDepartures, departure)
-		}
-
-		b, err := json.Marshal(dedup(enhancedDepartures))
-		if err != nil {
-			log.Println(err)
-		}
-
-		log.Println(stationId)
-		fmt.Fprintf(w, "data: %s\n\n", b)
-		w.(http.Flusher).Flush()
-	}
-
-	// Simulate closing the connection
-	closeNotify := w.(http.CloseNotifier).CloseNotify()
-	<-closeNotify
-}
-
-var (
-	ctx = context.Background()
-	rdb = redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
-	})
-)
-
-func main() {
-	r := mux.NewRouter()
-	r.HandleFunc("/events", sseHandler)
-
-	fs := http.FileServer(http.Dir("./web"))
-	r.PathPrefix("/").Handler(fs)
-
-	log.Println("Server started on :8080")
-	log.Fatal(http.ListenAndServe(":8080", r))
-}
-
-func dedup(input []Departure) []Departure {
-	lookup := make(map[string]bool)
-	output := []Departure{}
-
-	for _, departure := range input {
-		lookupKey := departure.Label + departure.Destination
-
-		if strings.HasPrefix(departure.Label, "U") {
-			if _, ok := lookup[lookupKey]; !ok {
-				lookup[lookupKey] = true
-				output = append(output, departure)
-			}
-		}
-	}
-
-	return output
+	<-r.Context().Done()
+	eb.mu.Lock()
+	delete(eb.writers, connID)
+	eb.mu.Unlock()
+	log.Printf("removed connection %q\n", connID)
 }
