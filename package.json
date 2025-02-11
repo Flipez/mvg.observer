@@ -16,6 +16,7 @@
     "@remix-run/serve": "^2.15.3",
     "eventsource": "^3.0.5",
     "isbot": "^4.4.0",
+    "moment": "^2.30.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
