@@ -91,11 +91,13 @@ func (eb *EventBroadcaster) redisEventProcessor(ctx context.Context) {
 			departures = filterAndDedup(departures)
 
 			data := struct {
-				Station    string      `json:"station"`
-				Departures []Departure `json:"departures"`
+				Station      string      `json:"station"`
+				FriendlyName string      `json:"friendlyName"`
+				Departures   []Departure `json:"departures"`
 			}{
-				Station:    stationID,
-				Departures: departures,
+				Station:      stationID,
+				FriendlyName: friendlyNames[stationID],
+				Departures:   departures,
 			}
 			raw, err := json.Marshal(data)
 			if err != nil {
