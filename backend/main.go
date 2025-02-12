@@ -3,16 +3,20 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"slices"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 )
+
+const redisStreamName = "mvg-events"
 
 type Departure struct {
 	PlannedDepartureTime  int    `json:"plannedDepartureTime"`
@@ -66,7 +70,7 @@ type EventBroadcaster struct {
 }
 
 func (eb *EventBroadcaster) redisEventProcessor(ctx context.Context) {
-	sub := eb.redisClient.PSubscribe(ctx, "__keyevent*__:*")
+	sub := eb.redisClient.PSubscribe(ctx, "__keyevent*__:set")
 	defer sub.Close()
 
 	for {
@@ -89,7 +93,6 @@ func (eb *EventBroadcaster) redisEventProcessor(ctx context.Context) {
 			}
 
 			departures = filterAndDedup(departures)
-
 			data := struct {
 				Station      string      `json:"station"`
 				FriendlyName string      `json:"friendlyName"`
@@ -101,22 +104,24 @@ func (eb *EventBroadcaster) redisEventProcessor(ctx context.Context) {
 				Coordinates:  coordinates[stationID],
 				Departures:   departures,
 			}
+
 			raw, err := json.Marshal(data)
 			if err != nil {
-				log.Printf("failed to marshal departures: %s\n", err)
-				continue
+				log.Printf("error marshal json (Call markus): %q\n", err)
+				return
 			}
 
-			eb.mu.Lock()
-			for connID, rw := range eb.writers {
-				log.Printf("send event to %q\n", connID)
-				_, err := fmt.Fprintf(rw, "data: %s\n\n", raw)
-				if err != nil {
-					log.Printf("failed to write json to response-writer: %s\n", err)
-				}
-				rw.(http.Flusher).Flush()
+			err = eb.redisClient.XAdd(ctx, &redis.XAddArgs{
+				Stream: redisStreamName,
+				Values: map[string]string{"json": string(raw)},
+				ID:     "*",
+				MaxLen: 200,
+			}).Err()
+
+			if err != nil {
+				log.Printf("error sending to redis: %q", err)
+				continue
 			}
-			eb.mu.Unlock()
 		}
 	}
 }
@@ -130,15 +135,45 @@ func (eb *EventBroadcaster) sseHandler(w http.ResponseWriter, r *http.Request) {
 	// You may need this locally for CORS requests
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	connID := uuid.New().String()
-	eb.mu.Lock()
-	eb.writers[connID] = w
-	eb.mu.Unlock()
-	log.Printf("added a new connection %q\n", connID)
+	groupId := uuid.New().String()
+	err := eb.redisClient.XGroupCreate(r.Context(), redisStreamName, groupId, "0").Err()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500"))
+		return
+	}
+	log.Printf("added a new connection\n")
+	for {
+		res, err := eb.redisClient.XReadGroup(r.Context(), &redis.XReadGroupArgs{
+			Streams:  []string{redisStreamName, ">"},
+			Group:    groupId,
+			Consumer: groupId,
+			Count:    10,
+			Block:    1 * time.Second,
+			NoAck:    true,
+		}).Result()
 
-	<-r.Context().Done()
-	eb.mu.Lock()
-	delete(eb.writers, connID)
-	eb.mu.Unlock()
-	log.Printf("removed connection %q\n", connID)
+		if err != nil {
+			if errors.Is(err, context.Canceled) {
+				log.Printf("removed connection\n")
+				return
+			}
+
+			if !errors.Is(err, redis.Nil) {
+				log.Printf("error reading redis stream: %q\n", err)
+			}
+			continue
+		}
+
+		for _, message := range res[0].Messages {
+			payload := message.Values["json"]
+
+			_, err = fmt.Fprintf(w, "data: %s\n\n", payload)
+			if err != nil {
+				log.Printf("failed to write json to response-writer: %s\n", err)
+			}
+			w.(http.Flusher).Flush()
+		}
+	}
+
 }

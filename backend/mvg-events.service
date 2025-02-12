@@ -1,0 +1,9 @@
+[Unit]
+Description=Start MVG Event Bridge
+
+[Service]
+Type=simple
+ExecStart=/srv/mvg-live/backend/mvg-live
+
+[Install]
+WantedBy=multi-user.target
