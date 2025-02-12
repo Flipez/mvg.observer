@@ -12,8 +12,8 @@ import {
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "New Remix App" },
-    { name: "description", content: "Welcome to Remix!" },
+    { title: "MVG Live" },
+    { name: "description", content: "Live view of MVG Subway metrics" },
   ];
 };
 
@@ -99,7 +99,9 @@ export function DepartureTable({departures}: {departures: any}) {
             <tr key={key} className="max-h-1 h-1">
               <td className="p-4 border-b border-blue-gray-50">
                 {value["friendlyName"]}
-                <div className="text-xs text-muted-foreground">Average delay is {value["avgDelay"]} minutes.</div>
+                <div className="text-xs text-muted-foreground">
+                  Ø {value["avgDelay"]}m Verspätung.
+                </div>
               </td>
               <td className="p-4 border-b border-blue-gray-5">
                 <div>
@@ -140,7 +142,7 @@ function DepartureCard({station}: {station: any}) {
         <DepartureValue value={station["departures"]} />
         <div className="flex items-center pt-2">
           <span className="text-xs text-muted-foreground">
-            Average Delay is {station["avgDelay"]} minutes.
+            Ø {station["avgDelay"]}m Verspätung.
           </span>
         </div>
       </HoverCardContent>
