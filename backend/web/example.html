@@ -1,17 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
+  <head>
     <title>SSE Example</title>
-</head>
-<body>
+  </head>
+  <body>
     <div id="sse-data"></div>
 
     <script>
-        const eventSource = new EventSource('http://localhost:8080/events');
-        eventSource.onmessage = function(event) {
-            const dataElement = document.getElementById('sse-data');
-            dataElement.innerHTML += event.data + '<br>';
-        };
+      const eventSource = new EventSource("http://localhost:8080/events")
+      eventSource.onmessage = function (event) {
+        const dataElement = document.getElementById("sse-data")
+        dataElement.innerHTML += event.data + "<br>"
+      }
     </script>
-</body>
+  </body>
 </html>

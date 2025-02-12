@@ -1,32 +1,41 @@
 import { Button } from "~/components/ui/button"
-import {Departure, Station, StationState} from "~/departures/types"
-import { colorByDelay, DepartureEntry } from "~/departures/helper";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover"
+import { colorByDelay, DepartureEntry } from "~/departures/helper"
+import { Departure, Station, StationState } from "~/departures/types"
 
-export function DepartureGrid({departures}: {departures: StationState}) {
-  return(
+export function DepartureGrid({ departures }: { departures: StationState }) {
+  return (
     <div className="grid grid-cols-6 gap-3">
-        {
-          Object.entries(departures)
-          .sort(([, stationA]: [string, Station], [, stationB]: [string, Station]) => stationA.friendlyName > stationB.friendlyName ? 1 : -1)
-          .map( ([stationId, station]: [string, Station]) =>
-            <div key={stationId} id={stationId} className={`h-10 ${colorByDelay(station.avgDelay)}`}>
-              <DepartureGridCard station={station} />
-            </div>)
-        }
+      {Object.entries(departures)
+        .sort(
+          ([, stationA]: [string, Station], [, stationB]: [string, Station]) =>
+            stationA.friendlyName > stationB.friendlyName ? 1 : -1
+        )
+        .map(([stationId, station]: [string, Station]) => (
+          <div
+            key={stationId}
+            id={stationId}
+            className={`h-10 ${colorByDelay(station.avgDelay)}`}
+          >
+            <DepartureGridCard station={station} />
+          </div>
+        ))}
     </div>
   )
 }
 
-function DepartureGridCard({station}: {station: Station}) {
-  return(
+function DepartureGridCard({ station }: { station: Station }) {
+  return (
     <Popover>
       <PopoverTrigger asChild className="w-full">
-        <Button variant="ghost" className="border-solid border-2 h-10 w-full text-sm">
+        <Button
+          variant="ghost"
+          className="h-10 w-full border-2 border-solid text-sm"
+        >
           {station.friendlyName}
         </Button>
       </PopoverTrigger>
@@ -42,14 +51,14 @@ function DepartureGridCard({station}: {station: Station}) {
   )
 }
 
-function DepartureGridList({departures}: {departures: Departure[]}) {
+function DepartureGridList({ departures }: { departures: Departure[] }) {
   return (
     <div>
-      {
-      departures.map(
-        (departure: Departure) => <div key={departure.plannedDepartureTime}><DepartureEntry departure={departure} /></div>
-      )
-    }
+      {departures.map((departure: Departure) => (
+        <div key={departure.plannedDepartureTime}>
+          <DepartureEntry departure={departure} />
+        </div>
+      ))}
     </div>
   )
 }
