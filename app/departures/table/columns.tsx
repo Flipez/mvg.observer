@@ -3,9 +3,8 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Button } from "~/components/ui/button"
 import { DepartureEntry } from "~/departures/helper"
+import { Departure, Station } from "~/types/departures"
 import { ArrowUpDown } from "lucide-react"
-
-import { Departure, Station } from "../types"
 
 const DepartureList = ({ departures }: { departures: Departure[] }) => {
   return departures.map((departure: Departure) => (
