@@ -1,6 +1,5 @@
+import { Departure } from "~/types/departures"
 import moment from "moment"
-
-import { Departure } from "./types"
 
 export function colorByDelay(delay: number) {
   if (delay <= 0) {
