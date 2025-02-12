@@ -3,8 +3,15 @@ import { Form } from "@remix-run/react";
 import {EventSource} from 'eventsource'
 import { useEffect, useState } from "react";
 import moment from 'moment';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip"
 
 let departures = {}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 export const meta: MetaFunction = () => {
   return [
@@ -27,6 +34,11 @@ export default function Index() {
         ...prevDepartures,  // Copy previous state
         [payload["station"]]: payload // Update specific station
       }));
+
+    const grid = document.getElementById(payload["station"]);
+    grid?.classList.add("bg-red-400")
+    setTimeout(() => grid?.classList.remove("bg-red-400"), 100)
+
     };
 
     return () => {
@@ -38,19 +50,27 @@ export default function Index() {
   return(
     <div>
       <DepartureGrid departures={departures} />
-      <DepartureTable departures={departures} />
+      {/* <DepartureTable departures={departures} /> */}
       </div>
   )
 }
 
 function DepartureGrid({departures}: {departures: any}) {
   return(
-    <div className="grid grid-cols-10 gap-4">
+    <div className="grid grid-cols-6 gap-4">
         {
           Object.entries(departures)
+          .sort(([keyA, valueA], [keyB, valueB]) => valueA["friendlyName"] > valueB["friendlyName"] ? 1 : -1)
           .map( ([key, value]) =>
-            <div key={key}>
-                {value["friendlyName"]}
+            <div key={key} id={key} className="h-10">
+              <TooltipProvider delayDuration={100}>
+                <Tooltip>
+                  <TooltipTrigger>{value["friendlyName"]}</TooltipTrigger>
+                  <TooltipContent>
+                    <DepartureValue value={value["departures"]} />
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>)
         }
     </div>
@@ -83,7 +103,7 @@ export function DepartureValue({value}: {value: any}) {
     <div>
       {
       value.map(
-        (v) => <div><Label label={v["label"]} /> - {v["destination"]}: in <FormatTime timestamp={v["realtimeDepartureTime"]} /></div>
+        (v) => <div><Label label={v["label"]} /> {v["destination"]}: in <FormatTime timestamp={v["realtimeDepartureTime"]} /></div>
       )
     }
     </div>
@@ -131,7 +151,7 @@ function Label({ label }: {label: string}) {
       {isDualColored && (
         <span className={`absolute z-10 top-0 left-0 w-full h-full ${colors.secondary[label]} [clip-path:polygon(0%_0%,0%_100%,100%_0%)]`} />
       )}
-      <span className="inline-flex z-20 px-1 py-0.5 text-white text-xs font-medium">
+      <span className="inline-flex z-20 px-1 py-0.5 text-white text-xs font-medium w-7 justify-center">
         {label}
       </span>
     </div>

@@ -11,14 +11,20 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@radix-ui/react-tooltip": "^1.1.8",
     "@remix-run/node": "^2.15.3",
     "@remix-run/react": "^2.15.3",
     "@remix-run/serve": "^2.15.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "eventsource": "^3.0.5",
     "isbot": "^4.4.0",
+    "lucide-react": "^0.475.0",
     "moment": "^2.30.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^3.0.1",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.15.3",
