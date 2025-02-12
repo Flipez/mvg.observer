@@ -1,57 +1,52 @@
-import type { MetaFunction } from "@remix-run/node";
-import {EventSource} from 'eventsource'
-import { useEffect, useState } from "react";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "~/components/ui/tabs"
+import { useEffect, useState } from "react"
+import type { MetaFunction } from "@remix-run/node"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
+import { DepartureGrid } from "~/departures/grid"
+import { EventSource } from "eventsource"
+
 import { columns } from "../departures/table/columns"
 import { DataTable } from "../departures/table/data-table"
-import { DepartureGrid } from "~/departures/grid";
 
 export const meta: MetaFunction = () => {
   return [
     { title: "MVG Live" },
     { name: "description", content: "Live view of MVG Subway metrics" },
-  ];
-};
-
+  ]
+}
 
 export default function Index() {
-  const [departures, setDepartures] = useState({});
+  const [departures, setDepartures] = useState({})
 
   useEffect(() => {
     const sse = new EventSource("http://localhost:8080/events")
 
-    sse.onmessage = function(event) {
-      var payload = JSON.parse(event.data);
+    sse.onmessage = function (event) {
+      var payload = JSON.parse(event.data)
 
-      var avgDelay = payload["departures"].reduce(
-        (accumulator: number, currentValue: { delayInMinutes: number; }) => accumulator + currentValue.delayInMinutes, 0,
-      ) / payload["departures"].length
+      var avgDelay =
+        payload["departures"].reduce(
+          (accumulator: number, currentValue: { delayInMinutes: number }) =>
+            accumulator + currentValue.delayInMinutes,
+          0
+        ) / payload["departures"].length
       payload["avgDelay"] = Math.round(avgDelay * 100) / 100
 
       setDepartures((prevDepartures) => ({
-        ...prevDepartures,  // Copy previous state
-        [payload["station"]]: payload // Update specific station
-      }));
+        ...prevDepartures, // Copy previous state
+        [payload["station"]]: payload, // Update specific station
+      }))
 
-    const grid = document.getElementById(payload["station"]);
-    grid?.classList.add("animate-ping")
-    setTimeout(() => grid?.classList.remove("animate-ping"), 25)
-
-    };
+      const grid = document.getElementById(payload["station"])
+      grid?.classList.add("animate-ping")
+      setTimeout(() => grid?.classList.remove("animate-ping"), 25)
+    }
 
     return () => {
-      sse.close();
-    };
+      sse.close()
+    }
+  }, [])
 
-  }, []);
-
-
-  return(
+  return (
     <div className="container mx-auto">
       <Tabs defaultValue="grid" className="">
         <TabsList className="grid w-full grid-cols-2">
