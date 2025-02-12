@@ -36,8 +36,8 @@ func main() {
 	go eb.redisEventProcessor(ctx)
 
 	http.HandleFunc("/events", eb.sseHandler)
-	log.Println("Server started on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Server started on 127.0.0.1:8080")
+	log.Fatal(http.ListenAndServe("127.0.0.1:8080", nil))
 }
 
 func filterAndDedup(departures []Departure) []Departure {

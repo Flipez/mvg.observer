@@ -3,15 +3,12 @@ import { Form } from "@remix-run/react";
 import {EventSource} from 'eventsource'
 import { useEffect, useState } from "react";
 import moment from 'moment';
+import { Button } from "~/components/ui/button"
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip"
-
-let departures = {}
-const sleep = ms => new Promise(r => setTimeout(r, ms));
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "~/components/ui/hover-card"
 
 export const meta: MetaFunction = () => {
   return [
@@ -19,6 +16,16 @@ export const meta: MetaFunction = () => {
     { name: "description", content: "Welcome to Remix!" },
   ];
 };
+
+function colorByDelay(delay: {delay: number}) {
+  if (delay <= 0) {
+    return "bg-green-100"
+  }
+  if (delay <= 5) {
+    return "bg-yellow-100"
+  }
+  return "bg-red-100"
+}
 
 export default function Index() {
   const [departures, setDepartures] = useState({});
@@ -28,7 +35,11 @@ export default function Index() {
 
     sse.onmessage = function(event) {
       var payload = JSON.parse(event.data);
-      console.log(payload)
+
+      var avgDelay = payload["departures"].reduce(
+        (accumulator, currentValue) => accumulator + currentValue.delayInMinutes, 0,
+      ) / payload["departures"].length
+      payload["avgDelay"] = Math.round(avgDelay * 100) / 100
 
       setDepartures((prevDepartures) => ({
         ...prevDepartures,  // Copy previous state
@@ -36,8 +47,8 @@ export default function Index() {
       }));
 
     const grid = document.getElementById(payload["station"]);
-    grid?.classList.add("bg-red-400")
-    setTimeout(() => grid?.classList.remove("bg-red-400"), 100)
+    grid?.classList.add("animate-ping")
+    setTimeout(() => grid?.classList.remove("animate-ping"), 25)
 
     };
 
@@ -48,29 +59,22 @@ export default function Index() {
   }, []);
 
   return(
-    <div>
+    <div className="containe mx-auto">
       <DepartureGrid departures={departures} />
-      {/* <DepartureTable departures={departures} /> */}
+      <DepartureTable departures={departures} />
       </div>
   )
 }
 
 function DepartureGrid({departures}: {departures: any}) {
   return(
-    <div className="grid grid-cols-6 gap-4">
+    <div className="grid grid-cols-6 gap-3">
         {
           Object.entries(departures)
           .sort(([keyA, valueA], [keyB, valueB]) => valueA["friendlyName"] > valueB["friendlyName"] ? 1 : -1)
           .map( ([key, value]) =>
-            <div key={key} id={key} className="h-10">
-              <TooltipProvider delayDuration={100}>
-                <Tooltip>
-                  <TooltipTrigger>{value["friendlyName"]}</TooltipTrigger>
-                  <TooltipContent>
-                    <DepartureValue value={value["departures"]} />
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+            <div key={key} id={key} className={`h-10 ${colorByDelay(value["avgDelay"])}`}>
+              <DepartureCard station={value} />
             </div>)
         }
     </div>
@@ -80,7 +84,7 @@ function DepartureGrid({departures}: {departures: any}) {
 export function DepartureTable({departures}: {departures: any}) {
   return (
     <div className="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
-    <table className="w-full text-left table-auto min-w-max">
+    <table className="w-full text-left min-w-max">
       <thead>
         <tr>
           <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">Station</th>
@@ -90,7 +94,32 @@ export function DepartureTable({departures}: {departures: any}) {
       <tbody>
         {
           Object.entries(departures)
-          .map( ([key, value]) => <tr key={key}><td className="p-4 border-b border-blue-gray-50">{value["friendlyName"]}</td><td className="p-4 border-b border-blue-gray-5"><DepartureValue value={value["departures"]}/></td></tr>)
+          .sort(([keyA, valueA], [keyB, valueB]) => valueA["friendlyName"] > valueB["friendlyName"] ? 1 : -1)
+          .map( ([key, value]) =>
+            <tr key={key} className="max-h-1 h-1">
+              <td className="p-4 border-b border-blue-gray-50">
+                {value["friendlyName"]}
+                <div className="text-xs text-muted-foreground">Average delay is {value["avgDelay"]} minutes.</div>
+              </td>
+              <td className="p-4 border-b border-blue-gray-5">
+                <div>
+                  {
+                  value["departures"].map(
+                    (v) =>
+                      <span>
+                        <Label label={v["label"]} /> {v["destination"]}
+                        <span className="text-xs"> in </span>
+                        <b><RelativeTime timestamp={v["realtimeDepartureTime"]} /></b>
+                        &nbsp;
+                        <span className="text-xs">(<FormatTime timestamp={v["plannedDepartureTime"]} />+{v["delayInMinutes"]})</span>
+                        &nbsp;
+                        &nbsp;
+                      </span>
+                  )
+                }
+                </div>
+              </td>
+            </tr>)
         }
       </tbody>
     </table>
@@ -98,26 +127,58 @@ export function DepartureTable({departures}: {departures: any}) {
   );
 }
 
+function DepartureCard({station}: {station: any}) {
+
+  return(
+    <HoverCard openDelay={50} closeDelay={0}>
+      <HoverCardTrigger asChild>
+        <Button variant="ghost" className="border-solid border-2 h-10 w-full text-sm">
+          {station["friendlyName"]}
+        </Button>
+      </HoverCardTrigger>
+      <HoverCardContent className="w-100">
+        <DepartureValue value={station["departures"]} />
+        <div className="flex items-center pt-2">
+          <span className="text-xs text-muted-foreground">
+            Average Delay is {station["avgDelay"]} minutes.
+          </span>
+        </div>
+      </HoverCardContent>
+    </HoverCard>
+  )
+}
+
 export function DepartureValue({value}: {value: any}) {
   return (
     <div>
       {
       value.map(
-        (v) => <div><Label label={v["label"]} /> {v["destination"]}: in <FormatTime timestamp={v["realtimeDepartureTime"]} /></div>
+        (v) => <div>
+          <Label label={v["label"]} /> {v["destination"]}
+          <span className="text-xs"> in </span>
+          <b><RelativeTime timestamp={v["realtimeDepartureTime"]} /></b>
+          &nbsp;
+          <span className="text-xs">(<FormatTime timestamp={v["plannedDepartureTime"]} />+{v["delayInMinutes"]})</span>
+        </div>
       )
     }
     </div>
   )
 }
 
-export function FormatTime({timestamp} : {timestamp: any}) {
+export function RelativeTime({timestamp} : {timestamp: any}) {
   const now = moment();
   const date = moment.unix(timestamp/1000);
   return(
     <span>
-      <b>{date.diff(now, 'minutes')}m</b> ({date.format("HH:mm")})
+      {date.diff(now, 'minutes')}m
     </span>
   )
+}
+
+function FormatTime({timestamp}: {timestamp: any}) {
+  const date = moment.unix(timestamp/1000)
+  return date.format("HH:mm")
 }
 
 export function FormatLabel({label} : {label: string}) {
@@ -128,7 +189,7 @@ export function FormatLabel({label} : {label: string}) {
 
 function Label({ label }: {label: string}) {
   const isDualColored = (label === "U7" || label === "U8")
-  
+
   const colors = {
     primary: {
       "U1": "bg-u1",
