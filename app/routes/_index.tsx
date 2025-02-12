@@ -3,9 +3,9 @@ import type { MetaFunction } from "@remix-run/node"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { DepartureGrid } from "~/departures/grid"
 import { EventSource } from "eventsource"
-
 import { columns } from "../departures/table/columns"
 import { DataTable } from "../departures/table/data-table"
+import { SubwayMap } from "~/departures/map";
 
 export const meta: MetaFunction = () => {
   return [
@@ -18,7 +18,7 @@ export default function Index() {
   const [departures, setDepartures] = useState({})
 
   useEffect(() => {
-    const sse = new EventSource("http://localhost:8080/events")
+    const sse = new EventSource("https://live.mvg.auch.cool/events")
 
     sse.onmessage = function (event) {
       var payload = JSON.parse(event.data)
@@ -49,15 +49,19 @@ export default function Index() {
   return (
     <div className="container mx-auto">
       <Tabs defaultValue="grid" className="">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="grid">Grid</TabsTrigger>
           <TabsTrigger value="table">Table</TabsTrigger>
+          <TabsTrigger value="map">Map</TabsTrigger>
         </TabsList>
         <TabsContent value="grid">
           <DepartureGrid departures={departures} />
         </TabsContent>
         <TabsContent value="table">
           <DataTable columns={columns} data={Object.values(departures)} />
+        </TabsContent>
+        <TabsContent value="map">
+          <SubwayMap />
         </TabsContent>
       </Tabs>
     </div>
