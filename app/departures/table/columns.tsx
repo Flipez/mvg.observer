@@ -1,13 +1,19 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import {FormatTime, RelativeTime, Label, DepartureEntry} from "~/departures/helper"
-import { ArrowUpDown } from "lucide-react"
 import { Button } from "~/components/ui/button"
-import {Departure, Station} from "../types"
+import { DepartureEntry } from "~/departures/helper"
+import { ArrowUpDown } from "lucide-react"
 
-const DepartureList = ({departures}: {departures: Departure[]}) => {
-  return(departures.map((departure: Departure) => <span key={departure.label+departure.destination}><DepartureEntry departure={departure} />&nbsp;&nbsp;</span>))
+import { Departure, Station } from "../types"
+
+const DepartureList = ({ departures }: { departures: Departure[] }) => {
+  return departures.map((departure: Departure) => (
+    <span key={departure.label + departure.destination}>
+      <DepartureEntry departure={departure} />
+      &nbsp;&nbsp;
+    </span>
+  ))
 }
 
 export const columns: ColumnDef<Station>[] = [
@@ -24,7 +30,7 @@ export const columns: ColumnDef<Station>[] = [
         </Button>
       )
     },
-    cell: ({row}) => {
+    cell: ({ row }) => {
       return (
         <div>
           {row.original.friendlyName}
@@ -32,12 +38,17 @@ export const columns: ColumnDef<Station>[] = [
             Ø {row.original.avgDelay}m Verspätung.
           </div>
         </div>
-    )
-  },
+      )
+    },
   },
   {
     accessorKey: "departures",
     header: "Abfahrten",
-    cell: ({row}) => <DepartureList key={row.original.friendlyName} departures={row.original.departures} />
-  }
+    cell: ({ row }) => (
+      <DepartureList
+        key={row.original.friendlyName}
+        departures={row.original.departures}
+      />
+    ),
+  },
 ]
