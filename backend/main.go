@@ -93,10 +93,12 @@ func (eb *EventBroadcaster) redisEventProcessor(ctx context.Context) {
 			data := struct {
 				Station      string      `json:"station"`
 				FriendlyName string      `json:"friendlyName"`
+				Coordinates  Coordinates `json:"coordinates"`
 				Departures   []Departure `json:"departures"`
 			}{
 				Station:      stationID,
 				FriendlyName: friendlyNames[stationID],
+				Coordinates:  coordinates[stationID],
 				Departures:   departures,
 			}
 			raw, err := json.Marshal(data)
