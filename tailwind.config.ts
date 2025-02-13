@@ -72,6 +72,25 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      keyframes: {
+        "flash-grow": {
+          "0%": {
+            transform: "scale(1)",
+            opacity: "1",
+          },
+          "50%": {
+            transform: "scale(1.1)",
+            opacity: "0.1",
+          },
+          "100%": {
+            transform: "scale(1)",
+            opacity: "1",
+          },
+        },
+      },
+      animation: {
+        "flash-grow": "flash-grow 0.3s ease-in-out",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

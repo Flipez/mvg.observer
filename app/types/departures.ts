@@ -7,6 +7,7 @@ export type Station = {
 }
 
 export type Departure = {
+  id: string
   plannedDepartureTime: number
   realtimeDepartureTime: number
   label: SubwayLine

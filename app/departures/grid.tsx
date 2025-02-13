@@ -6,65 +6,83 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover"
 import { formatDelay } from "~/departures/helper"
+import { cn } from "~/lib/utils"
 import { Departure, Station, StationState } from "~/types/departures"
 
-export function DepartureGrid({ departures }: { departures: StationState }) {
+type StationCardProps = {
+  station: Station
+  isUpdated: boolean
+}
+
+function StationCard({ station, isUpdated }: StationCardProps) {
+  const delayColor =
+    station.avgDelay <= 0
+      ? "bg-green-100"
+      : station.avgDelay <= 5
+        ? "bg-yellow-100"
+        : "bg-red-100"
+
   return (
-    <div className="grid grid-cols-6 gap-3">
-      {Object.entries(departures)
-        .sort(
-          ([, stationA]: [string, Station], [, stationB]: [string, Station]) =>
-            stationA.friendlyName > stationB.friendlyName ? 1 : -1
-        )
-        .map(([stationId, station]: [string, Station]) => (
-          <div
-            key={stationId}
-            id={stationId}
-            className={`h-10 ${
-              station.avgDelay <= 0
-                ? "bg-green-100"
-                : station.avgDelay <= 5
-                  ? "bg-yellow-100"
-                  : "bg-red-100"
-            }`}
+    <div
+      className={cn(
+        "h-10 transform transition-all",
+        delayColor,
+        isUpdated && "animate-flash-grow"
+      )}
+    >
+      <Popover>
+        <PopoverTrigger asChild className="w-full">
+          <Button
+            variant="ghost"
+            className="h-10 w-full border-2 border-solid text-sm"
           >
-            <DepartureGridCard station={station} />
+            {station.friendlyName}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto">
+          <DepartureList departures={station.departures} />
+          <div className="flex items-center pt-2">
+            <span className="text-xs text-muted-foreground">
+              Ø {formatDelay(station.avgDelay)} Verspätung
+            </span>
           </div>
-        ))}
+        </PopoverContent>
+      </Popover>
     </div>
   )
 }
 
-function DepartureGridCard({ station }: { station: Station }) {
+function DepartureList({ departures }: { departures: Departure[] }) {
   return (
-    <Popover>
-      <PopoverTrigger asChild className="w-full">
-        <Button
-          variant="ghost"
-          className="h-10 w-full border-2 border-solid text-sm"
-        >
-          {station.friendlyName}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-100">
-        <DepartureGridList departures={station.departures} />
-        <div className="flex items-center pt-2">
-          <span className="text-xs text-muted-foreground">
-            Ø {formatDelay(station.avgDelay)} Verspätung
-          </span>
-        </div>
-      </PopoverContent>
-    </Popover>
+    <>
+      {departures.map((departure) => (
+        <DepartureEntry key={departure.id} departure={departure} />
+      ))}
+    </>
   )
 }
 
-function DepartureGridList({ departures }: { departures: Departure[] }) {
+export function DepartureGrid({
+  departures,
+  updatedStation,
+}: {
+  departures: StationState
+  updatedStation: string | null
+}) {
+  const stationEntries = Object.entries(departures)
+
+  const sortedStations = stationEntries.sort(([, a], [, b]) =>
+    a.friendlyName.localeCompare(b.friendlyName)
+  )
+
   return (
-    <div>
-      {departures.map((departure: Departure) => (
-        <div key={departure.plannedDepartureTime}>
-          <DepartureEntry departure={departure} />
-        </div>
+    <div className="grid grid-cols-6 gap-3">
+      {sortedStations.map(([stationId, station]) => (
+        <StationCard
+          key={stationId}
+          station={station}
+          isUpdated={stationId === updatedStation}
+        />
       ))}
     </div>
   )
