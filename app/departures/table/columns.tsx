@@ -1,8 +1,9 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
+import { DepartureEntry } from "~/components/departure-entry"
 import { Button } from "~/components/ui/button"
-import { DepartureEntry } from "~/departures/helper"
+import { formatDelay } from "~/departures/helper"
 import { Departure, Station } from "~/types/departures"
 import { ArrowUpDown } from "lucide-react"
 
@@ -34,7 +35,7 @@ export const columns: ColumnDef<Station>[] = [
         <div>
           {row.original.friendlyName}
           <div className="text-xs text-muted-foreground">
-            Ø {row.original.avgDelay}m Verspätung.
+            Ø {formatDelay(row.original.avgDelay)} Verspätung
           </div>
         </div>
       )

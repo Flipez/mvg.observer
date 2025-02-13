@@ -1,11 +1,12 @@
+import { DepartureEntry } from "~/components/departure-entry"
 import { Button } from "~/components/ui/button"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover"
-import { colorByDelay, DepartureEntry } from "~/departures/helper"
-import { Departure, Station, StationState } from "~/departures/types"
+import { formatDelay } from "~/departures/helper"
+import { Departure, Station, StationState } from "~/types/departures"
 
 export function DepartureGrid({ departures }: { departures: StationState }) {
   return (
@@ -19,7 +20,13 @@ export function DepartureGrid({ departures }: { departures: StationState }) {
           <div
             key={stationId}
             id={stationId}
-            className={`h-10 ${colorByDelay(station.avgDelay)}`}
+            className={`h-10 ${
+              station.avgDelay <= 0
+                ? "bg-green-100"
+                : station.avgDelay <= 5
+                  ? "bg-yellow-100"
+                  : "bg-red-100"
+            }`}
           >
             <DepartureGridCard station={station} />
           </div>
@@ -43,7 +50,7 @@ function DepartureGridCard({ station }: { station: Station }) {
         <DepartureGridList departures={station.departures} />
         <div className="flex items-center pt-2">
           <span className="text-xs text-muted-foreground">
-            Ø {station.avgDelay}m Verspätung.
+            Ø {formatDelay(station.avgDelay)} Verspätung
           </span>
         </div>
       </PopoverContent>

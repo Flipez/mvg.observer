@@ -24,11 +24,14 @@ export default function Index() {
       const payload = JSON.parse(event.data)
       const { departures, station } = payload
 
-      const totalDelay = departures.reduce(
-        (acc: number, curr: Departure) => acc + curr.delayInMinutes,
-        0
-      )
-      const avgDelay = Math.round((totalDelay / departures.length) * 100) / 100
+      // Calculate average delay across all departures for this station (in minutes)
+      const avgDelay =
+        departures.length > 0
+          ? departures.reduce(
+              (sum: number, dep: Departure) => sum + dep.delayInMinutes,
+              0
+            ) / departures.length
+          : 0
 
       setDepartures((prev) => ({
         ...prev,
