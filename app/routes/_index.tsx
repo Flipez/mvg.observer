@@ -35,7 +35,7 @@ export default function Index() {
           <DataTable columns={columns} data={Object.values(departures)} />
         </TabsContent>
         <TabsContent value="map">
-          <SubwayMap />
+          <SubwayMap stations={departures} updatedStation={updatedStation} />
         </TabsContent>
       </Tabs>
     </div>

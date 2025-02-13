@@ -32,7 +32,7 @@ export function useDepartures() {
 
   const handleStationUpdate = useCallback((event: MessageEvent) => {
     const payload = JSON.parse(event.data)
-    const { departures: stationDepartures, station, friendlyName } = payload
+    const { departures: stationDepartures, station, friendlyName, coordinates } = payload
 
     // Create deterministic IDs from departure data
     const departuresWithId = stationDepartures.map(
@@ -50,6 +50,7 @@ export function useDepartures() {
         departures: departuresWithId,
         avgDelay,
         friendlyName,
+        coordinates,
       },
     }))
 
