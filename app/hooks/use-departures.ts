@@ -44,23 +44,21 @@ export function useDepartures() {
 
     const avgDelay = calculateAverageDelay(departuresWithId)
 
-    setDepartures((prev) => {
-      const updatedGlobalDepartures = {
-        ...prev,
-        [station]: {
-          departures: departuresWithId,
-          avgDelay,
-          friendlyName,
-        },
-      }
-
-    setGlobalDelay(calculateGlobalAverageDelay(updatedGlobalDepartures))
-
-    return updatedGlobalDepartures
-    })
-
+    setDepartures((prev) => ({
+      ...prev,
+      [station]: {
+        departures: departuresWithId,
+        avgDelay,
+        friendlyName,
+      },
+    }))
+    
     setUpdatedStation(station)
   }, [])
+
+  useEffect(() => {
+    setGlobalDelay(calculateGlobalAverageDelay(departures))
+  }, [departures])
 
   useEffect(() => {
     const sse = new EventSource(SSE_URL)
