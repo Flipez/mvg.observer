@@ -39,12 +39,19 @@ function StationCard({ station, isUpdated }: StationCardProps) {
             {station.friendlyName}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto">
-          <DepartureList departures={station.departures} />
-          <div className="flex items-center pt-2">
-            <span className="text-xs text-muted-foreground">
-              Ø {formatDelay(station.avgDelay)} Verspätung
-            </span>
+        <PopoverContent
+          className="w-auto bg-mvg text-white"
+          onOpenAutoFocus={(event) => {
+            event.preventDefault()
+          }}
+        >
+          <h2 className="mb-2 text-xl font-semibold">{station.friendlyName}</h2>
+          <DepartureList
+            departures={station.departures}
+            className="font-light"
+          />
+          <div className="mt-4 flex text-xs">
+            Ø {formatDelay(station.avgDelay)} Verspätung
           </div>
         </PopoverContent>
       </Popover>
@@ -52,13 +59,19 @@ function StationCard({ station, isUpdated }: StationCardProps) {
   )
 }
 
-function DepartureList({ departures }: { departures: Departure[] }) {
+function DepartureList({
+  departures,
+  className,
+}: {
+  departures: Departure[]
+  className?: string
+}) {
   return (
-    <>
+    <div className={`${className} flex flex-col gap-1`}>
       {departures.map((departure) => (
         <DepartureEntry key={departure.id} departure={departure} />
       ))}
-    </>
+    </div>
   )
 }
 

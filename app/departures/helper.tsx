@@ -20,13 +20,36 @@ export function formatDelay(minutes: number) {
 }
 
 /**
- * Returns a relative time string (e.g., "a few seconds ago", "in 2 minutes").
- * @param {number} timestamp - The timestamp in milliseconds.
- * @returns {string} The relative time string.
+ * Converts a timestamp to a human-readable relative time string.
+ *
+ * @param timestamp - Unix timestamp in milliseconds
+ * @returns Formatted relative time string (e.g., "2 minutes ago", "30 seconds", "5 Min")
+ *
+ * @example
+ * relativeTime(1634567890000) // "2 hours ago"
+ * relativeTime(Date.now() + 30000) // "30 seconds"
+ * relativeTime(Date.now() - 45000) // "45 seconds ago"
  */
 export function relativeTime(timestamp: number): string {
   const date = moment.unix(timestamp / 1000)
-  return date.fromNow()
+  const diffInSeconds = date.diff(moment(), "seconds")
+
+  // Future time more than a minute
+  if (diffInSeconds >= 60) {
+    return `${Math.round(diffInSeconds / 60)} Min`
+  }
+
+  // Past time more than a minute
+  if (diffInSeconds < -60) {
+    return date.fromNow()
+  }
+
+  // Within a minute (past or future)
+  const absDiff = Math.abs(diffInSeconds)
+  const suffix = diffInSeconds < 0 ? " ago" : ""
+  const plural = absDiff === 1 ? "" : "s"
+
+  return `${absDiff} second${plural}${suffix}`
 }
 
 /**
