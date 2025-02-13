@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react"
 import type { MetaFunction } from "@remix-run/node"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { DepartureGrid } from "~/departures/grid"
 import { SubwayMap } from "~/departures/map"
-import type { Departure, StationState } from "~/types/departures"
-import { EventSource } from "eventsource"
+import { useDepartures } from "~/hooks/use-departures"
 
 import { columns } from "../departures/table/columns"
 import { DataTable } from "../departures/table/data-table"
@@ -15,35 +13,7 @@ export const meta: MetaFunction = () => [
 ]
 
 export default function Index() {
-  const [departures, setDepartures] = useState<StationState>({})
-
-  useEffect(() => {
-    const sse = new EventSource("https://live.mvg.auch.cool/events")
-
-    sse.onmessage = (event) => {
-      const payload = JSON.parse(event.data)
-      const { departures, station } = payload
-
-      const totalDelay = departures.reduce(
-        (acc: number, curr: Departure) => acc + curr.delayInMinutes,
-        0
-      )
-      const avgDelay = Math.round((totalDelay / departures.length) * 100) / 100
-
-      setDepartures((prev) => ({
-        ...prev,
-        [station]: { ...payload, avgDelay },
-      }))
-
-      const grid = document.getElementById(station)
-      if (grid) {
-        grid.classList.add("animate-ping")
-        setTimeout(() => grid.classList.remove("animate-ping"), 25)
-      }
-    }
-
-    return () => sse.close()
-  }, [])
+  const { departures, updatedStation } = useDepartures()
 
   return (
     <div className="container mx-auto">
@@ -54,7 +24,10 @@ export default function Index() {
           <TabsTrigger value="map">Map</TabsTrigger>
         </TabsList>
         <TabsContent value="grid">
-          <DepartureGrid departures={departures} />
+          <DepartureGrid
+            departures={departures}
+            updatedStation={updatedStation}
+          />
         </TabsContent>
         <TabsContent value="table">
           <DataTable columns={columns} data={Object.values(departures)} />
