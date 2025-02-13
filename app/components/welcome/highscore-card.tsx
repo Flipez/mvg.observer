@@ -19,7 +19,7 @@ export function HighscoreCard({stations}: {stations: StationState}) {
     </CardHeader>
     <CardContent>
     {mostDelayStation && <div>
-      Die Station mit der größten durchschnittlichen Verspätung ist
+      Die größte durchschnittliche Verspätung hat im Moment die Station
       <b> {mostDelayStation.friendlyName}</b> mit {formatDelay(mostDelayStation.avgDelay)}.
     </div>}
     </CardContent>
