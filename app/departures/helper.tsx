@@ -1,4 +1,5 @@
 import moment from "moment"
+import { StationState, Station } from "~/types/departures"
 
 /**
  * Formats a delay in minutes into a human-readable string.
@@ -36,4 +37,12 @@ export function relativeTime(timestamp: number): string {
 export function formatTime(timestamp: number): string {
   const date = moment.unix(timestamp / 1000)
   return date.format("HH:mm")
+}
+
+export function stationWithMostDelay(stations: StationState): Station|null {
+  if (Object.values(stations).length == 0) {
+    return null
+  }
+  const max = Object.values(stations).reduce((prev, current) => (prev && prev.avgDelay > current.avgDelay) ? prev : current)
+  return max
 }
