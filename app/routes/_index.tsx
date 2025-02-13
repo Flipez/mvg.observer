@@ -20,10 +20,10 @@ export default function Index() {
     <div className="container mx-auto">
       <WelcomeBlock stations={departures} globalDelay={globalDelay} />
       <Tabs defaultValue="grid">
-        <TabsList className="grid w-full grid-cols-3 mx-5">
-          <TabsTrigger value="grid">Grid</TabsTrigger>
-          <TabsTrigger value="table">Table</TabsTrigger>
-          <TabsTrigger value="map">Map</TabsTrigger>
+        <TabsList className="grid grid-cols-3 mx-5">
+          <TabsTrigger value="grid">Stationenmatrix</TabsTrigger>
+          <TabsTrigger value="table">Tabellarische Übersicht</TabsTrigger>
+          <TabsTrigger value="map">Karte</TabsTrigger>
         </TabsList>
         <TabsContent value="grid">
           <DepartureGrid
