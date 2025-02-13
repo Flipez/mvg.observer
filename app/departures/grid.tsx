@@ -1,3 +1,4 @@
+import React, { Children } from "react"
 import { DepartureEntry } from "~/components/departure-entry"
 import { Button } from "~/components/ui/button"
 import {
@@ -12,9 +13,10 @@ import { Departure, Station, StationState } from "~/types/departures"
 type StationCardProps = {
   station: Station
   isUpdated: boolean
+  children: React.ReactNode
 }
 
-function StationCard({ station, isUpdated }: StationCardProps) {
+export function StationCard({ station, isUpdated, children }: StationCardProps) {
   const delayColor =
     station.avgDelay <= 0
       ? "bg-green-100"
@@ -32,12 +34,7 @@ function StationCard({ station, isUpdated }: StationCardProps) {
     >
       <Popover>
         <PopoverTrigger asChild className="w-full">
-          <Button
-            variant="ghost"
-            className="h-10 w-full border-2 border-solid text-xs"
-          >
-            {station.friendlyName}
-          </Button>
+          {children}
         </PopoverTrigger>
         <PopoverContent
           className="w-auto bg-mvg text-white"
@@ -59,7 +56,7 @@ function StationCard({ station, isUpdated }: StationCardProps) {
   )
 }
 
-function DepartureList({
+export function DepartureList({
   departures,
   className,
 }: {
@@ -95,7 +92,15 @@ export function DepartureGrid({
           key={stationId}
           station={station}
           isUpdated={stationId === updatedStation}
-        />
+        >
+          <Button
+            variant="ghost"
+            className="h-10 w-full border-2 border-solid text-xs"
+          >
+            {station.friendlyName}
+          </Button>
+          
+        </StationCard>
       ))}
     </div>
   )

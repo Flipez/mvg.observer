@@ -4,6 +4,12 @@ export type Station = {
   departures: Departure[]
   avgDelay: number
   friendlyName: string
+  coordinates: Coordinates
+}
+
+export type Coordinates = {
+  longitude: string
+  latitude: string
 }
 
 export type Departure = {
