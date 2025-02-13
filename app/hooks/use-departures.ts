@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import type { Departure, StationState } from "~/types/departures"
+import type { Departure, Station, StationState } from "~/types/departures"
 import { EventSource } from "eventsource"
 
 const SSE_URL = "https://live.mvg.auch.cool/events"
@@ -14,6 +14,11 @@ function calculateAverageDelay(departures: Departure[]): number {
   return totalDelay / departures.length
 }
 
+function calculateGlobalAverageDelay(departures: StationState) {
+  const allDepartures = Object.values(departures).map((station) => station.departures).flat()
+  return calculateAverageDelay(allDepartures)
+}
+
 function createDepartureId(departure: Omit<Departure, "id">): string {
   return `${departure.label}-${departure.plannedDepartureTime}-${departure.destination}`
     .toLowerCase()
@@ -23,6 +28,7 @@ function createDepartureId(departure: Omit<Departure, "id">): string {
 export function useDepartures() {
   const [departures, setDepartures] = useState<StationState>({})
   const [updatedStation, setUpdatedStation] = useState<string | null>(null)
+  const [globalDelay, setGlobalDelay] = useState<number>(0)
 
   const handleStationUpdate = useCallback((event: MessageEvent) => {
     const payload = JSON.parse(event.data)
@@ -46,9 +52,13 @@ export function useDepartures() {
         friendlyName,
       },
     }))
-
+    
     setUpdatedStation(station)
   }, [])
+
+  useEffect(() => {
+    setGlobalDelay(calculateGlobalAverageDelay(departures))
+  }, [departures])
 
   useEffect(() => {
     const sse = new EventSource(SSE_URL)
@@ -60,5 +70,5 @@ export function useDepartures() {
     }
   }, [handleStationUpdate])
 
-  return { departures, updatedStation }
+  return { departures, updatedStation, globalDelay }
 }

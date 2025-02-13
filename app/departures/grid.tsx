@@ -34,7 +34,7 @@ function StationCard({ station, isUpdated }: StationCardProps) {
         <PopoverTrigger asChild className="w-full">
           <Button
             variant="ghost"
-            className="h-10 w-full border-2 border-solid text-sm"
+            className="h-10 w-full border-2 border-solid text-xs"
           >
             {station.friendlyName}
           </Button>
@@ -76,7 +76,7 @@ export function DepartureGrid({
   )
 
   return (
-    <div className="grid grid-cols-6 gap-3">
+    <div className="grid grid-cols-6 gap-3 m-5">
       {sortedStations.map(([stationId, station]) => (
         <StationCard
           key={stationId}

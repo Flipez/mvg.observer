@@ -6,6 +6,7 @@ import { useDepartures } from "~/hooks/use-departures"
 
 import { columns } from "../departures/table/columns"
 import { DataTable } from "../departures/table/data-table"
+import { WelcomeBlock } from "~/components/welcome"
 
 export const meta: MetaFunction = () => [
   { title: "MVG Live" },
@@ -13,12 +14,13 @@ export const meta: MetaFunction = () => [
 ]
 
 export default function Index() {
-  const { departures, updatedStation } = useDepartures()
+  const { departures, updatedStation, globalDelay } = useDepartures()
 
   return (
     <div className="container mx-auto">
+      <WelcomeBlock stations={departures} globalDelay={globalDelay} />
       <Tabs defaultValue="grid">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-3 mx-5">
           <TabsTrigger value="grid">Grid</TabsTrigger>
           <TabsTrigger value="table">Table</TabsTrigger>
           <TabsTrigger value="map">Map</TabsTrigger>

@@ -2,7 +2,7 @@ import netzplan from "~/images/netzplan.svg"
 
 export function SubwayMap() {
   return(
-    <div>
+    <div className="mx-5">
       <img src={netzplan} />
     </div>
   )
