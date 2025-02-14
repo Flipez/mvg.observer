@@ -45,22 +45,18 @@ func main() {
 }
 
 func filterAndDedup(departures []Departure) []Departure {
-	seen := make(map[string]bool)
-	return slices.DeleteFunc(
+	subwayDepartures := slices.DeleteFunc(
 		departures,
 		func(d Departure) bool {
-			if !strings.HasPrefix(d.Label, "U") {
-				return true
-			}
-
-			lookupKey := d.Label + d.Destination
-			if _, ok := seen[lookupKey]; ok {
-				return true
-			}
-			seen[lookupKey] = true
-			return false
+			return !strings.HasPrefix(d.Label, "U")
 		},
 	)
+
+	if len(subwayDepartures) < 8 {
+		return subwayDepartures
+	}
+
+	return subwayDepartures[:8]
 }
 
 type EventBroadcaster struct {
