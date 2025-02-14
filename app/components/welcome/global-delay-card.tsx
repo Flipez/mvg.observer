@@ -1,3 +1,4 @@
+import { Trans } from "react-i18next"
 import { formatDelay } from "~/components/departures/helper"
 import {
   Card,
@@ -23,7 +24,7 @@ export function GlobalDelayCard({ globalDelay }: { globalDelay: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Zustand</CardTitle>
+        <CardTitle><Trans>Welcome.Card.Status.Title</Trans></CardTitle>
         <CardDescription>Stationsübergreifende Informationen</CardDescription>
       </CardHeader>
       <CardContent>

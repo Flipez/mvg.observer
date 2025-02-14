@@ -2,6 +2,7 @@ import type { MetaFunction } from "@remix-run/node"
 import { Analytics } from "@vercel/analytics/remix"
 import { DepartureGrid } from "~/components/departures/grid"
 import { SubwayMap } from "~/components/departures/map"
+import LanguageSwitcher from "~/components/language-switcher"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { WelcomeBlock } from "~/components/welcome"
 import { useDepartures } from "~/hooks/use-departures"
@@ -9,9 +10,13 @@ import { useDepartures } from "~/hooks/use-departures"
 import { columns } from "../components/departures/table/columns"
 import { DataTable } from "../components/departures/table/data-table"
 
+import "../translations"
+
+import { Trans } from "react-i18next"
+
 export const meta: MetaFunction = () => [
-  { title: "MVG Live" },
-  { name: "description", content: "Live view of MVG Subway metrics" },
+  { title: "MVGeht" },
+  { name: "description", content: "Geht's noch oder eher nicht mehr?" },
 ]
 
 export default function Index() {
@@ -20,8 +25,9 @@ export default function Index() {
   return (
     <div className="container mx-auto">
       <div className="m-5">
+        <LanguageSwitcher />
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-          Geht die MVG oder gehst du zu Fuß?
+          <Trans>Title</Trans>
         </h1>
         <p className="text-xl text-muted-foreground">
           Ein inoffizieller Abfahrtsmonitor für die U-Bahnen in München
