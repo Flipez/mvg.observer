@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react"
-import type { Departure, Station, StationState } from "~/types/departures"
+import type { Departure, StationList } from "~/types/departures"
 import { EventSource } from "eventsource"
 
-const SSE_URL = "https://live.mvg.auch.cool/events"
+const SSE_URL = "https://api.mvgeht.de/events"
 
 function calculateAverageDelay(departures: Departure[]): number {
   if (!departures.length) return 0
@@ -14,8 +14,10 @@ function calculateAverageDelay(departures: Departure[]): number {
   return totalDelay / departures.length
 }
 
-function calculateGlobalAverageDelay(departures: StationState) {
-  const allDepartures = Object.values(departures).map((station) => station.departures).flat()
+function calculateGlobalAverageDelay(stationList: StationList) {
+  const allDepartures = Object.values(stationList)
+    .map((station) => station.departures)
+    .flat()
   return calculateAverageDelay(allDepartures)
 }
 
@@ -26,13 +28,18 @@ function createDepartureId(departure: Omit<Departure, "id">): string {
 }
 
 export function useDepartures() {
-  const [departures, setDepartures] = useState<StationState>({})
+  const [stationList, setStationList] = useState<StationList>({})
   const [updatedStation, setUpdatedStation] = useState<string | null>(null)
   const [globalDelay, setGlobalDelay] = useState<number>(0)
 
   const handleStationUpdate = useCallback((event: MessageEvent) => {
     const payload = JSON.parse(event.data)
-    const { departures: stationDepartures, station, friendlyName, coordinates } = payload
+    const {
+      departures: stationDepartures,
+      station: stationId,
+      friendlyName,
+      coordinates,
+    } = payload
 
     // Create deterministic IDs from departure data
     const departuresWithId = stationDepartures.map(
@@ -44,9 +51,9 @@ export function useDepartures() {
 
     const avgDelay = calculateAverageDelay(departuresWithId)
 
-    setDepartures((prev) => ({
+    setStationList((prev) => ({
       ...prev,
-      [station]: {
+      [stationId]: {
         departures: departuresWithId,
         avgDelay,
         friendlyName,
@@ -54,12 +61,12 @@ export function useDepartures() {
       },
     }))
 
-    setUpdatedStation(station)
+    setUpdatedStation(stationId)
   }, [])
 
   useEffect(() => {
-    setGlobalDelay(calculateGlobalAverageDelay(departures))
-  }, [departures])
+    setGlobalDelay(calculateGlobalAverageDelay(stationList))
+  }, [stationList])
 
   useEffect(() => {
     const sse = new EventSource(SSE_URL)
@@ -71,5 +78,5 @@ export function useDepartures() {
     }
   }, [handleStationUpdate])
 
-  return { departures, updatedStation, globalDelay }
+  return { stationList, updatedStation, globalDelay }
 }

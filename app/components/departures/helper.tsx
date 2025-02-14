@@ -1,5 +1,8 @@
+import { Departure, Station, StationList } from "~/types/departures"
 import moment from "moment"
-import { StationState, Station } from "~/types/departures"
+
+// eslint-disable-next-line import/no-named-as-default-member
+const { unix } = moment
 
 /**
  * Formats a delay in minutes into a human-readable string.
@@ -31,7 +34,7 @@ export function formatDelay(minutes: number) {
  * relativeTime(Date.now() - 45000) // "45 seconds ago"
  */
 export function relativeTime(timestamp: number): string {
-  const date = moment.unix(timestamp / 1000)
+  const date = unix(timestamp / 1000)
   const diffInSeconds = date.diff(moment(), "seconds")
 
   // Future time more than a minute
@@ -58,14 +61,23 @@ export function relativeTime(timestamp: number): string {
  * @returns {string} The formatted time string.
  */
 export function formatTime(timestamp: number): string {
-  const date = moment.unix(timestamp / 1000)
+  const date = unix(timestamp / 1000)
   return date.format("HH:mm")
 }
 
-export function stationWithMostDelay(stations: StationState): Station|null {
+export function stationWithMostDelay(stations: StationList): Station | null {
   if (Object.values(stations).length == 0) {
     return null
   }
-  const max = Object.values(stations).reduce((prev, current) => (prev && prev.avgDelay > current.avgDelay) ? prev : current)
+  const max = Object.values(stations).reduce((prev, current) =>
+    prev && prev.avgDelay > current.avgDelay ? prev : current
+  )
+  return max
+}
+
+export function departureWithMostDelay(station: Station): Departure {
+  const max = Object.values(station.departures).reduce((prev, current) =>
+    prev && prev.delayInMinutes > current.delayInMinutes ? prev : current
+  )
   return max
 }

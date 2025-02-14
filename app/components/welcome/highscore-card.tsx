@@ -1,28 +1,33 @@
 import {
+  formatDelay,
+  stationWithMostDelay,
+} from "~/components/departures/helper"
+import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "~/components/ui/card"
-import { StationState } from "~/types/departures"
-import { stationWithMostDelay, formatDelay } from "~/departures/helper"
+import { StationList } from "~/types/departures"
 
-export function HighscoreCard({stations}: {stations: StationState}) {
+export function HighscoreCard({ stations }: { stations: StationList }) {
   const mostDelayStation = stationWithMostDelay(stations)
- return(
+  return (
     <Card>
-    <CardHeader>
-      <CardTitle>Highscore</CardTitle>
-      <CardDescription>Top Stationen</CardDescription>
-    </CardHeader>
-    <CardContent>
-    {mostDelayStation && <div>
-      Die größte durchschnittliche Verspätung hat im Moment die Station
-      <b> {mostDelayStation.friendlyName}</b> mit {formatDelay(mostDelayStation.avgDelay)}.
-    </div>}
-    </CardContent>
-  </Card>
- )
+      <CardHeader>
+        <CardTitle>Highscore</CardTitle>
+        <CardDescription>Top Stationen</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {mostDelayStation && (
+          <div>
+            Die größte durchschnittliche Verspätung hat im Moment die Station
+            <b> {mostDelayStation.friendlyName}</b> mit{" "}
+            {formatDelay(mostDelayStation.avgDelay)}.
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
 }

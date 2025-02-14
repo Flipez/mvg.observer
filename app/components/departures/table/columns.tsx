@@ -1,20 +1,11 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { DepartureEntry } from "~/components/departure-entry"
+import { formatDelay } from "~/components/departures/helper"
+import { DepartureList } from "~/components/departures/list"
 import { Button } from "~/components/ui/button"
-import { formatDelay } from "~/departures/helper"
-import { Departure, Station } from "~/types/departures"
+import { Station } from "~/types/departures"
 import { ArrowUpDown } from "lucide-react"
-
-const DepartureList = ({ departures }: { departures: Departure[] }) => {
-  return departures.map((departure: Departure) => (
-    <span key={departure.label + departure.destination}>
-      <DepartureEntry departure={departure} />
-      &nbsp;&nbsp;
-    </span>
-  ))
-}
 
 export const columns: ColumnDef<Station>[] = [
   {
@@ -26,7 +17,7 @@ export const columns: ColumnDef<Station>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Station
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="ml-2 size-4" />
         </Button>
       )
     },
@@ -45,10 +36,7 @@ export const columns: ColumnDef<Station>[] = [
     accessorKey: "departures",
     header: "Abfahrten",
     cell: ({ row }) => (
-      <DepartureList
-        key={row.original.friendlyName}
-        departures={row.original.departures}
-      />
+      <DepartureList departures={row.original.departures} tableMode={true} />
     ),
   },
 ]
