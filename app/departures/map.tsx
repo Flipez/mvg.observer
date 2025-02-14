@@ -2,14 +2,10 @@ import {
   Map,
   Marker,
   Popup,
-  NavigationControl,
-  FullscreenControl,
-  ScaleControl,
-  GeolocateControl
-} from 'react-map-gl/mapbox';
+} from 'react-map-gl/maplibre';
 import {useState, useMemo} from 'react';
 import { StationState } from '~/types/departures';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import { StationCard } from './grid';
 import {
   Popover,
@@ -39,13 +35,13 @@ function Pin({size = 12, color = '#fff'}) {
 
 function pinColor(isUpdated: boolean, avgDelay: number) {
   if (isUpdated) {
-    return '#fff'
+    return '#5063DF'
   }
   return avgDelay <= 0
-      ? "#00dd0d"
+      ? "#31C48D"
       : avgDelay <= 5
-        ? "#ffff00"
-        : "#ff0000"
+        ? "#FACA15"
+        : "#F8B4B4"
 }
 
 export function SubwayMap({stations, updatedStation}: {stations: StationState, updatedStation: string|null}) {
@@ -99,16 +95,16 @@ export function SubwayMap({stations, updatedStation}: {stations: StationState, u
   );
 
   return(
-    <div className="h-[800px] mx-5">
+    <div className="h-[1100px] mx-5">
       <Map
-        mapboxAccessToken="pk.eyJ1IjoiZmxpcGV6IiwiYSI6ImNtNzN1Z3B6NzAycGkyanNjbmlsaTh4MTUifQ.oHbAQa-XfcphOhmxnSiczg"
         initialViewState={{
-          latitude: 48.18362, 
+          latitude: 48.18,
           longitude: 11.579,
-          zoom: 10.9,
+          zoom: 11.35,
         }}
-        mapStyle="mapbox://styles/mapbox/dark-v10"
-        {...settings} 
+        mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
+        attributionControl={false}
+        {...settings}
       >
 
         {pins}

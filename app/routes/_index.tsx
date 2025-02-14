@@ -18,7 +18,14 @@ export default function Index() {
 
   return (
     <div className="container mx-auto">
-      <WelcomeBlock stations={departures} globalDelay={globalDelay} />
+      <div className="mx-5 my-5">
+        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+          Geht die MVG oder gehst du zu Fuß?
+        </h1>
+        <p className="text-xl text-muted-foreground">
+          Ein inoffizieller Abfahrtsmonitor für die U-Bahnen in München
+        </p>
+      </div>
       <Tabs defaultValue="grid">
         <TabsList className="grid grid-cols-3 mx-5">
           <TabsTrigger value="grid">Stationenmatrix</TabsTrigger>
@@ -26,6 +33,7 @@ export default function Index() {
           <TabsTrigger value="map">Karte</TabsTrigger>
         </TabsList>
         <TabsContent value="grid">
+          <WelcomeBlock stations={departures} globalDelay={globalDelay} />
           <DepartureGrid
             departures={departures}
             updatedStation={updatedStation}
