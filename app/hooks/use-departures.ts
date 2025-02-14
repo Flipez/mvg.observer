@@ -15,7 +15,9 @@ function calculateAverageDelay(departures: Departure[]): number {
 }
 
 function calculateGlobalAverageDelay(departures: StationState) {
-  const allDepartures = Object.values(departures).map((station) => station.departures).flat()
+  const allDepartures = Object.values(departures)
+    .map((station) => station.departures)
+    .flat()
   return calculateAverageDelay(allDepartures)
 }
 
@@ -32,7 +34,12 @@ export function useDepartures() {
 
   const handleStationUpdate = useCallback((event: MessageEvent) => {
     const payload = JSON.parse(event.data)
-    const { departures: stationDepartures, station, friendlyName, coordinates } = payload
+    const {
+      departures: stationDepartures,
+      station,
+      friendlyName,
+      coordinates,
+    } = payload
 
     // Create deterministic IDs from departure data
     const departuresWithId = stationDepartures.map(

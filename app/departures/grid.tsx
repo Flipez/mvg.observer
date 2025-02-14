@@ -1,11 +1,9 @@
 import { DepartureEntry } from "~/components/departure-entry"
 import { Button } from "~/components/ui/button"
-import {
-  Popover,
-  PopoverTrigger,
-} from "~/components/ui/popover"
+import { Popover, PopoverTrigger } from "~/components/ui/popover"
 import { cn } from "~/lib/utils"
 import { Departure, Station, StationState } from "~/types/departures"
+
 import { DeparturesPopoverContent } from "./popover-content"
 
 type StationCardProps = {
@@ -74,7 +72,7 @@ export function DepartureGrid({
   )
 
   return (
-    <div className="grid grid-cols-6 gap-3 m-5">
+    <div className="m-5 grid grid-cols-6 gap-3">
       {sortedStations.map(([stationId, station]) => (
         <StationCard
           key={stationId}

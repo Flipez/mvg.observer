@@ -1,5 +1,5 @@
+import { Station, StationState } from "~/types/departures"
 import moment from "moment"
-import { StationState, Station } from "~/types/departures"
 
 /**
  * Formats a delay in minutes into a human-readable string.
@@ -62,10 +62,12 @@ export function formatTime(timestamp: number): string {
   return date.format("HH:mm")
 }
 
-export function stationWithMostDelay(stations: StationState): Station|null {
+export function stationWithMostDelay(stations: StationState): Station | null {
   if (Object.values(stations).length == 0) {
     return null
   }
-  const max = Object.values(stations).reduce((prev, current) => (prev && prev.avgDelay > current.avgDelay) ? prev : current)
+  const max = Object.values(stations).reduce((prev, current) =>
+    prev && prev.avgDelay > current.avgDelay ? prev : current
+  )
   return max
 }
