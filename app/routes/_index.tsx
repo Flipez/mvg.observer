@@ -1,12 +1,12 @@
 import type { MetaFunction } from "@remix-run/node"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
+import { WelcomeBlock } from "~/components/welcome"
 import { DepartureGrid } from "~/departures/grid"
 import { SubwayMap } from "~/departures/map"
 import { useDepartures } from "~/hooks/use-departures"
 
 import { columns } from "../departures/table/columns"
 import { DataTable } from "../departures/table/data-table"
-import { WelcomeBlock } from "~/components/welcome"
 
 export const meta: MetaFunction = () => [
   { title: "MVG Live" },
@@ -27,7 +27,7 @@ export default function Index() {
         </p>
       </div>
       <Tabs defaultValue="grid">
-        <TabsList className="grid grid-cols-3 mx-5">
+        <TabsList className="mx-5 grid grid-cols-3">
           <TabsTrigger value="grid">Stationenmatrix</TabsTrigger>
           <TabsTrigger value="table">Tabellarische Übersicht</TabsTrigger>
           <TabsTrigger value="map">Karte</TabsTrigger>

@@ -1,22 +1,19 @@
-import React, { Children } from "react"
 import { DepartureEntry } from "~/components/departure-entry"
 import { Button } from "~/components/ui/button"
 import {
   Popover,
-  PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover"
-import { formatDelay } from "~/departures/helper"
 import { cn } from "~/lib/utils"
 import { Departure, Station, StationState } from "~/types/departures"
+import { DeparturesPopoverContent } from "./popover-content"
 
 type StationCardProps = {
   station: Station
   isUpdated: boolean
-  children: React.ReactNode
 }
 
-export function StationCard({ station, isUpdated, children }: StationCardProps) {
+function StationCard({ station, isUpdated }: StationCardProps) {
   const delayColor =
     station.avgDelay <= 0
       ? "bg-green-100"
@@ -34,23 +31,14 @@ export function StationCard({ station, isUpdated, children }: StationCardProps) 
     >
       <Popover>
         <PopoverTrigger asChild className="w-full">
-          {children}
+          <Button
+            variant="ghost"
+            className="h-10 w-full border-2 border-solid text-xs"
+          >
+            {station.friendlyName}
+          </Button>
         </PopoverTrigger>
-        <PopoverContent
-          className="w-auto bg-mvg text-white"
-          onOpenAutoFocus={(event) => {
-            event.preventDefault()
-          }}
-        >
-          <h2 className="mb-2 text-xl font-semibold">{station.friendlyName}</h2>
-          <DepartureList
-            departures={station.departures}
-            className="font-light"
-          />
-          <div className="mt-4 flex text-xs">
-            Ø {formatDelay(station.avgDelay)} Verspätung
-          </div>
-        </PopoverContent>
+        <DeparturesPopoverContent station={station} />
       </Popover>
     </div>
   )
@@ -92,15 +80,7 @@ export function DepartureGrid({
           key={stationId}
           station={station}
           isUpdated={stationId === updatedStation}
-        >
-          <Button
-            variant="ghost"
-            className="h-10 w-full border-2 border-solid text-xs"
-          >
-            {station.friendlyName}
-          </Button>
-          
-        </StationCard>
+        />
       ))}
     </div>
   )
