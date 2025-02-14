@@ -1,14 +1,17 @@
 import {
+  formatDelay,
+  stationWithMostDelay,
+} from "~/components/departures/helper"
+import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "~/components/ui/card"
-import { formatDelay, stationWithMostDelay } from "~/departures/helper"
-import { StationState } from "~/types/departures"
+import { StationList } from "~/types/departures"
 
-export function HighscoreCard({ stations }: { stations: StationState }) {
+export function HighscoreCard({ stations }: { stations: StationList }) {
   const mostDelayStation = stationWithMostDelay(stations)
   return (
     <Card>

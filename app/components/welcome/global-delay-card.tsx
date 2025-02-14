@@ -1,3 +1,4 @@
+import { formatDelay } from "~/components/departures/helper"
 import {
   Card,
   CardContent,
@@ -5,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card"
-import { formatDelay } from "~/departures/helper"
 
 export function GlobalDelayCard({ globalDelay }: { globalDelay: number }) {
   const delayColor =

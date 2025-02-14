@@ -8,7 +8,7 @@ import {
 
 export function DescriptionCard() {
   return (
-    <Card className="col-span-2">
+    <Card className="sm:col-span-1 md:col-span-2">
       <CardHeader>
         <CardTitle>MVGeht</CardTitle>
         <CardDescription>Was sehen meine Augen hier?</CardDescription>

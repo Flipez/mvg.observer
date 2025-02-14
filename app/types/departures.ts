@@ -21,4 +21,4 @@ export type Departure = {
   destination: string
 }
 
-export type StationState = Record<string, Station>
+export type StationList = Record<string, Station>

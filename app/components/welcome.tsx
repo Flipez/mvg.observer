@@ -1,4 +1,4 @@
-import { StationState } from "~/types/departures"
+import { StationList } from "~/types/departures"
 
 import { DescriptionCard } from "./welcome/description-card"
 import { GlobalDelayCard } from "./welcome/global-delay-card"
@@ -9,11 +9,11 @@ export function WelcomeBlock({
   stations,
 }: {
   globalDelay: number
-  stations: StationState
+  stations: StationList
 }) {
   return (
     <div className="mx-5">
-      <div className="my-5 grid grid-cols-4 gap-4">
+      <div className="my-5 grid grid-cols-1 gap-4 md:grid-cols-4">
         <GlobalDelayCard globalDelay={globalDelay} />
         <HighscoreCard stations={stations} />
         <DescriptionCard />
