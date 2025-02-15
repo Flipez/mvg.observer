@@ -92,7 +92,7 @@ const resources = {
       },
       Misc: {
         Delay: "Verspätung",
-        Departed: "Abgefahren",
+        Departed: "abgefahren",
       },
     },
   },
