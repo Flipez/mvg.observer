@@ -43,11 +43,12 @@ const resources = {
         Columns: {
           Station: "Station",
           Departures: "Departures",
-        }
+        },
       },
       Misc: {
-        Delay: "delay"
-      }
+        Delay: "delay",
+        Departed: "departed",
+      },
     },
   },
   de: {
@@ -87,11 +88,12 @@ const resources = {
         Columns: {
           Station: "Station",
           Departures: "Abfahrten",
-        }
+        },
       },
       Misc: {
-        Delay: "Verspätung"
-      }
+        Delay: "Verspätung",
+        Departed: "Abgefahren",
+      },
     },
   },
 }

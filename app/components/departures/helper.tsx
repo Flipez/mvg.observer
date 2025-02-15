@@ -1,6 +1,7 @@
-import { Departure, Station, StationList } from "~/types/departures"
-import moment from "moment"
 import { useState } from "react"
+import { Departure, Station, StationList } from "~/types/departures"
+import { t } from "i18next"
+import moment from "moment"
 
 // eslint-disable-next-line import/no-named-as-default-member
 const { unix } = moment
@@ -28,13 +29,8 @@ export function formatDelay(minutes: number) {
  *
  * @param timestamp - Unix timestamp in milliseconds
  * @returns Formatted relative time string (e.g., "2 minutes ago", "30 seconds", "5 Min")
- *
- * @example
- * relativeTime(1634567890000) // "2 hours ago"
- * relativeTime(Date.now() + 30000) // "30 seconds"
- * relativeTime(Date.now() - 45000) // "45 seconds ago"
  */
-export function relativeTime(timestamp: number): string {
+export function RelativeTime(timestamp: number): string {
   const [selectedLanguage] = useState("de")
   const date = unix(timestamp / 1000)
   const diffInSeconds = date.diff(moment(), "seconds")
@@ -44,17 +40,23 @@ export function relativeTime(timestamp: number): string {
     return `${Math.round(diffInSeconds / 60)} Min`
   }
 
-  // Past time more than a minute
-  if (diffInSeconds < -60) {
-    return date.fromNow()
+  if (diffInSeconds < 0) {
+    return t("Misc.Departed")
   }
 
-  // Within a minute (past or future)
+  // Within a minute (past)
   const absDiff = Math.abs(diffInSeconds)
-  const suffix = diffInSeconds < 0 ? " ago" : ""
-  const plural = absDiff === 1 ? "" : "s"
 
-  return `${absDiff} second${plural}${suffix}`
+  if (selectedLanguage === "en") {
+    const plural = absDiff === 1 ? "" : "s"
+    return `${absDiff} second${plural}`
+  }
+  if (selectedLanguage === "de") {
+    const plural = absDiff === 1 ? "Sekunde" : "Sekunden"
+    return `${absDiff} ${plural}`
+  }
+
+  return ""
 }
 
 /**

@@ -5,8 +5,8 @@ import { formatDelay } from "~/components/departures/helper"
 import { DepartureList } from "~/components/departures/list"
 import { Button } from "~/components/ui/button"
 import { Station } from "~/types/departures"
-import { ArrowUpDown } from "lucide-react"
 import { t } from "i18next"
+import { ArrowUpDown } from "lucide-react"
 import { Trans } from "react-i18next"
 
 export const columns: ColumnDef<Station>[] = [

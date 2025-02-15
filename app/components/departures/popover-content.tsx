@@ -1,9 +1,9 @@
 import { PopoverContent } from "~/components/ui/popover"
 import { Station } from "~/types/departures"
+import { Trans } from "react-i18next"
 
 import { formatDelay } from "./helper"
 import { DepartureList } from "./list"
-import { Trans } from "react-i18next"
 
 export function DeparturesPopoverContent({ station }: { station: Station }) {
   return (

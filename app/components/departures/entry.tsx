@@ -1,4 +1,4 @@
-import { formatTime, relativeTime } from "~/components/departures/helper"
+import { formatTime, RelativeTime } from "~/components/departures/helper"
 import { cn } from "~/lib/utils"
 import { Departure } from "~/types/departures"
 
@@ -39,7 +39,7 @@ export function DepartureEntry({
             <TooltipTrigger
               className={cn("text-right", "font-semibold", delayColor)}
             >
-              {relativeTime(departure.realtimeDepartureTime)}
+              {RelativeTime(departure.realtimeDepartureTime)}
             </TooltipTrigger>
             <TooltipContent className="text-xs">
               {formatTime(departure.plannedDepartureTime)}+
