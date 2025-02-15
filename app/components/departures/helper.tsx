@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { Departure, Station, StationList } from "~/types/departures"
 import { t } from "i18next"
 import moment from "moment"
@@ -30,8 +29,7 @@ export function formatDelay(minutes: number) {
  * @param timestamp - Unix timestamp in milliseconds
  * @returns Formatted relative time string (e.g., "2 minutes ago", "30 seconds", "5 Min")
  */
-export function RelativeTime(timestamp: number): string {
-  const [selectedLanguage] = useState("de")
+export function relativeTime(timestamp: number): string {
   const date = unix(timestamp / 1000)
   const diffInSeconds = date.diff(moment(), "seconds")
 
@@ -46,17 +44,7 @@ export function RelativeTime(timestamp: number): string {
 
   // Within a minute (past)
   const absDiff = Math.abs(diffInSeconds)
-
-  if (selectedLanguage === "en") {
-    const plural = absDiff === 1 ? "" : "s"
-    return `${absDiff} second${plural}`
-  }
-  if (selectedLanguage === "de") {
-    const plural = absDiff === 1 ? "Sekunde" : "Sekunden"
-    return `${absDiff} ${plural}`
-  }
-
-  return ""
+  return `${absDiff} ${t("Misc.SecondsShort")}`
 }
 
 /**
