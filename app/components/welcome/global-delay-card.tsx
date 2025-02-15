@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card"
+import { Trans } from "react-i18next"
 
 export function GlobalDelayCard({ globalDelay }: { globalDelay: number }) {
   const delayColor =
@@ -23,13 +24,22 @@ export function GlobalDelayCard({ globalDelay }: { globalDelay: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Zustand</CardTitle>
-        <CardDescription>Stationsübergreifende Informationen</CardDescription>
+        <CardTitle>
+          <Trans>Welcome.Card.Status.Title</Trans>
+        </CardTitle>
+        <CardDescription>
+          <Trans>Welcome.Card.Status.Description</Trans>
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        Aktuell haben die U-Bahnen im Durchschnitt{" "}
-        <span className={delayColor}>{formatDelay(globalDelay)}</span>{" "}
-        Verspätung, das ist <span className={delayColor}>{delayText}</span>.
+        <Trans
+          i18nKey="Welcome.Card.Status.Content"
+          values={{ delay: formatDelay(globalDelay), delayText: delayText }}
+          components={{
+            delay: <span className={delayColor} />,
+            delayText: <span className={delayColor} />,
+          }}
+        />
       </CardContent>
     </Card>
   )
