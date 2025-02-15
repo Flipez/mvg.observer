@@ -30,14 +30,20 @@ export default function Index() {
           <Trans>Title</Trans>
         </h1>
         <p className="text-xl text-muted-foreground">
-          Ein inoffizieller Abfahrtsmonitor für die U-Bahnen in München
+          <Trans>Description</Trans>
         </p>
       </div>
       <Tabs defaultValue="grid">
         <TabsList className="mx-5 grid grid-cols-3">
-          <TabsTrigger value="grid">Matrix</TabsTrigger>
-          <TabsTrigger value="table">Tabelle</TabsTrigger>
-          <TabsTrigger value="map">Karte</TabsTrigger>
+          <TabsTrigger value="grid">
+            <Trans>Tabs.Matrix</Trans>
+          </TabsTrigger>
+          <TabsTrigger value="table">
+            <Trans>Tabs.Table</Trans>
+          </TabsTrigger>
+          <TabsTrigger value="map">
+            <Trans>Tabs.Map</Trans>
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="grid">
           <WelcomeBlock stations={stationList} globalDelay={globalDelay} />

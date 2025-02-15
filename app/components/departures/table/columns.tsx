@@ -6,6 +6,8 @@ import { DepartureList } from "~/components/departures/list"
 import { Button } from "~/components/ui/button"
 import { Station } from "~/types/departures"
 import { ArrowUpDown } from "lucide-react"
+import { t } from "i18next"
+import { Trans } from "react-i18next"
 
 export const columns: ColumnDef<Station>[] = [
   {
@@ -16,7 +18,7 @@ export const columns: ColumnDef<Station>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Station
+          <Trans>Table.Columns.Station</Trans>
           <ArrowUpDown className="ml-2 size-4" />
         </Button>
       )
@@ -26,7 +28,7 @@ export const columns: ColumnDef<Station>[] = [
         <div>
           {row.original.friendlyName}
           <div className="text-xs text-muted-foreground">
-            Ø {formatDelay(row.original.avgDelay)} Verspätung
+            Ø {formatDelay(row.original.avgDelay)} <Trans>Misc.Delay</Trans>
           </div>
         </div>
       )
@@ -34,7 +36,7 @@ export const columns: ColumnDef<Station>[] = [
   },
   {
     accessorKey: "departures",
-    header: "Abfahrten",
+    header: t("Table.Columns.Departures"),
     cell: ({ row }) => (
       <DepartureList departures={row.original.departures} tableMode={true} />
     ),

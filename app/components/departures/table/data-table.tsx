@@ -20,6 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table"
+import { t } from "i18next"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -52,7 +53,7 @@ export function DataTable<TData, TValue>({
     <div className="mx-5">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Stationen filtern..."
+          placeholder={t("Table.Filter")}
           value={
             (table.getColumn("friendlyName")?.getFilterValue() as string) ?? ""
           }

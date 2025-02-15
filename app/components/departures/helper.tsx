@@ -1,5 +1,6 @@
 import { Departure, Station, StationList } from "~/types/departures"
 import moment from "moment"
+import { useState } from "react"
 
 // eslint-disable-next-line import/no-named-as-default-member
 const { unix } = moment
@@ -34,6 +35,7 @@ export function formatDelay(minutes: number) {
  * relativeTime(Date.now() - 45000) // "45 seconds ago"
  */
 export function relativeTime(timestamp: number): string {
+  const [selectedLanguage] = useState("de")
   const date = unix(timestamp / 1000)
   const diffInSeconds = date.diff(moment(), "seconds")
 

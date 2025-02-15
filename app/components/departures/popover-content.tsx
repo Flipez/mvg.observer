@@ -3,6 +3,7 @@ import { Station } from "~/types/departures"
 
 import { formatDelay } from "./helper"
 import { DepartureList } from "./list"
+import { Trans } from "react-i18next"
 
 export function DeparturesPopoverContent({ station }: { station: Station }) {
   return (
@@ -15,7 +16,7 @@ export function DeparturesPopoverContent({ station }: { station: Station }) {
       <h2 className="mb-2 text-xl font-semibold">{station.friendlyName}</h2>
       <DepartureList departures={station.departures} tableMode={false} />
       <div className="mt-4 flex text-xs">
-        Ø {formatDelay(station.avgDelay)} Verspätung
+        Ø {formatDelay(station.avgDelay)} <Trans>Misc.Delay</Trans>
       </div>
     </PopoverContent>
   )

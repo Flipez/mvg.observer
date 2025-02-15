@@ -10,21 +10,31 @@ import {
   CardTitle,
 } from "~/components/ui/card"
 import { StationList } from "~/types/departures"
+import { Trans } from "react-i18next"
 
 export function HighscoreCard({ stations }: { stations: StationList }) {
   const mostDelayStation = stationWithMostDelay(stations)
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Highscore</CardTitle>
-        <CardDescription>Top Stationen</CardDescription>
+        <CardTitle>
+          <Trans>Welcome.Card.Highscore.Title</Trans>
+        </CardTitle>
+        <CardDescription>
+          <Trans>Welcome.Card.Highscore.Description</Trans>
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {mostDelayStation && (
           <div>
-            Die größte durchschnittliche Verspätung hat im Moment die Station
-            <b> {mostDelayStation.friendlyName}</b> mit{" "}
-            {formatDelay(mostDelayStation.avgDelay)}.
+            <Trans
+              i18nKey="Welcome.Card.Highscore.Content"
+              values={{
+                station: mostDelayStation.friendlyName,
+                delay: formatDelay(mostDelayStation.avgDelay),
+              }}
+              components={{ station: <b></b> }}
+            />
           </div>
         )}
       </CardContent>
