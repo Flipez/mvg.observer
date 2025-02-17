@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { StationDelayHourChart } from "~/components/charts/station-delay-hour"
 import { ControlBar } from "~/components/history/line_day_delay/control-bar"
 import { fetchLineDelay } from "~/components/history/line_day_delay/fetch"
-import { U6 } from "~/data/subway-lines"
+import { StationsByLine } from "~/data/subway-lines"
 import { ChartSettings, StationBucketList } from "~/types/history"
 import { addDays, format } from "date-fns"
 
@@ -27,6 +27,7 @@ export default function History() {
     chartDate: 0,
     interval: 30,
     realtime: false,
+    line: "U6"
   })
 
   const year = 2024
@@ -51,7 +52,7 @@ export default function History() {
       }
     }
     fetchData()
-  }, [debouncedChartDate, settings])
+  }, [debouncedChartDate, settings.chartDate, settings.interval, settings.realtime])
 
   return (
     <div>
@@ -65,7 +66,7 @@ export default function History() {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(U6).map((stationId: string) => {
+          {Object.keys(StationsByLine[settings.line]).map((stationId: string) => {
             const stationDataSouth: StationBucketList | undefined =
               southChartData.find(
                 (stationBucketList: StationBucketList) =>
@@ -91,7 +92,7 @@ export default function History() {
                   />
                 </td>
                 <td className="border text-center">
-                  {U6[stationId] ?? "Unknown Station"}
+                  {StationsByLine[settings.line][stationId] ?? "Unknown Station"}
                 </td>
                 <td className="border">
                   <StationDelayHourChart

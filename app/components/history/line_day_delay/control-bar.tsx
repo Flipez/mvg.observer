@@ -73,6 +73,47 @@ export function IntervalDropdown({
   )
 }
 
+function LineDropdown({
+  settings,
+  setSettings,
+}: {
+  settings: ChartSettings
+  setSettings: Dispatch<SetStateAction<ChartSettings>>
+}) {
+  // Define your interval options.
+  const options = [
+    { value: "U1", label: "U1" },
+    { value: "U2", label: "U2" },
+    { value: "U3", label: "U3" },
+    { value: "U4", label: "U4" },
+    { value: "U5", label: "U5" },
+    { value: "U6", label: "U6" },
+  ]
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        Line: {settings.line}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        {options.map((option) => (
+          <DropdownMenuItem
+            key={option.value}
+            onSelect={() =>
+              setSettings((prev: ChartSettings) => ({
+                ...prev,
+                line: option.value,
+              }))
+            }
+          >
+            {option.label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 export function DateSlider({
   settings,
   setSettings,
@@ -118,6 +159,7 @@ export function ControlBar({
     <div className="flex items-center justify-between">
       <DateSlider settings={settings} setSettings={setSettings} />
       <RealtimeCheckbox settings={settings} setSettings={setSettings} />
+      <LineDropdown settings={settings} setSettings={setSettings} />
       <IntervalDropdown settings={settings} setSettings={setSettings} />
     </div>
   )

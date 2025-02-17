@@ -14,4 +14,5 @@ export interface ChartSettings {
   chartDate: number
   interval: number
   realtime: boolean
+  line: string
 }

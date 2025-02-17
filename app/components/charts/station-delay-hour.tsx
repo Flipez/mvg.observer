@@ -77,7 +77,7 @@ export function StationDelayHourChart({
     endOfDayMs,
     intervalMinutes
   )
-  console.log(processedData)
+
   return (
     <ChartContainer className="h-[30px] w-[400px]" config={chartConfig}>
       <AreaChart

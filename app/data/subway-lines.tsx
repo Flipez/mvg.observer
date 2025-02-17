@@ -1,4 +1,121 @@
-export const U6: { [stationId: string]: string } = {
+interface StationNames {
+  [stationId: string]: string
+}
+
+const U1: StationNames = {
+  "de:09162:360": "Olympia-Einkaufszentrum",
+  "de:09162:312": "Georg-Brauchle-Ring",
+  "de:09162:200": "Westfriedhof",
+  "de:09162:990": "Gern",
+  "de:09162:190": "Rotkreuzplatz",
+  "de:09162:180": "Maillingerstraße",
+  "de:09162:170": "Stiglmaierplatz",
+  "de:09162:6": "Hauptbahnhof Bahnhofsplatz",
+  "de:09162:50": "Sendlinger Tor",
+  "de:09162:150": "Fraunhoferstraße",
+  "de:09162:160": "Kolumbusplatz",
+  "de:09162:1180": "Candidplatz",
+  "de:09162:1190": "Wettersteinplatz",
+  "de:09162:1200": "St.-Quirin-Platz",
+  "de:09162:1210": "Mangfallplatz",
+}
+
+const U2: StationNames = {
+  "de:09162:320": "Feldmoching",
+  "de:09162:790": "Hasenbergl",
+  "de:09162:780": "Dülferstraße",
+  "de:09162:770": "Harthof",
+  "de:09162:760": "Am Hart",
+  "de:09162:750": "Frankfurter Ring",
+  "de:09162:740": "Milbertshofen",
+  "de:09162:400": "Scheidplatz",
+  "de:09162:140": "Hohenzollernplatz",
+  "de:09162:130": "Josephsplatz",
+  "de:09162:120": "Theresienstraße",
+  "de:09162:110": "Königsplatz",
+  "de:09162:6": "Hauptbahnhof Bahnhofsplatz",
+  "de:09162:50": "Sendlinger Tor",
+  "de:09162:150": "Fraunhoferstraße",
+  "de:09162:160": "Kolumbusplatz",
+  "de:09162:1170": "Silberhornstraße",
+  "de:09162:1160": "Untersbergstraße",
+  "de:09162:1110": "Giesing",
+  "de:09162:1070": "Karl-Preis-Platz",
+  "de:09162:1060": "Innsbrucker Ring",
+  "de:09162:1220": "Josephsburg",
+  "de:09162:1230": "Kreillerstraße",
+  "de:09162:920": "Trudering",
+  "de:09162:1240": "Moosfeld",
+  "de:09162:1250": "Messestadt West",
+  "de:09162:1260": "Messestadt Ost",
+}
+
+const U3: StationNames = {
+  "de:09162:300": "Moosach",
+  "de:09162:370": "Moosacher St.-Martins-Platz",
+  "de:09162:360": "Olympia-Einkaufszentrum",
+  "de:09162:380": "Oberwiesenfeld",
+  "de:09162:350": "Olympiazentrum",
+  "de:09162:340": "Petuelring",
+  "de:09162:400": "Scheidplatz",
+  "de:09162:410": "Bonner Platz",
+  "de:09162:500": "Münchner Freiheit",
+  "de:09162:80": "Giselastraße",
+  "de:09162:70": "Universität",
+  "de:09162:60": "Odeonsplatz",
+  "de:09162:2": "Marienplatz",
+  "de:09162:50": "Sendlinger Tor",
+  "de:09162:40": "Goetheplatz",
+  "de:09162:30": "Poccistraße",
+  "de:09162:1140": "Implerstraße",
+  "de:09162:1430": "Brudermühlstraße",
+  "de:09162:1440": "Thalkirchen (Tierpark)",
+  "de:09162:1450": "Obersendling",
+  "de:09162:1460": "Aidenbachstraße",
+  "de:09162:1470": "Machtlfinger Straße",
+  "de:09162:1480": "Forstenrieder Allee",
+  "de:09162:1490": "Basler Straße",
+  "de:09162:1500": "Fürstenried West",
+}
+
+const U4: StationNames = {
+  "de:09162:260": "Westendstraße",
+  "de:09162:1150": "Heimeranplatz",
+  "de:09162:250": "Schwanthalerhöhe",
+  "de:09162:240": "Theresienwiese",
+  "de:09162:6": "Hauptbahnhof Bahnhofsplatz",
+  "de:09162:1": "Karlsplatz (Stachus)",
+  "de:09162:60": "Odeonsplatz",
+  "de:09162:590": "Lehel",
+  "de:09162:580": "Max-Weber-Platz",
+  "de:09162:570": "Prinzregentenplatz",
+  "de:09162:560": "Böhmerwaldplatz",
+  "de:09162:680": "Richard-Strauss-Straße",
+  "de:09162:670": "Arabellapark",
+}
+
+const U5: StationNames = {
+  "de:09162:280": "Laimer Platz",
+  "de:09162:270": "Friedenheimer Straße",
+  "de:09162:260": "Westendstraße",
+  "de:09162:1150": "Heimeranplatz",
+  "de:09162:250": "Schwanthalerhöhe",
+  "de:09162:240": "Theresienwiese",
+  "de:09162:6": "Hauptbahnhof Bahnhofsplatz",
+  "de:09162:1": "Karlsplatz (Stachus)",
+  "de:09162:60": "Odeonsplatz",
+  "de:09162:590": "Lehel",
+  "de:09162:580": "Max-Weber-Platz",
+  "de:09162:5": "München, Ostbahnhof",
+  "de:09162:1060": "Innsbrucker Ring",
+  "de:09162:1050": "Michaelibad",
+  "de:09162:1040": "Quiddestraße",
+  "de:09162:1030": "Neuperlach Zentrum",
+  "de:09162:1020": "Therese-Giehse-Allee",
+  "de:09162:1010": "Neuperlach Süd",
+}
+
+const U6: { [stationId: string]: string } = {
   "de:09184:460": "Garching, Forschungszentrum",
   "de:09184:490": "Garching",
   "de:09184:480": "Garching-Hochbrück",
@@ -27,7 +144,7 @@ export const U6: { [stationId: string]: string } = {
   "de:09162:1540": "Klinikum Großhadern",
 }
 
-export const friendlyNames = {
+const All: StationNames = {
   "de:09162:1": "Karlsplatz (Stachus)",
   "de:09162:2": "Marienplatz",
   "de:09162:5": "München, Ostbahnhof",
@@ -126,4 +243,14 @@ export const friendlyNames = {
   "de:09162:1540": "Klinikum Großhadern",
   "de:06412:10": "Frankfurt Hbf.",
   "de:09564:510": "Nürnberg Hbf",
+}
+
+export const StationsByLine: {[lineId: string]: StationNames } = {
+  "U1": U1,
+  "U2": U2,
+  "U3": U3,
+  "U4": U4,
+  "U5": U5,
+  "U6": U6,
+  "All": All
 }
