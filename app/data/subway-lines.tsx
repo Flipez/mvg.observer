@@ -1,3 +1,5 @@
+import { SubwayLine } from "~/types/departures"
+
 interface StationNames {
   [stationId: string]: string
 }
@@ -289,7 +291,7 @@ const All: StationNames = {
   "de:09564:510": "Nürnberg Hbf",
 }
 
-export const StationsByLine: {[lineId: string]: StationNames } = {
+export const StationsByLine: Record<SubwayLine, StationNames> = {
   "U1": U1,
   "U2": U2,
   "U3": U3,
@@ -298,5 +300,4 @@ export const StationsByLine: {[lineId: string]: StationNames } = {
   "U6": U6,
   "U7": U7,
   "U8": U8,
-  "All": All
 }

@@ -5,6 +5,7 @@ import { fetchLineDelay } from "~/components/history/line_day_delay/fetch"
 import { StationsByLine } from "~/data/subway-lines"
 import { ChartSettings, StationBucketList } from "~/types/history"
 import { addDays, format } from "date-fns"
+import { Separator } from "~/components/ui/separator"
 
 function useDebounce(value: string, delay: number) {
   const [debouncedValue, setDebouncedValue] = useState(value)
@@ -57,6 +58,7 @@ export default function History() {
   return (
     <div>
       <ControlBar settings={settings} setSettings={setSettings} />
+      <Separator className="my-5"/>
       <table className="table-auto border-collapse">
         <thead>
           <tr>

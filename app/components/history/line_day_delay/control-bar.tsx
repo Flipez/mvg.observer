@@ -4,11 +4,18 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
 import { Slider } from "~/components/ui/slider"
 import { ChartSettings } from "~/types/history"
 import { addDays, format } from "date-fns"
+import { Button } from "~/components/ui/button"
+import { Label } from "~/components/label"
+import { SubwayLine } from "~/types/departures"
+import { StationsByLine } from "~/data/subway-lines"
+import { DropdownMenuArrow } from "@radix-ui/react-dropdown-menu"
 
 export function RealtimeCheckbox({
   settings,
@@ -50,11 +57,15 @@ export function IntervalDropdown({
   ]
 
   return (
+    <div className="mr-10">
     <DropdownMenu>
       <DropdownMenuTrigger>
-        Interval: {settings.interval} Minutes
+        <Button variant="outline">
+          Interval: {settings.interval} Minutes
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
+        <DropdownMenuArrow />
         {options.map((option) => (
           <DropdownMenuItem
             key={option.value}
@@ -70,6 +81,8 @@ export function IntervalDropdown({
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
+
+    </div>
   )
 }
 
@@ -80,24 +93,22 @@ function LineDropdown({
   settings: ChartSettings
   setSettings: Dispatch<SetStateAction<ChartSettings>>
 }) {
-  // Define your interval options.
-  const options = [
-    { value: "U1", label: "U1" },
-    { value: "U2", label: "U2" },
-    { value: "U3", label: "U3" },
-    { value: "U4", label: "U4" },
-    { value: "U5", label: "U5" },
-    { value: "U6", label: "U6" },
-    { value: "U7", label: "U7" },
-    { value: "U8", label: "U8" },
-  ]
+  const options = (Object.keys(StationsByLine) as SubwayLine[]).map((line) => ({
+    value: line,
+    label: <Label label={line} />,
+  }))
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        Line: {settings.line}
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">
+          <Label label={settings.line} />
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
+        <DropdownMenuArrow />
+        <DropdownMenuLabel>Line</DropdownMenuLabel>
+        <DropdownMenuSeparator />
         {options.map((option) => (
           <DropdownMenuItem
             key={option.value}
@@ -132,7 +143,7 @@ export function DateSlider({
   const formattedDate = format(selectedDate, "yyyy-MM-dd")
 
   return (
-    <div className="space-y-4">
+    <div className="ml-5 space-y-4">
       <p>Selected Date: {formattedDate}</p>
       <Slider
         value={[settings.chartDate]}
@@ -158,7 +169,7 @@ export function ControlBar({
   setSettings: Dispatch<SetStateAction<ChartSettings>>
 }) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="mt-2 flex items-center justify-between">
       <DateSlider settings={settings} setSettings={setSettings} />
       <RealtimeCheckbox settings={settings} setSettings={setSettings} />
       <LineDropdown settings={settings} setSettings={setSettings} />

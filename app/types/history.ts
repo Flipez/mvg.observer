@@ -1,3 +1,5 @@
+import { SubwayLine } from "./departures"
+
 export type StationBucketList = {
   station: string
   name: string
@@ -14,5 +16,5 @@ export interface ChartSettings {
   chartDate: number
   interval: number
   realtime: boolean
-  line: string
+  line: SubwayLine
 }
