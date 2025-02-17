@@ -5,7 +5,7 @@ import {
   ChartTooltipContent,
 } from "~/components/ui/chart"
 import { Bucket, StationBucketList } from "~/types/history"
-import { Area, AreaChart } from "recharts"
+import { Area, AreaChart, YAxis } from "recharts"
 
 const chartConfig = {
   desktop: {
@@ -93,6 +93,9 @@ export function StationDelayHourChart({
         <ChartTooltip
           cursor={false}
           content={<ChartTooltipContent indicator="line" />}
+        />
+        <YAxis
+        domain={[0, 10]}
         />
         <Area
           isAnimationActive={false}
