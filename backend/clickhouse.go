@@ -63,7 +63,7 @@ func getDayRange(dateStr string) (startOfDay, endOfDay string, err error) {
 	return
 }
 
-func getDelayForLine(interval string, day string, isSouth string, realtime string, conn driver.Conn) []LineDelayDay {
+func getDelayForLine(interval string, day string, label string, isSouth string, realtime string, conn driver.Conn) []LineDelayDay {
 	start, end, err := getDayRange(day)
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -93,7 +93,8 @@ func getDelayForLine(interval string, day string, isSouth string, realtime strin
       FROM mvg.responses_dedup
       INNER JOIN mvg.lines as thisStation ON (responses_dedup.station = thisStation.station AND responses_dedup.label = thisStation.label)
       INNER JOIN mvg.lines as destStation ON (responses_dedup.destination = destStation.name AND responses_dedup.label = thisStation.label)
-      WHERE plannedDepartureTime >= ? AND plannedDepartureTime < ?
+			WHERE plannedDepartureTime >= ? AND plannedDepartureTime < ?
+			AND responses_dedup.label = ?
       AND (thisStation.stop < destStation.stop) = ?
 			AND (? = 0 OR realtime = 1)
       GROUP BY responses_dedup.station, bucket, thisStation.name, thisStation.stop
@@ -103,7 +104,7 @@ func getDelayForLine(interval string, day string, isSouth string, realtime strin
   ORDER BY stop
 	`
 
-	rows, err := conn.Query(context.Background(), query, interval, start, end, isSouth, realtime)
+	rows, err := conn.Query(context.Background(), query, interval, start, end, label, isSouth, realtime)
 	if err != nil {
 		log.Fatal("error running query: ", err)
 	}

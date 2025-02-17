@@ -292,12 +292,12 @@ const All: StationNames = {
 }
 
 export const StationsByLine: Record<SubwayLine, StationNames> = {
-  "U1": U1,
-  "U2": U2,
-  "U3": U3,
-  "U4": U4,
-  "U5": U5,
-  "U6": U6,
-  "U7": U7,
-  "U8": U8,
+  U1: U1,
+  U2: U2,
+  U3: U3,
+  U4: U4,
+  U5: U5,
+  U6: U6,
+  U7: U7,
+  U8: U8,
 }

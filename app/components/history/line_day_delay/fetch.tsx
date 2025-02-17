@@ -10,6 +10,7 @@ export async function fetchLineDelay(
         south=${south}
         &date=${encodeURIComponent(debouncedChartDate)}
         &interval=${settings.interval}
+        &label=${settings.line}
         &realtime=${settings.realtime ? 1 : 0}`.replace(/\s+/g, "")
   )
 

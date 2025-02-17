@@ -2,10 +2,10 @@ import { useEffect, useState } from "react"
 import { StationDelayHourChart } from "~/components/charts/station-delay-hour"
 import { ControlBar } from "~/components/history/line_day_delay/control-bar"
 import { fetchLineDelay } from "~/components/history/line_day_delay/fetch"
+import { Separator } from "~/components/ui/separator"
 import { StationsByLine } from "~/data/subway-lines"
 import { ChartSettings, StationBucketList } from "~/types/history"
 import { addDays, format } from "date-fns"
-import { Separator } from "~/components/ui/separator"
 
 function useDebounce(value: string, delay: number) {
   const [debouncedValue, setDebouncedValue] = useState(value)
@@ -28,7 +28,7 @@ export default function History() {
     chartDate: 0,
     interval: 30,
     realtime: false,
-    line: "U6"
+    line: "U6",
   })
 
   const year = 2024
@@ -53,12 +53,12 @@ export default function History() {
       }
     }
     fetchData()
-  }, [debouncedChartDate, settings.chartDate, settings.interval, settings.realtime])
+  }, [debouncedChartDate, settings])
 
   return (
-    <div>
+    <div className="container mx-auto">
       <ControlBar settings={settings} setSettings={setSettings} />
-      <Separator className="my-5"/>
+      <Separator className="my-5" />
       <table className="table-auto border-collapse">
         <thead>
           <tr>
@@ -68,44 +68,52 @@ export default function History() {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(StationsByLine[settings.line]).map((stationId: string) => {
-            const stationDataSouth: StationBucketList | undefined =
-              southChartData.find(
-                (stationBucketList: StationBucketList) =>
-                  stationBucketList.station === stationId
+          {Object.keys(StationsByLine[settings.line]).map(
+            (stationId: string) => {
+              var stationDataSouth: StationBucketList | undefined
+              if (southChartData) {
+                stationDataSouth = southChartData.find(
+                  (stationBucketList: StationBucketList) =>
+                    stationBucketList.station === stationId
+                )
+              }
+
+              var stationDataNorth: StationBucketList | undefined
+              if (northChartData) {
+                stationDataNorth = northChartData.find(
+                  (stationBucketList: StationBucketList) =>
+                    stationBucketList.station === stationId
+                )
+              }
+              if (
+                typeof stationDataSouth === "undefined" ||
+                typeof stationDataNorth === "undefined"
               )
-            const stationDataNorth: StationBucketList | undefined =
-              northChartData.find(
-                (stationBucketList: StationBucketList) =>
-                  stationBucketList.station === stationId
+                return null
+              return (
+                <tr key={stationDataSouth.station}>
+                  <td className="border">
+                    <StationDelayHourChart
+                      stationData={stationDataSouth}
+                      day={debouncedChartDate}
+                      interval={settings.interval}
+                    />
+                  </td>
+                  <td className="border text-center">
+                    {StationsByLine[settings.line][stationId] ??
+                      "Unknown Station"}
+                  </td>
+                  <td className="border">
+                    <StationDelayHourChart
+                      stationData={stationDataNorth}
+                      day={debouncedChartDate}
+                      interval={settings.interval}
+                    />
+                  </td>
+                </tr>
               )
-            if (
-              typeof stationDataSouth === "undefined" ||
-              typeof stationDataNorth === "undefined"
-            )
-              return null
-            return (
-              <tr key={stationDataSouth.station}>
-                <td className="border">
-                  <StationDelayHourChart
-                    stationData={stationDataSouth}
-                    day={debouncedChartDate}
-                    interval={settings.interval}
-                  />
-                </td>
-                <td className="border text-center">
-                  {StationsByLine[settings.line][stationId] ?? "Unknown Station"}
-                </td>
-                <td className="border">
-                  <StationDelayHourChart
-                    stationData={stationDataNorth}
-                    day={debouncedChartDate}
-                    interval={settings.interval}
-                  />
-                </td>
-              </tr>
-            )
-          })}
+            }
+          )}
         </tbody>
       </table>
     </div>

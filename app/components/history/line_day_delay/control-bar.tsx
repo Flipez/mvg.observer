@@ -1,4 +1,7 @@
 import { Dispatch, SetStateAction } from "react"
+import { DropdownMenuArrow } from "@radix-ui/react-dropdown-menu"
+import { Label } from "~/components/label"
+import { Button } from "~/components/ui/button"
 import { Checkbox } from "~/components/ui/checkbox"
 import {
   DropdownMenu,
@@ -9,13 +12,11 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
 import { Slider } from "~/components/ui/slider"
+import { StationsByLine } from "~/data/subway-lines"
+import { SubwayLine } from "~/types/departures"
 import { ChartSettings } from "~/types/history"
 import { addDays, format } from "date-fns"
-import { Button } from "~/components/ui/button"
-import { Label } from "~/components/label"
-import { SubwayLine } from "~/types/departures"
-import { StationsByLine } from "~/data/subway-lines"
-import { DropdownMenuArrow } from "@radix-ui/react-dropdown-menu"
+import moment from "moment"
 
 export function RealtimeCheckbox({
   settings,
@@ -58,30 +59,29 @@ export function IntervalDropdown({
 
   return (
     <div className="mr-10">
-    <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Button variant="outline">
-          Interval: {settings.interval} Minutes
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuArrow />
-        {options.map((option) => (
-          <DropdownMenuItem
-            key={option.value}
-            onSelect={() =>
-              setSettings((prev: ChartSettings) => ({
-                ...prev,
-                interval: option.value,
-              }))
-            }
-          >
-            {option.label}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Button variant="outline">
+            Interval: {settings.interval} Minutes
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuArrow />
+          {options.map((option) => (
+            <DropdownMenuItem
+              key={option.value}
+              onSelect={() =>
+                setSettings((prev: ChartSettings) => ({
+                  ...prev,
+                  interval: option.value,
+                }))
+              }
+            >
+              {option.label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   )
 }
@@ -140,7 +140,7 @@ export function DateSlider({
 
   // Calculate the selected date by adding the dayIndex to the start of the year.
   const selectedDate = addDays(startDate, settings.chartDate)
-  const formattedDate = format(selectedDate, "yyyy-MM-dd")
+  const formattedDate = moment(selectedDate, "yyyy-MM-dd").format("dddd, MMM Do YY")
 
   return (
     <div className="ml-5 space-y-4">

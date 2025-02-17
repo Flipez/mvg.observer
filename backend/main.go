@@ -58,12 +58,13 @@ func lineDelayHandler(w http.ResponseWriter, r *http.Request) {
 	isSouth := r.URL.Query().Get("south")
 	interval := r.URL.Query().Get("interval")
 	realtime := r.URL.Query().Get("realtime")
+	label := r.URL.Query().Get("label")
 	if dateStr == "" {
 		http.Error(w, "Missing date parameter", http.StatusBadRequest)
 		return
 	}
 
-	results := getDelayForLine(interval, dateStr, isSouth, realtime, db)
+	results := getDelayForLine(interval, dateStr, label, isSouth, realtime, db)
 
 	var writer io.Writer = w
 	gz := gzip.NewWriter(w)
