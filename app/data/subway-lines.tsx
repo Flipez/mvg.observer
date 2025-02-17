@@ -115,7 +115,7 @@ const U5: StationNames = {
   "de:09162:1010": "Neuperlach Süd",
 }
 
-const U6: { [stationId: string]: string } = {
+const U6: StationNames = {
   "de:09184:460": "Garching, Forschungszentrum",
   "de:09184:490": "Garching",
   "de:09184:480": "Garching-Hochbrück",
@@ -142,6 +142,50 @@ const U6: { [stationId: string]: string } = {
   "de:09162:1520": "Haderner Stern",
   "de:09162:1530": "Großhadern",
   "de:09162:1540": "Klinikum Großhadern",
+}
+
+const U7: StationNames = {
+  "de:09162:360": "Olympia-Einkaufszentrum",
+  "de:09162:312": "Georg-Brauchle-Ring",
+  "de:09162:200": "Westfriedhof",
+  "de:09162:990": "Gern",
+  "de:09162:190": "Rotkreuzplatz",
+  "de:09162:180": "Maillingerstraße",
+  "de:09162:170": "Stiglmaierplatz",
+  "de:09162:6": "Hauptbahnhof Bahnhofsplatz",
+  "de:09162:50": "Sendlinger Tor",
+  "de:09162:150": "Fraunhoferstraße",
+  "de:09162:160": "Kolumbusplatz",
+  "de:09162:1170": "Silberhornstraße",
+  "de:09162:1160": "Untersbergstraße",
+  "de:09162:1110": "Giesing",
+  "de:09162:1070": "Karl-Preis-Platz",
+  "de:09162:1060": "Innsbrucker Ring",
+  "de:09162:1050": "Michaelibad",
+  "de:09162:1040": "Quiddestraße",
+  "de:09162:1030": "Neuperlach Zentrum",
+}
+
+const U8: StationNames = {
+  "de:09162:350": "Olympiazentrum",
+  "de:09162:340": "Petuelring",
+  "de:09162:400": "Scheidplatz",
+  "de:09162:140": "Hohenzollernplatz",
+  "de:09162:130": "Josephsplatz",
+  "de:09162:120": "Theresienstraße",
+  "de:09162:110": "Königsplatz",
+  "de:09162:6": "Hauptbahnhof Bahnhofsplatz",
+  "de:09162:50": "Sendlinger Tor",
+  "de:09162:150": "Fraunhoferstraße",
+  "de:09162:160": "Kolumbusplatz",
+  "de:09162:1170": "Silberhornstraße",
+  "de:09162:1160": "Untersbergstraße",
+  "de:09162:1110": "Giesing",
+  "de:09162:1070": "Karl-Preis-Platz",
+  "de:09162:1060": "Innsbrucker Ring",
+  "de:09162:1050": "Michaelibad",
+  "de:09162:1040": "Quiddestraße",
+  "de:09162:1030": "Neuperlach Zentrum",
 }
 
 const All: StationNames = {
@@ -252,5 +296,7 @@ export const StationsByLine: {[lineId: string]: StationNames } = {
   "U4": U4,
   "U5": U5,
   "U6": U6,
+  "U7": U7,
+  "U8": U8,
   "All": All
 }

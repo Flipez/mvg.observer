@@ -88,6 +88,8 @@ function LineDropdown({
     { value: "U4", label: "U4" },
     { value: "U5", label: "U5" },
     { value: "U6", label: "U6" },
+    { value: "U7", label: "U7" },
+    { value: "U8", label: "U8" },
   ]
 
   return (
