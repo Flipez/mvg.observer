@@ -2,9 +2,9 @@ import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
 } from "~/components/ui/chart"
 import { Bucket, StationBucketList } from "~/types/history"
+import moment from "moment"
 import { Area, AreaChart, YAxis } from "recharts"
 
 const chartConfig = {
@@ -55,14 +55,43 @@ function fillMissingBuckets(
   })
 }
 
+interface DataPayload {
+  value?: number | string | undefined | (string | number)[]
+}
+
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: {
+  active: boolean | undefined
+  payload: DataPayload[] | undefined
+  label: string | undefined
+}) => {
+  if (active && payload && payload.length) {
+    return (
+      <div
+        style={{ position: "relative", zIndex: 9999 }}
+        className="rounded border bg-white p-2 shadow"
+      >
+        <p className="text-sm font-medium">{`Time: ${moment(label).format("HH:mm")}`}</p>
+        <p className="text-sm">{`Avg Delay: ${Number(payload[0].value).toFixed(2)}`}</p>
+      </div>
+    )
+  }
+  return null
+}
+
 export function StationDelayHourChart({
   stationData,
   day,
   interval,
+  yAxisOrientation,
 }: {
   stationData: StationBucketList
   day: string
   interval: number
+  yAxisOrientation: "left" | "right"
 }) {
   const startOfDay = new Date(`${day}T00:00:00`).getTime()
   const endOfDay = new Date(`${day}T00:00:00`)
@@ -79,7 +108,7 @@ export function StationDelayHourChart({
   )
 
   return (
-    <ChartContainer className="h-[30px] w-[400px]" config={chartConfig}>
+    <ChartContainer className="h-[35px] w-full" config={chartConfig}>
       <AreaChart
         accessibilityLayer
         data={processedData}
@@ -92,11 +121,17 @@ export function StationDelayHourChart({
       >
         <ChartTooltip
           cursor={false}
-          content={<ChartTooltipContent indicator="line" />}
+          /* eslint-disable react/prop-types */
+          content={(props) => (
+            <CustomTooltip
+              active={props.active}
+              payload={props.payload}
+              label={props.label}
+            />
+          )}
+          wrapperStyle={{ zIndex: 9999 }}
         />
-        <YAxis
-        domain={[0, 10]}
-        />
+        <YAxis domain={[0, 10]} orientation={yAxisOrientation} />
         <Area
           isAnimationActive={false}
           dataKey="avgDelay"

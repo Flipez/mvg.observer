@@ -26,7 +26,7 @@ export default function History() {
   const [northChartData, setNorthChartData] = useState<StationBucketList[]>([])
   const [settings, setSettings] = useState<ChartSettings>({
     chartDate: 0,
-    interval: 30,
+    interval: 15,
     realtime: false,
     line: "U6",
   })
@@ -59,12 +59,12 @@ export default function History() {
     <div className="container mx-auto">
       <ControlBar settings={settings} setSettings={setSettings} />
       <Separator className="my-5" />
-      <table className="table-auto border-collapse">
+      <table className="w-full table-auto border-collapse">
         <thead>
           <tr>
-            <th>South</th>
-            <th>Station</th>
-            <th>North</th>
+            <th className="w-1/2">South</th>
+            <th className="w-auto whitespace-nowrap">Station</th>
+            <th className="w-1/2">North</th>
           </tr>
         </thead>
         <tbody>
@@ -92,22 +92,26 @@ export default function History() {
                 return null
               return (
                 <tr key={stationDataSouth.station}>
-                  <td className="border">
+                  <td className="border-y">
                     <StationDelayHourChart
                       stationData={stationDataSouth}
                       day={debouncedChartDate}
                       interval={settings.interval}
+                      yAxisOrientation="left"
                     />
                   </td>
                   <td className="border text-center">
-                    {StationsByLine[settings.line][stationId] ??
-                      "Unknown Station"}
+                    <div className="mx-5">
+                      {StationsByLine[settings.line][stationId] ??
+                        "Unknown Station"}
+                    </div>
                   </td>
-                  <td className="border">
+                  <td className="border-y">
                     <StationDelayHourChart
                       stationData={stationDataNorth}
                       day={debouncedChartDate}
                       interval={settings.interval}
+                      yAxisOrientation="right"
                     />
                   </td>
                 </tr>

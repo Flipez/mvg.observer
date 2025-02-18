@@ -6,12 +6,12 @@ export async function fetchLineDelay(
   south: number
 ) {
   let url: string
-  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+  if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
     url = "http://localhost:8080/line_delay"
   } else {
     url = "https://api.mvgeht.de/line_delay"
   }
-    const response = await fetch(
+  const response = await fetch(
     `${url}?
         south=${south}
         &date=${encodeURIComponent(debouncedChartDate)}

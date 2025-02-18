@@ -139,7 +139,9 @@ export function DateSlider({
 
   // Calculate the selected date by adding the dayIndex to the start of the year.
   const selectedDate = addDays(startDate, settings.chartDate)
-  const formattedDate = moment(selectedDate, "yyyy-MM-dd").format("dddd, MMM Do YY")
+  const formattedDate = moment(selectedDate, "yyyy-MM-dd").format(
+    "dddd, MMM Do YY"
+  )
 
   return (
     <div className="ml-5 space-y-4">
