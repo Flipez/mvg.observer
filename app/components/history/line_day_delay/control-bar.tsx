@@ -15,7 +15,7 @@ import { Slider } from "~/components/ui/slider"
 import { StationsByLine } from "~/data/subway-lines"
 import { SubwayLine } from "~/types/departures"
 import { ChartSettings } from "~/types/history"
-import { addDays, format } from "date-fns"
+import { addDays } from "date-fns"
 import moment from "moment"
 
 export function RealtimeCheckbox({

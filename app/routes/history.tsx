@@ -70,7 +70,7 @@ export default function History() {
         <tbody>
           {Object.keys(StationsByLine[settings.line]).map(
             (stationId: string) => {
-              var stationDataSouth: StationBucketList | undefined
+              let stationDataSouth: StationBucketList | undefined
               if (southChartData) {
                 stationDataSouth = southChartData.find(
                   (stationBucketList: StationBucketList) =>
@@ -78,7 +78,7 @@ export default function History() {
                 )
               }
 
-              var stationDataNorth: StationBucketList | undefined
+              let stationDataNorth: StationBucketList | undefined
               if (northChartData) {
                 stationDataNorth = northChartData.find(
                   (stationBucketList: StationBucketList) =>

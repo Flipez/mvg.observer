@@ -190,7 +190,7 @@ const U8: StationNames = {
   "de:09162:1030": "Neuperlach Zentrum",
 }
 
-const All: StationNames = {
+export const All: StationNames = {
   "de:09162:1": "Karlsplatz (Stachus)",
   "de:09162:2": "Marienplatz",
   "de:09162:5": "München, Ostbahnhof",

@@ -5,7 +5,7 @@ export async function fetchLineDelay(
   settings: ChartSettings,
   south: number
 ) {
-  var url: string
+  let url: string
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
     url = "http://localhost:8080/line_delay"
   } else {
