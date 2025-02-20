@@ -11,6 +11,8 @@ const resources = {
     translation: {
       Title: "Is the MVG working or should you walk?",
       Description: "An unofficial departure monitor for Munich's subways",
+      PointInTimeLink:
+        "You can also use the <pita>Point In Time Analytics</pita> to see statistics about a specific date.",
       Tabs: {
         Matrix: "Matrix",
         Table: "Table",
@@ -48,7 +50,7 @@ const resources = {
       Misc: {
         Delay: "delay",
         Departed: "departed",
-        SecondsShort: "Sec"
+        SecondsShort: "Sec",
       },
     },
   },
@@ -57,6 +59,8 @@ const resources = {
       Title: "Geht die MVG oder gehst du zu Fuß?",
       Description:
         "Ein inoffizieller Abfahrtsmonitor für die U-Bahnen in München",
+      PointInTimeLink:
+        "Du kannst auch die <pita>Point In Time Analytics</pita> benutzen um Statistiken zu einem bestimmten Datum zu sehen.",
       Tabs: {
         Matrix: "Matrix",
         Table: "Tabelle",
@@ -94,7 +98,7 @@ const resources = {
       Misc: {
         Delay: "Verspätung",
         Departed: "abgefahren",
-        SecondsShort: "Sek"
+        SecondsShort: "Sek",
       },
     },
   },
