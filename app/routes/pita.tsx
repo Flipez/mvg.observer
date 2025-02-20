@@ -21,7 +21,7 @@ function useDebounce(value: string, delay: number) {
   return debouncedValue
 }
 
-export default function History() {
+export default function Pita() {
   const [southChartData, setSouthChartData] = useState<StationBucketList[]>([])
   const [northChartData, setNorthChartData] = useState<StationBucketList[]>([])
   const [settings, setSettings] = useState<ChartSettings>({

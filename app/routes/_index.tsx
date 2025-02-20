@@ -22,7 +22,7 @@ export const meta: MetaFunction = () => [
 function PointInTimeLink() {
   return (
     <span>
-      <a href="/history" className="font-bold underline hover:no-underline">
+      <a href="/pita" className="font-bold underline hover:no-underline">
         {" "}
         Point In Time Analytics
       </a>
