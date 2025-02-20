@@ -117,13 +117,13 @@ export function ThresholdDropdown({
 }) {
   // Define your interval options.
   const options = [
-    { value: 1, label: "1 Minute"},
-    { value: 2, label: "2 Minutes"},
-    { value: 3, label: "3 Minutes"},
-    { value: 4, label: "4 Minutes"},
-    { value: 5, label: "5 Minutes"},
-    { value: 10, label: "10 Minutes"},
-    { value: 15, label: "15 Minutes"},
+    { value: 1, label: "1 Minute" },
+    { value: 2, label: "2 Minutes" },
+    { value: 3, label: "3 Minutes" },
+    { value: 4, label: "4 Minutes" },
+    { value: 5, label: "5 Minutes" },
+    { value: 10, label: "10 Minutes" },
+    { value: 15, label: "15 Minutes" },
   ]
 
   return (

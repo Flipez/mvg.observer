@@ -84,7 +84,7 @@ const CustomTooltip = ({
       >
         <p className="text-sm">{`Time: ${moment(label).format("HH:mm")}`}</p>
         <p className="text-sm">{`# Departures: ${elements[0].payload?.numDepartures}`}</p>
-          <p className="text-sm">{`${showPercentage ? "% delayed" : "Avg Delay"}: ${Number(elements[0].value).toFixed(2)}`}</p>
+        <p className="text-sm">{`${showPercentage ? "% delayed" : "Avg Delay"}: ${Number(elements[0].value).toFixed(2)}`}</p>
       </div>
     )
   }
@@ -96,12 +96,12 @@ export function StationDelayHourChart({
   day,
   interval,
   yAxisOrientation,
-  showPercentage
+  showPercentage,
 }: {
   stationData: StationBucketList
   day: string
   interval: number
-  yAxisOrientation: "left" | "right",
+  yAxisOrientation: "left" | "right"
   showPercentage: boolean
 }) {
   const startOfDay = new Date(`${day}T00:00:00`).getTime()
@@ -143,7 +143,10 @@ export function StationDelayHourChart({
           )}
           wrapperStyle={{ zIndex: 9999 }}
         />
-        <YAxis domain={[0, (showPercentage ? 100 : 10)]} orientation={yAxisOrientation} />
+        <YAxis
+          domain={[0, showPercentage ? 100 : 10]}
+          orientation={yAxisOrientation}
+        />
         <Area
           isAnimationActive={false}
           dataKey={showPercentage ? "percentageThreshold" : "avgDelay"}

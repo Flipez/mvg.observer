@@ -30,7 +30,7 @@ export default function History() {
     realtime: false,
     line: "U6",
     threshold: 2,
-    showPercentage: false
+    showPercentage: false,
   })
 
   const year = 2024
