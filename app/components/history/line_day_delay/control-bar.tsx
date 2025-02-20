@@ -41,6 +41,29 @@ export function RealtimeCheckbox({
   )
 }
 
+export function ShowPercentageCheckbox({
+  settings,
+  setSettings,
+}: {
+  settings: ChartSettings
+  setSettings: Dispatch<SetStateAction<ChartSettings>>
+}) {
+  return (
+    <div className="flex items-center space-x-2">
+      <Checkbox
+        checked={settings.showPercentage}
+        onCheckedChange={(checked) =>
+          setSettings((prev: ChartSettings) => ({
+            ...prev,
+            showPercentage: checked as boolean,
+          }))
+        }
+      />
+      <span>Percentage by Threshold</span>
+    </div>
+  )
+}
+
 export function IntervalDropdown({
   settings,
   setSettings,
@@ -73,6 +96,53 @@ export function IntervalDropdown({
                 setSettings((prev: ChartSettings) => ({
                   ...prev,
                   interval: option.value,
+                }))
+              }
+            >
+              {option.label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  )
+}
+
+export function ThresholdDropdown({
+  settings,
+  setSettings,
+}: {
+  settings: ChartSettings
+  setSettings: Dispatch<SetStateAction<ChartSettings>>
+}) {
+  // Define your interval options.
+  const options = [
+    { value: 1, label: "1 Minute"},
+    { value: 2, label: "2 Minutes"},
+    { value: 3, label: "3 Minutes"},
+    { value: 4, label: "4 Minutes"},
+    { value: 5, label: "5 Minutes"},
+    { value: 10, label: "10 Minutes"},
+    { value: 15, label: "15 Minutes"},
+  ]
+
+  return (
+    <div className="mr-10">
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Button variant="outline">
+            Threshold: {settings.threshold} Minutes
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuArrow />
+          {options.map((option) => (
+            <DropdownMenuItem
+              key={option.value}
+              onSelect={() =>
+                setSettings((prev: ChartSettings) => ({
+                  ...prev,
+                  threshold: option.value,
                 }))
               }
             >
@@ -175,6 +245,8 @@ export function ControlBar({
       <RealtimeCheckbox settings={settings} setSettings={setSettings} />
       <LineDropdown settings={settings} setSettings={setSettings} />
       <IntervalDropdown settings={settings} setSettings={setSettings} />
+      <ShowPercentageCheckbox settings={settings} setSettings={setSettings} />
+      <ThresholdDropdown settings={settings} setSettings={setSettings} />
     </div>
   )
 }

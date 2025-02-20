@@ -51,31 +51,40 @@ function fillMissingBuckets(
   return completeBuckets.map((time) => {
     return lookup[time]
       ? { ...lookup[time], bucket: time }
-      : { bucket: time, avgDelay: null }
+      : { bucket: time, avgDelay: null, numDepartures: null }
   })
 }
 
-interface DataPayload {
+interface ChartElement {
+  payload?: DataPayload | undefined
   value?: number | string | undefined | (string | number)[]
+}
+
+interface DataPayload {
+  avgDelay: number
+  numDepartures: number
 }
 
 const CustomTooltip = ({
   active,
-  payload,
+  elements,
   label,
+  showPercentage,
 }: {
   active: boolean | undefined
-  payload: DataPayload[] | undefined
+  elements: ChartElement[] | undefined
   label: string | undefined
+  showPercentage: boolean
 }) => {
-  if (active && payload && payload.length) {
+  if (active && elements && elements.length) {
     return (
       <div
         style={{ position: "relative", zIndex: 9999 }}
         className="rounded border bg-white p-2 shadow"
       >
-        <p className="text-sm font-medium">{`Time: ${moment(label).format("HH:mm")}`}</p>
-        <p className="text-sm">{`Avg Delay: ${Number(payload[0].value).toFixed(2)}`}</p>
+        <p className="text-sm">{`Time: ${moment(label).format("HH:mm")}`}</p>
+        <p className="text-sm">{`# Departures: ${elements[0].payload?.numDepartures}`}</p>
+          <p className="text-sm">{`${showPercentage ? "% delayed" : "Avg Delay"}: ${Number(elements[0].value).toFixed(2)}`}</p>
       </div>
     )
   }
@@ -87,11 +96,13 @@ export function StationDelayHourChart({
   day,
   interval,
   yAxisOrientation,
+  showPercentage
 }: {
   stationData: StationBucketList
   day: string
   interval: number
-  yAxisOrientation: "left" | "right"
+  yAxisOrientation: "left" | "right",
+  showPercentage: boolean
 }) {
   const startOfDay = new Date(`${day}T00:00:00`).getTime()
   const endOfDay = new Date(`${day}T00:00:00`)
@@ -125,16 +136,17 @@ export function StationDelayHourChart({
           content={(props) => (
             <CustomTooltip
               active={props.active}
-              payload={props.payload}
+              elements={props.payload}
               label={props.label}
+              showPercentage={showPercentage}
             />
           )}
           wrapperStyle={{ zIndex: 9999 }}
         />
-        <YAxis domain={[0, 10]} orientation={yAxisOrientation} />
+        <YAxis domain={[0, (showPercentage ? 100 : 10)]} orientation={yAxisOrientation} />
         <Area
           isAnimationActive={false}
-          dataKey="avgDelay"
+          dataKey={showPercentage ? "percentageThreshold" : "avgDelay"}
           type="step"
           fill="var(--color-desktop)"
           fillOpacity={0.4}

@@ -10,6 +10,8 @@ export type StationBucketList = {
 export type Bucket = {
   avgDelay: string
   bucket: string
+  numDepartures: string
+  percentageThreshold: string
 }
 
 export interface ChartSettings {
@@ -17,4 +19,6 @@ export interface ChartSettings {
   interval: number
   realtime: boolean
   line: SubwayLine
+  threshold: number
+  showPercentage: boolean
 }

@@ -63,23 +63,34 @@ func getDayRange(dateStr string) (startOfDay, endOfDay string, err error) {
 	return
 }
 
-func getDelayForLine(interval string, day string, label string, isSouth string, realtime string, conn driver.Conn) []LineDelayDay {
+func getDelayForLine(day string, interval string, threshold string, label string, isSouth string, realtime string, conn driver.Conn) []LineDelayDay {
 	start, end, err := getDayRange(day)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return nil
 	}
-	fmt.Println("Start of day:", start)
-	fmt.Println("End of day:", end)
 
 	query := `
+	  WITH
+		  ? AS startDate,
+			? AS endDate,
+			? AS intervalMin,
+			? AS thresholdMin,
+			? AS filterLabel,
+			? AS isSouth,
+			? AS isRealtime
   	SELECT
       station,
       name,
       stop,
       arrayMap(
-          x -> map('bucket', toString(x.1), 'avgDelay', toString(x.2)),
-          groupArray((bucket, avgDelay))
+          x -> map(
+					  'bucket', toString(x.1),
+						'avgDelay', toString(x.2),
+						'numDepartures', toString(x.3),
+						'percentageThreshold', toString(x.4)
+					),
+          groupArray((bucket, avgDelay, numDepartures, percentageThreshold))
       ) AS buckets
 
   FROM
@@ -88,15 +99,17 @@ func getDelayForLine(interval string, day string, label string, isSouth string, 
           responses_dedup.station AS station,
           thisStation.name AS name,
           thisStation.stop AS stop,
-          toStartOfInterval(plannedDepartureTime, INTERVAL ? minute) AS bucket,
-          avg(delayInMinutes) AS avgDelay
+          toStartOfInterval(plannedDepartureTime, INTERVAL intervalMin minute) AS bucket,
+          avg(delayInMinutes) AS avgDelay,
+					count() AS numDepartures,
+					100.0 * countIf(delayInMinutes > thresholdMin) / count() AS percentageThreshold
       FROM mvg.responses_dedup
       INNER JOIN mvg.lines as thisStation ON (responses_dedup.station = thisStation.station AND responses_dedup.label = thisStation.label)
       INNER JOIN mvg.lines as destStation ON (responses_dedup.destination = destStation.name AND responses_dedup.label = thisStation.label)
-			WHERE plannedDepartureTime >= ? AND plannedDepartureTime < ?
-			AND responses_dedup.label = ?
-      AND (thisStation.stop < destStation.stop) = ?
-			AND (? = 0 OR realtime = 1)
+			WHERE plannedDepartureTime >= startDate AND plannedDepartureTime < endDate
+			AND responses_dedup.label = filterLabel
+      AND (thisStation.stop < destStation.stop) = isSouth
+			AND (isRealtime = 0 OR realtime = 1)
       GROUP BY responses_dedup.station, bucket, thisStation.name, thisStation.stop
       ORDER BY bucket
   )
@@ -104,7 +117,7 @@ func getDelayForLine(interval string, day string, label string, isSouth string, 
   ORDER BY stop
 	`
 
-	rows, err := conn.Query(context.Background(), query, interval, start, end, label, isSouth, realtime)
+	rows, err := conn.Query(context.Background(), query, start, end, interval, threshold, label, isSouth, realtime)
 	if err != nil {
 		log.Fatal("error running query: ", err)
 	}

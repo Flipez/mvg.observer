@@ -17,7 +17,9 @@ export async function fetchLineDelay(
         &date=${encodeURIComponent(debouncedChartDate)}
         &interval=${settings.interval}
         &label=${settings.line}
-        &realtime=${settings.realtime ? 1 : 0}`.replace(/\s+/g, "")
+        &realtime=${settings.realtime ? 1 : 0}
+        &threshold=${settings.threshold}
+    `.replace(/\s+/g, "")
   )
 
   const data = await response.json()

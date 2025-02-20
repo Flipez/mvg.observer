@@ -29,6 +29,8 @@ export default function History() {
     interval: 15,
     realtime: false,
     line: "U6",
+    threshold: 2,
+    showPercentage: false
   })
 
   const year = 2024
@@ -98,6 +100,7 @@ export default function History() {
                       day={debouncedChartDate}
                       interval={settings.interval}
                       yAxisOrientation="left"
+                      showPercentage={settings.showPercentage}
                     />
                   </td>
                   <td className="border text-center">
@@ -112,6 +115,7 @@ export default function History() {
                       day={debouncedChartDate}
                       interval={settings.interval}
                       yAxisOrientation="right"
+                      showPercentage={settings.showPercentage}
                     />
                   </td>
                 </tr>
