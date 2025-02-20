@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
 import i18n from "~/translations"
+import { GlobeIcon } from "lucide-react"
 
 export default function LanguageSwitcher() {
   const [selectedLanguage, setSelectedLanguage] = useState("de")
@@ -21,50 +22,27 @@ export default function LanguageSwitcher() {
   }, [selectedLanguage])
 
   return (
-    <div className="absolute right-0 top-0 mx-20 my-5">
+    <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="flex items-center gap-2">
+            <GlobeIcon />
             <span className="font-medium">{selectedLanguage}</span>
-            <ChevronDownIcon />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="bottom" className="w-[200px]">
+        <DropdownMenuContent side="bottom">
           <DropdownMenuLabel>Select Language</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem onClick={() => setSelectedLanguage("en")}>
-              <div className="flex items-center gap-2">
-                <span>English</span>
-              </div>
+              <span>English</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setSelectedLanguage("de")}>
-              <div className="flex items-center gap-2">
-                <span>Deutsch</span>
-              </div>
+              <span>Deutsch</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  )
-}
-
-function ChevronDownIcon() {
-  return (
-    <svg
-      className="size-4"
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m6 9 6 6 6-6" />
-    </svg>
   )
 }

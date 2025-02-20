@@ -19,19 +19,37 @@ export const meta: MetaFunction = () => [
   { name: "description", content: "Geht's noch oder eher nicht mehr?" },
 ]
 
+function PointInTimeLink() {
+  return (
+    <span>
+      <a href="/history" className="font-bold underline hover:no-underline">
+        {" "}
+        Point In Time Analytics
+      </a>
+    </span>
+  )
+}
+
 export default function Index() {
   const { stationList, updatedStation, globalDelay } = useDepartures()
 
   return (
     <div className="container mx-auto">
-      <div className="m-5">
+      <div className="m-5 flex justify-between">
+        <div>
+          <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+            <Trans>Title</Trans>
+          </h1>
+          <p className="text-xl text-muted-foreground">
+            <Trans>Description</Trans>
+          </p>
+        </div>
         <LanguageSwitcher />
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-          <Trans>Title</Trans>
-        </h1>
-        <p className="text-xl text-muted-foreground">
-          <Trans>Description</Trans>
-        </p>
+      </div>
+      <div className="m-5 scroll-m-20 border-b pb-2 text-xl tracking-tight">
+        <Trans components={{ pita: <PointInTimeLink /> }}>
+          PointInTimeLink
+        </Trans>
       </div>
       <Tabs defaultValue="grid">
         <TabsList className="mx-5 grid grid-cols-3">
