@@ -6,7 +6,7 @@ import {
   fetchLineDelay,
 } from "~/components/history/line_day_delay/fetch"
 import { NoDeparturesCard } from "~/components/history/line_day_delay/no-departures-card"
-import {BucketSelector} from "~/components/history/map/history-map"
+import { BucketSelector } from "~/components/history/map/history-map"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { StationsByLine } from "~/data/subway-lines"
 import { ChartSettings, StationBucketList } from "~/types/history"
@@ -86,6 +86,7 @@ export default function Pita() {
     threshold: 0,
     threshold_label: "> 0 Minutes",
     showPercentage: false,
+    selectedTab: "table",
   })
 
   const chartDateFormatted = format(settings.chartDate, "yyyy-MM-dd")
@@ -136,7 +137,16 @@ export default function Pita() {
       <ControlBar settings={settings} setSettings={setSettings} />
       {validStationIds.length > 0 ? (
         <div className="mt-5">
-          <Tabs defaultValue="table">
+          <Tabs
+            defaultValue="table"
+            value={settings.selectedTab}
+            onValueChange={(value) =>
+              setSettings((prev: ChartSettings) => ({
+                ...prev,
+                selectedTab: value,
+              }))
+            }
+          >
             <TabsList className="mx-5 grid grid-cols-2">
               <TabsTrigger value="table">
                 <Trans>Tabs.Table</Trans>

@@ -145,6 +145,7 @@ export function ShowPercentage({
   return (
     <div className="flex items-center space-x-2">
       <Switch
+        disabled={settings.selectedTab === "map"}
         checked={settings.showPercentage}
         onCheckedChange={(checked: boolean) =>
           setSettings((prev: ChartSettings) => ({
@@ -227,12 +228,16 @@ export function ThresholdDropdown({
   return (
     <div>
       <DropdownMenu>
-        <DropdownMenuTrigger disabled={!settings.showPercentage}>
+        <DropdownMenuTrigger
+          disabled={!settings.showPercentage || settings.selectedTab === "map"}
+        >
           <Button
             className="w-full"
             variant="outline"
             id="thresholdpicker"
-            disabled={!settings.showPercentage}
+            disabled={
+              !settings.showPercentage || settings.selectedTab === "map"
+            }
           >
             {settings.threshold_label}
           </Button>
@@ -242,7 +247,6 @@ export function ThresholdDropdown({
           {options.map((option) => (
             <DropdownMenuItem
               key={option.value}
-              disabled={!settings.showPercentage}
               onSelect={() =>
                 setSettings((prev: ChartSettings) => ({
                   ...prev,
@@ -278,7 +282,7 @@ function LineDropdown({
         Subway line
       </Label>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger asChild disabled={settings.selectedTab === "map"}>
           <Button id="linepicker" variant="outline">
             <SubwayLabel label={settings.line} />
           </Button>

@@ -23,4 +23,5 @@ export interface ChartSettings {
   threshold: number
   threshold_label: string
   showPercentage: boolean
+  selectedTab: string
 }
