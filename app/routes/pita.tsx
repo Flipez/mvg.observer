@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react"
 import { StationDelayHourChart } from "~/components/charts/station-delay-hour"
 import { ControlBar } from "~/components/history/line_day_delay/control-bar"
-import { fetchLineDelay } from "~/components/history/line_day_delay/fetch"
+import {
+  fetchGlobalDelay,
+  fetchLineDelay,
+} from "~/components/history/line_day_delay/fetch"
 import { NoDeparturesCard } from "~/components/history/line_day_delay/no-departures-card"
+import {BucketSelector} from "~/components/history/map/history-map"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { StationsByLine } from "~/data/subway-lines"
 import { ChartSettings, StationBucketList } from "~/types/history"
 import { format } from "date-fns"
+import { Trans } from "react-i18next"
 
 interface StationDelayRowProps {
   stationId: string
@@ -71,6 +77,7 @@ export function StationDelayRow({
 export default function Pita() {
   const [southChartData, setSouthChartData] = useState<StationBucketList[]>([])
   const [northChartData, setNorthChartData] = useState<StationBucketList[]>([])
+  const [globalData, setGlobalData] = useState<StationBucketList[]>([])
   const [settings, setSettings] = useState<ChartSettings>({
     chartDate: new Date(2024, 1, 17), // parameters are (year, monthINDEX, day)
     interval: 15,
@@ -86,12 +93,14 @@ export default function Pita() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [southData, northData] = await Promise.all([
+        const [southData, northData, globalData] = await Promise.all([
           fetchLineDelay(chartDateFormatted, settings, 1),
           fetchLineDelay(chartDateFormatted, settings, 0),
+          fetchGlobalDelay(settings),
         ])
         setSouthChartData(southData)
         setNorthChartData(northData)
+        setGlobalData(globalData)
       } catch (error) {
         console.error("Error fetching chart data:", error)
       }
@@ -126,27 +135,46 @@ export default function Pita() {
     <div className="container mx-auto">
       <ControlBar settings={settings} setSettings={setSettings} />
       {validStationIds.length > 0 ? (
-        <table className="w-full table-auto border-collapse">
-          <thead>
-            <tr>
-              <th className="w-1/2">South</th>
-              <th className="w-auto whitespace-nowrap">Station</th>
-              <th className="w-1/2">North</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.keys(StationsByLine[settings.line]).map((stationId) => (
-              <StationDelayRow
-                key={stationId}
-                stationId={stationId}
-                chartDateFormatted={chartDateFormatted}
-                settings={settings}
-                southChartData={southChartData}
-                northChartData={northChartData}
-              />
-            ))}
-          </tbody>
-        </table>
+        <div className="mt-5">
+          <Tabs defaultValue="table">
+            <TabsList className="mx-5 grid grid-cols-2">
+              <TabsTrigger value="table">
+                <Trans>Tabs.Table</Trans>
+              </TabsTrigger>
+              <TabsTrigger value="map">
+                <Trans>Tabs.Map</Trans>
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="table">
+              <table className="w-full table-auto border-collapse">
+                <thead>
+                  <tr>
+                    <th className="w-1/2">South</th>
+                    <th className="w-auto whitespace-nowrap">Station</th>
+                    <th className="w-1/2">North</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.keys(StationsByLine[settings.line]).map(
+                    (stationId) => (
+                      <StationDelayRow
+                        key={stationId}
+                        stationId={stationId}
+                        chartDateFormatted={chartDateFormatted}
+                        settings={settings}
+                        southChartData={southChartData}
+                        northChartData={northChartData}
+                      />
+                    )
+                  )}
+                </tbody>
+              </table>
+            </TabsContent>
+            <TabsContent value="map">
+              <BucketSelector stations={globalData} settings={settings} />
+            </TabsContent>
+          </Tabs>
+        </div>
       ) : (
         <NoDeparturesCard />
       )}

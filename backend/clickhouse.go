@@ -33,10 +33,11 @@ func connectClickhouse() driver.Conn {
 }
 
 type LineDelayDay struct {
-	Station string              `json:"station"`
-	Name    string              `json:"name"`
-	Stop    int32               `json:"stop"`
-	Buckets []map[string]string `json:"buckets"`
+	Station     string              `json:"station"`
+	Name        string              `json:"name"`
+	Stop        int32               `json:"stop"`
+	Coordinates Coordinates         `json:"coordinates"`
+	Buckets     []map[string]string `json:"buckets"`
 }
 
 func getDayRange(dateStr string) (startOfDay, endOfDay string, err error) {
@@ -61,6 +62,72 @@ func getDayRange(dateStr string) (startOfDay, endOfDay string, err error) {
 	startOfDay = startTime.Format(outputLayout)
 	endOfDay = endTime.Format(outputLayout)
 	return
+}
+
+func getGlobalDelay(day string, interval string, threshold string, realtime string, conn driver.Conn) []LineDelayDay {
+	start, end, err := getDayRange(day)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return nil
+	}
+
+	query := `
+    WITH
+        ? AS startDate,
+        ? AS endDate,
+        ? AS intervalMin,
+        ? AS thresholdMin,
+        ? AS isRealtime
+    SELECT
+        station,
+        arrayMap(x -> map('bucket', toString(x.1), 'avgDelay', toString(x.2), 'numDepartures', toString(x.3), 'percentageThreshold', toString(x.4)), groupArray((bucket, avgDelay, numDepartures, percentageThreshold))) AS buckets
+    FROM
+    (
+        SELECT
+            responses_dedup.station AS station,
+            toStartOfInterval(plannedDepartureTime, toIntervalMinute(intervalMin)) AS bucket,
+            avg(delayInMinutes) AS avgDelay,
+            count() AS numDepartures,
+            (100. * countIf(delayInMinutes > thresholdMin)) / count() AS percentageThreshold
+        FROM mvg.responses_dedup
+        WHERE (plannedDepartureTime >= startDate) AND (plannedDepartureTime < endDate) AND ((isRealtime = 0) OR (realtime = 1))
+        GROUP BY
+            responses_dedup.station,
+            bucket
+        ORDER BY bucket ASC
+    )
+    GROUP BY station	
+	`
+
+	rows, err := conn.Query(context.Background(), query, start, end, interval, threshold, realtime)
+	if err != nil {
+		log.Fatal("error running query: ", err)
+	}
+	defer rows.Close()
+
+	var results []LineDelayDay
+
+	for rows.Next() {
+		var station string
+		var buckets []map[string]string
+
+		if err := rows.Scan(&station, &buckets); err != nil {
+			log.Fatal("Error scanning row:", err)
+		}
+
+		results = append(results, LineDelayDay{
+			Station:     station,
+			Buckets:     buckets,
+			Coordinates: coordinates[station],
+		})
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return results
+
 }
 
 func getDelayForLine(day string, interval string, threshold string, label string, isSouth string, realtime string, conn driver.Conn) []LineDelayDay {

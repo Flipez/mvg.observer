@@ -47,10 +47,46 @@ func main() {
 	db = connectClickhouse()
 
 	http.HandleFunc("/line_delay", lineDelayHandler)
+	http.HandleFunc("/global_delay", globalDelayGHandler)
 	http.HandleFunc("/events", eb.sseHandler)
 	log.Println("Server started on 127.0.0.1:8080")
 	log.Fatal(http.ListenAndServe("127.0.0.1:8080", nil))
 
+}
+
+func globalDelayGHandler(w http.ResponseWriter, r *http.Request) {
+	requiredParams := []string{"date", "interval", "realtime", "threshold"}
+	params := make(map[string]string, len(requiredParams))
+
+	for _, key := range requiredParams {
+		value := r.URL.Query().Get(key)
+		if value == "" {
+			http.Error(w, fmt.Sprintf("Missing parameter: %s", key), http.StatusBadRequest)
+			return
+		}
+		params[key] = value
+	}
+
+	results := getGlobalDelay(
+		params["date"],
+		params["interval"],
+		params["threshold"],
+		params["realtime"],
+		db,
+	)
+
+	var writer io.Writer = w
+	gz := gzip.NewWriter(w)
+	defer gz.Close()
+	writer = gz
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Encoding", "gzip")
+	if err := json.NewEncoder(writer).Encode(results); err != nil {
+		http.Error(w, "Error encoding JSON: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func lineDelayHandler(w http.ResponseWriter, r *http.Request) {

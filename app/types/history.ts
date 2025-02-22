@@ -1,10 +1,11 @@
-import { SubwayLine } from "./departures"
+import { Coordinates, SubwayLine } from "./departures"
 
 export type StationBucketList = {
   station: string
   name: string
   stop: number
   buckets: Bucket[]
+  coordinates: Coordinates
 }
 
 export type Bucket = {
