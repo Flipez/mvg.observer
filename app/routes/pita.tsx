@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { StationsByLine } from "~/data/subway-lines"
 import { ChartSettings, StationBucketList } from "~/types/history"
 import { format } from "date-fns"
-import { Trans } from "react-i18next"
+import { Trans, useTranslation } from "react-i18next"
 
 interface StationDelayRowProps {
   stationId: string
@@ -88,6 +88,7 @@ export default function Pita() {
     showPercentage: false,
     selectedTab: "table",
   })
+  useTranslation()
 
   const chartDateFormatted = format(settings.chartDate, "yyyy-MM-dd")
 
