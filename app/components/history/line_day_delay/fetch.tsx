@@ -1,7 +1,7 @@
 import { ChartSettings } from "~/types/history"
 
 export async function fetchLineDelay(
-  debouncedChartDate: string,
+  chartDateFormatted: string,
   settings: ChartSettings,
   south: number
 ) {
@@ -14,7 +14,7 @@ export async function fetchLineDelay(
   const response = await fetch(
     `${url}?
         south=${south}
-        &date=${encodeURIComponent(debouncedChartDate)}
+        &date=${encodeURIComponent(chartDateFormatted)}
         &interval=${settings.interval}
         &label=${settings.line}
         &realtime=${settings.realtime ? 1 : 0}

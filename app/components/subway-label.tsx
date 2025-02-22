@@ -24,7 +24,7 @@ const LINE_COLORS: {
   },
 }
 
-export function Label({ label }: { label: SubwayLine }) {
+export function SubwayLabel({ label }: { label: SubwayLine }) {
   const isDualColored = DUAL_COLORED_LINES.includes(label)
 
   return (

@@ -15,10 +15,11 @@ export type Bucket = {
 }
 
 export interface ChartSettings {
-  chartDate: number
+  chartDate: Date
   interval: number
   realtime: boolean
   line: SubwayLine
   threshold: number
+  threshold_label: string
   showPercentage: boolean
 }

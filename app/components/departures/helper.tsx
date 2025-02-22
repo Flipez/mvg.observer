@@ -1,9 +1,6 @@
 import { Departure, Station, StationList } from "~/types/departures"
+import { differenceInSeconds, format, fromUnixTime } from "date-fns"
 import { t } from "i18next"
-import moment from "moment"
-
-// eslint-disable-next-line import/no-named-as-default-member
-const { unix } = moment
 
 /**
  * Formats a delay in minutes into a human-readable string.
@@ -30,8 +27,8 @@ export function formatDelay(minutes: number) {
  * @returns Formatted relative time string (e.g., "2 minutes ago", "30 seconds", "5 Min")
  */
 export function relativeTime(timestamp: number): string {
-  const date = unix(timestamp / 1000)
-  const diffInSeconds = date.diff(moment(), "seconds")
+  const date = fromUnixTime(timestamp / 1000)
+  const diffInSeconds = differenceInSeconds(date, new Date())
 
   // Future time more than a minute
   if (diffInSeconds >= 60) {
@@ -53,8 +50,8 @@ export function relativeTime(timestamp: number): string {
  * @returns {string} The formatted time string.
  */
 export function formatTime(timestamp: number): string {
-  const date = unix(timestamp / 1000)
-  return date.format("HH:mm")
+  const date = fromUnixTime(timestamp / 1000)
+  return format(date, "HH:mm")
 }
 
 export function stationWithMostDelay(stations: StationList): Station | null {

@@ -9,14 +9,16 @@ import { initReactI18next } from "react-i18next"
 const resources = {
   en: {
     translation: {
-      Title: "Is the MVG working or should you walk?",
+      Title: "MVG Observer",
       Description: "An unofficial departure monitor for Munich's subways",
-      PointInTimeLink:
-        "You can also use the <pita>Point In Time Analytics</pita> to see statistics about a specific date.",
       Tabs: {
         Matrix: "Matrix",
         Table: "Table",
         Map: "Map",
+      },
+      Links: {
+        Overview: "Overview",
+        PITA: "Point In Time Analytics",
       },
       Welcome: {
         Card: {
@@ -33,7 +35,7 @@ const resources = {
               "The largest delay on average is at the <station>{{ station }}</station> Station, currently at {{ delay }}.",
           },
           About: {
-            Title: "MVGeht",
+            Title: "Overview",
             Description: "What do I see here?",
             Content:
               "If none of the next subways of a station has delay, the station will be displayed <green>green</green>. Has at least one subway a delay of under 5 minutes, the station is <yellow>yellow</yellow>. With more than 5 Minutes the station will be <red>red</red>.",
@@ -56,15 +58,17 @@ const resources = {
   },
   de: {
     translation: {
-      Title: "Geht die MVG oder gehst du zu Fuß?",
+      Title: "MVG Observierer",
       Description:
         "Ein inoffizieller Abfahrtsmonitor für die U-Bahnen in München",
-      PointInTimeLink:
-        "Du kannst auch die <pita>Point In Time Analytics</pita> benutzen um Statistiken zu einem bestimmten Datum zu sehen.",
       Tabs: {
         Matrix: "Matrix",
         Table: "Tabelle",
         Map: "Karte",
+      },
+      Links: {
+        Overview: "Übersicht",
+        PITA: "Punkt in der Zeit Auswertung",
       },
       Welcome: {
         Card: {
@@ -81,7 +85,7 @@ const resources = {
               "Die größte durchschnittliche Verspätung hat im Moment die Station <station>{{ station }}</station> mit {{ delay }}.",
           },
           About: {
-            Title: "MVGeht",
+            Title: "Übersicht",
             Description: "Was sehen meine Augen hier?",
             Content:
               "Wenn keine der nächsten U-Bahnen an einer Station mehr als 0 Minuten Verspätung hat, also alle pünktlich sind, dann wird die Station <green>grün</green> angezeigt. Hat mindestens eine U-Bahn maximal 5 Minuten Verspätung, dann ist die Station <yellow>gelb</yellow>. Bei mehr als 5 Minuten Verspätung wird die Station dann <red>rot</red> dargestellt.",

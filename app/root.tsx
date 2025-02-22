@@ -9,6 +9,10 @@ import {
 
 import "./tailwind.css"
 
+import { Trans } from "react-i18next"
+
+import { Header } from "./components/header"
+
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -32,7 +36,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <div className="flex min-h-screen flex-col">
+          <Header />
+          <div className="container flex-grow">{children}</div>
+          <div>
+            <footer className="border-t p-4 text-center">
+              <p className="text-sm text-muted-foreground">
+                <Trans>Description</Trans>
+              </p>
+            </footer>
+          </div>
+        </div>
         <ScrollRestoration />
         <Scripts />
       </body>
