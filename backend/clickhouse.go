@@ -79,43 +79,47 @@ func getDelayForLine(day string, interval string, threshold string, label string
 			? AS filterLabel,
 			? AS isSouth,
 			? AS isRealtime
-  	SELECT
-      station,
-      name,
-      stop,
-      arrayMap(
-          x -> map(
-					  'bucket', toString(x.1),
-						'avgDelay', toString(x.2),
-						'numDepartures', toString(x.3),
-						'percentageThreshold', toString(x.4)
-					),
-          groupArray((bucket, avgDelay, numDepartures, percentageThreshold))
-      ) AS buckets
+		SELECT
+			station,
+			name,
+			stop,
+			arrayMap(
+				x -> map(
+					'bucket', toString(x.1),
+					'avgDelay', toString(x.2),
+					'numDepartures', toString(x.3),
+					'percentageThreshold', toString(x.4)
+				),
+				groupArray((bucket, avgDelay, numDepartures, percentageThreshold))
+			) AS buckets
 
-  FROM
-  (
-      SELECT
-          responses_dedup.station AS station,
-          thisStation.name AS name,
-          thisStation.stop AS stop,
-          toStartOfInterval(plannedDepartureTime, INTERVAL intervalMin minute) AS bucket,
-          avg(delayInMinutes) AS avgDelay,
-					count() AS numDepartures,
-					100.0 * countIf(delayInMinutes > thresholdMin) / count() AS percentageThreshold
-      FROM mvg.responses_dedup
-      INNER JOIN mvg.lines as thisStation ON (responses_dedup.station = thisStation.station AND responses_dedup.label = thisStation.label)
-      INNER JOIN mvg.lines as destStation ON (responses_dedup.destination = destStation.name AND responses_dedup.label = thisStation.label)
-			WHERE plannedDepartureTime >= startDate AND plannedDepartureTime < endDate
+	FROM
+	(
+		SELECT
+			responses_dedup.station AS station,
+			thisStation.name AS name,
+			thisStation.stop AS stop,
+			toStartOfInterval(plannedDepartureTime, INTERVAL intervalMin minute) AS bucket,
+			avg(delayInMinutes) AS avgDelay,
+			count() AS numDepartures,
+			100.0 * countIf(delayInMinutes > thresholdMin) / count() AS percentageThreshold
+		FROM mvg.responses_dedup
+		INNER JOIN mvg.lines as thisStation ON (responses_dedup.station = thisStation.station AND responses_dedup.label = thisStation.label)
+		LEFT JOIN mvg.lines as destStation ON (responses_dedup.destination = destStation.name AND responses_dedup.label = thisStation.label)
+		WHERE plannedDepartureTime >= startDate AND plannedDepartureTime < endDate
 			AND responses_dedup.label = filterLabel
-      AND (thisStation.stop < destStation.stop) = isSouth
+			AND (
+				(destStation.stop IS NOT NULL AND (thisStation.stop < destStation.stop) = isSouth)
+				OR (destStation.stop IS NULL AND isSouth = 0 AND thisStation.stop = (SELECT max(stop) FROM mvg.lines WHERE label = filterLabel))
+				OR (destStation.stop IS NULL AND isSouth = 1 AND thisStation.stop = (SELECT min(stop) FROM mvg.lines WHERE label = filterLabel))
+			)
 			AND (isRealtime = 0 OR realtime = 1)
-      GROUP BY responses_dedup.station, bucket, thisStation.name, thisStation.stop
-      ORDER BY bucket
-  )
-  GROUP BY station, name, stop
-  ORDER BY stop
-	`
+			GROUP BY responses_dedup.station, bucket, thisStation.name, thisStation.stop
+			ORDER BY bucket
+	)
+	GROUP BY station, name, stop
+	ORDER BY stop
+`
 
 	rows, err := conn.Query(context.Background(), query, start, end, interval, threshold, label, isSouth, realtime)
 	if err != nil {
