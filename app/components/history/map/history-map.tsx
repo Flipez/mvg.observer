@@ -65,7 +65,7 @@ export const BucketSelector = ({
   return (
     <div className="space-y-2">
       <div className="mx-5">
-        <p className="font-semibold">
+        <p className="my-2 font-semibold">
           Selected Time:{" "}
           {format(addMinutes(dayStart, selectedStep * interval), "HH:mm")}
         </p>
