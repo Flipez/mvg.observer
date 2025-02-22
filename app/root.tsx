@@ -50,7 +50,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <div className="flex min-h-screen flex-col">
           <Header />
-          <div className="container grow">{children}</div>
+          <div className="container mx-auto grow">{children}</div>
           <div>
             <footer className="border-t p-4 text-center">
               <p className="text-sm text-muted-foreground">
