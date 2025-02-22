@@ -8,6 +8,7 @@ export default {
     extend: {
       colors: {
         mvg: "#5063DF",
+        u: "#000",
         u1: "#3C7333",
         u2: "#C3022D",
         u3: "#ED6720",
