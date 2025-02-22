@@ -1,4 +1,3 @@
-import { Analytics } from "@vercel/analytics/remix"
 import { DepartureGrid } from "~/components/departures/grid"
 import { SubwayMap } from "~/components/departures/map"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
@@ -43,7 +42,6 @@ export default function Index() {
           <SubwayMap stations={stationList} updatedStation={updatedStation} />
         </TabsContent>
       </Tabs>
-      <Analytics />
     </div>
   )
 }
