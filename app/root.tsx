@@ -9,7 +9,7 @@ import {
 
 import "./tailwind.css"
 
-import { Trans } from "react-i18next"
+import { useTranslation } from "react-i18next";
 
 import { Header } from "./components/header"
 
@@ -27,6 +27,8 @@ export const links: LinksFunction = () => [
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
+
   return (
     <html lang="en">
       <head>
@@ -42,7 +44,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <div>
             <footer className="border-t p-4 text-center">
               <p className="text-sm text-muted-foreground">
-                <Trans>Description</Trans>
+                {t("Description")}
               </p>
             </footer>
           </div>
