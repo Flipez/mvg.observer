@@ -29,18 +29,22 @@ export function StationDelayRow({
     (stationBucketList) => stationBucketList.station === stationId
   )
 
-  if (!stationDataSouth || !stationDataNorth) return null
+  if (!stationDataSouth && !stationDataNorth) return null
 
   return (
     <tr key={stationId}>
       <td className="border-y">
-        <StationDelayHourChart
-          stationData={stationDataSouth}
-          day={chartDateFormatted}
-          interval={settings.interval}
-          yAxisOrientation="left"
-          showPercentage={settings.showPercentage}
-        />
+        {stationDataSouth ? (
+          <StationDelayHourChart
+            stationData={stationDataSouth}
+            day={chartDateFormatted}
+            interval={settings.interval}
+            yAxisOrientation="left"
+            showPercentage={settings.showPercentage}
+          />
+        ) : (
+          <div className="text-center text-sm">No data</div>
+        )}
       </td>
       <td className="border text-center">
         <div className="mx-5">
@@ -48,13 +52,17 @@ export function StationDelayRow({
         </div>
       </td>
       <td className="border-y">
-        <StationDelayHourChart
-          stationData={stationDataNorth}
-          day={chartDateFormatted}
-          interval={settings.interval}
-          yAxisOrientation="right"
-          showPercentage={settings.showPercentage}
-        />
+        {stationDataNorth ? (
+          <StationDelayHourChart
+            stationData={stationDataNorth}
+            day={chartDateFormatted}
+            interval={settings.interval}
+            yAxisOrientation="right"
+            showPercentage={settings.showPercentage}
+          />
+        ) : (
+          <div className="text-center text-sm">No data</div>
+        )}
       </td>
     </tr>
   )
@@ -100,16 +108,16 @@ export default function Pita() {
 
   let validStationIds = []
   if (southChartData && northChartData) {
-    // Pre-filter station IDs where both south and north data exist.
+    // Pre-filter station IDs where either south and north data exist.
     validStationIds = Object.keys(StationsByLine[settings.line]).filter(
       (stationId) => {
-        const stationDataSouth = southChartData.find(
+        const hasSouth = southChartData.some(
           (data) => data.station === stationId
         )
-        const stationDataNorth = northChartData.find(
+        const hasNorth = northChartData.some(
           (data) => data.station === stationId
         )
-        return stationDataSouth && stationDataNorth
+        return hasSouth || hasNorth
       }
     )
   }
