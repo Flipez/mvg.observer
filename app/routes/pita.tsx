@@ -94,14 +94,22 @@ export default function Pita() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [southData, northData, globalData] = await Promise.all([
-          fetchLineDelay(chartDateFormatted, settings, 1),
-          fetchLineDelay(chartDateFormatted, settings, 0),
-          fetchGlobalDelay(settings),
-        ])
-        setSouthChartData(southData)
-        setNorthChartData(northData)
-        setGlobalData(globalData)
+        const promises = []
+
+        if (settings.selectedTab === "table") {
+          promises.push(fetchLineDelay(chartDateFormatted, settings, 1))
+          promises.push(fetchLineDelay(chartDateFormatted, settings, 0))
+        } else if (settings.selectedTab === "map") {
+          promises.push(fetchGlobalDelay(settings))
+        }
+
+        const results = await Promise.all(promises)
+        if (settings.selectedTab === "table") {
+          setSouthChartData(results[0])
+          setNorthChartData(results[1])
+        } else if (settings.selectedTab === "map") {
+          setGlobalData(results[0])
+        }
       } catch (error) {
         console.error("Error fetching chart data:", error)
       }
@@ -114,6 +122,7 @@ export default function Pita() {
     settings.realtime,
     settings.line,
     settings.threshold,
+    settings.selectedTab,
   ])
 
   let validStationIds = []
