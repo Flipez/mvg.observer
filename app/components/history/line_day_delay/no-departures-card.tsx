@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
-import { Frown, Home, TramFront, X } from "lucide-react"
+import { TramFront, X } from "lucide-react"
 
 export function NoDeparturesCard() {
   return (
@@ -9,7 +9,11 @@ export function NoDeparturesCard() {
           <CardTitle className="flex flex-col items-center justify-center text-center text-4xl">
             <div className="relative inline-block">
               <TramFront size={50} className="text-center text-gray-200" />
-              <X strokeWidth={0.7} size={100} className="absolute top-1/2 left-1/2 text-red-200 transform -translate-x-1/2 -translate-y-1/2" />
+              <X
+                strokeWidth={0.7}
+                size={100}
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-red-200"
+              />
             </div>
             No Departures found
           </CardTitle>
