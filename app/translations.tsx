@@ -67,7 +67,7 @@ const resources = {
         Realtime: {
           Title: "Realtime Data",
           Description: "The MVG data carries a realtime attribute. If set, the departure time is really a live timestamp. If this attribute is not set, the departure time might not reflect the real departure time.",
-          Switch: "Nur Echtzeitdaten",
+          Switch: "Realtime data only",
         },
         Percentage: {
           Title: "Analytics by Percentage",
