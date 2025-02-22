@@ -9,6 +9,7 @@ const LINE_COLORS: {
   secondary: Partial<ColorConfig>
 } = {
   primary: {
+    U: "bg-u",
     U1: "bg-u1",
     U2: "bg-u2",
     U3: "bg-u3",
