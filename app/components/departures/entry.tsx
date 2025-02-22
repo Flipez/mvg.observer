@@ -2,7 +2,7 @@ import { formatTime, relativeTime } from "~/components/departures/helper"
 import { cn } from "~/lib/utils"
 import { Departure } from "~/types/departures"
 
-import { Label } from "../label"
+import { SubwayLabel } from "../subway-label"
 import {
   Tooltip,
   TooltipContent,
@@ -32,7 +32,7 @@ export function DepartureEntry({
   return (
     <TooltipProvider delayDuration={100}>
       <div className="flex items-center">
-        <Label label={departure.label} />
+        <SubwayLabel label={departure.label} />
         <div className="flex w-full justify-between">
           <span className="mx-1 mr-4">{departure.destination}</span>
           <Tooltip>

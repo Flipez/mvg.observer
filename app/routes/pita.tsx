@@ -2,51 +2,85 @@ import { useEffect, useState } from "react"
 import { StationDelayHourChart } from "~/components/charts/station-delay-hour"
 import { ControlBar } from "~/components/history/line_day_delay/control-bar"
 import { fetchLineDelay } from "~/components/history/line_day_delay/fetch"
-import { Separator } from "~/components/ui/separator"
+import { NoDeparturesCard } from "~/components/history/line_day_delay/no-departures-card"
 import { StationsByLine } from "~/data/subway-lines"
 import { ChartSettings, StationBucketList } from "~/types/history"
-import { addDays, format } from "date-fns"
+import { format } from "date-fns"
 
-function useDebounce(value: string, delay: number) {
-  const [debouncedValue, setDebouncedValue] = useState(value)
+interface StationDelayRowProps {
+  stationId: string
+  chartDateFormatted: string
+  settings: ChartSettings
+  southChartData: StationBucketList[]
+  northChartData: StationBucketList[]
+}
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value)
-    }, delay)
+export function StationDelayRow({
+  stationId,
+  chartDateFormatted,
+  settings,
+  southChartData,
+  northChartData,
+}: StationDelayRowProps) {
+  const stationDataSouth = southChartData.find(
+    (stationBucketList) => stationBucketList.station === stationId
+  )
+  const stationDataNorth = northChartData.find(
+    (stationBucketList) => stationBucketList.station === stationId
+  )
 
-    return () => clearTimeout(handler)
-  }, [value, delay])
+  if (!stationDataSouth || !stationDataNorth) return null
 
-  return debouncedValue
+  return (
+    <tr key={stationId}>
+      <td className="border-y">
+        <StationDelayHourChart
+          stationData={stationDataSouth}
+          day={chartDateFormatted}
+          interval={settings.interval}
+          yAxisOrientation="left"
+          showPercentage={settings.showPercentage}
+        />
+      </td>
+      <td className="border text-center">
+        <div className="mx-5">
+          {StationsByLine[settings.line][stationId] ?? "Unknown Station"}
+        </div>
+      </td>
+      <td className="border-y">
+        <StationDelayHourChart
+          stationData={stationDataNorth}
+          day={chartDateFormatted}
+          interval={settings.interval}
+          yAxisOrientation="right"
+          showPercentage={settings.showPercentage}
+        />
+      </td>
+    </tr>
+  )
 }
 
 export default function Pita() {
   const [southChartData, setSouthChartData] = useState<StationBucketList[]>([])
   const [northChartData, setNorthChartData] = useState<StationBucketList[]>([])
   const [settings, setSettings] = useState<ChartSettings>({
-    chartDate: 0,
+    chartDate: new Date(2024, 1, 17), // parameters are (year, monthINDEX, day)
     interval: 15,
-    realtime: false,
+    realtime: true,
     line: "U6",
-    threshold: 2,
+    threshold: 0,
+    threshold_label: "> 0 Minutes",
     showPercentage: false,
   })
 
-  const year = 2024
-  const startDate = new Date(year, 1, 16)
-  const chartDateFormatted = format(
-    addDays(startDate, settings.chartDate),
-    "yyyy-MM-dd"
-  )
-  const debouncedChartDate = useDebounce(chartDateFormatted, 300)
+  const chartDateFormatted = format(settings.chartDate, "yyyy-MM-dd")
 
   useEffect(() => {
     async function fetchData() {
       try {
         const [southData, northData] = await Promise.all([
-          fetchLineDelay(debouncedChartDate, settings, 1),
-          fetchLineDelay(debouncedChartDate, settings, 0),
+          fetchLineDelay(chartDateFormatted, settings, 1),
+          fetchLineDelay(chartDateFormatted, settings, 0),
         ])
         setSouthChartData(southData)
         setNorthChartData(northData)
@@ -55,75 +89,59 @@ export default function Pita() {
       }
     }
     fetchData()
-  }, [debouncedChartDate, settings])
+  }, [
+    chartDateFormatted,
+    settings.chartDate,
+    settings.interval,
+    settings.realtime,
+    settings.line,
+    settings.threshold,
+  ])
+
+  let validStationIds = []
+  if (southChartData && northChartData) {
+    // Pre-filter station IDs where both south and north data exist.
+    validStationIds = Object.keys(StationsByLine[settings.line]).filter(
+      (stationId) => {
+        const stationDataSouth = southChartData.find(
+          (data) => data.station === stationId
+        )
+        const stationDataNorth = northChartData.find(
+          (data) => data.station === stationId
+        )
+        return stationDataSouth && stationDataNorth
+      }
+    )
+  }
 
   return (
     <div className="container mx-auto">
       <ControlBar settings={settings} setSettings={setSettings} />
-      <Separator className="my-5" />
-      <table className="w-full table-auto border-collapse">
-        <thead>
-          <tr>
-            <th className="w-1/2">South</th>
-            <th className="w-auto whitespace-nowrap">Station</th>
-            <th className="w-1/2">North</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.keys(StationsByLine[settings.line]).map(
-            (stationId: string) => {
-              let stationDataSouth: StationBucketList | undefined
-              if (southChartData) {
-                stationDataSouth = southChartData.find(
-                  (stationBucketList: StationBucketList) =>
-                    stationBucketList.station === stationId
-                )
-              }
-
-              let stationDataNorth: StationBucketList | undefined
-              if (northChartData) {
-                stationDataNorth = northChartData.find(
-                  (stationBucketList: StationBucketList) =>
-                    stationBucketList.station === stationId
-                )
-              }
-              if (
-                typeof stationDataSouth === "undefined" ||
-                typeof stationDataNorth === "undefined"
-              )
-                return null
-              return (
-                <tr key={stationDataSouth.station}>
-                  <td className="border-y">
-                    <StationDelayHourChart
-                      stationData={stationDataSouth}
-                      day={debouncedChartDate}
-                      interval={settings.interval}
-                      yAxisOrientation="left"
-                      showPercentage={settings.showPercentage}
-                    />
-                  </td>
-                  <td className="border text-center">
-                    <div className="mx-5">
-                      {StationsByLine[settings.line][stationId] ??
-                        "Unknown Station"}
-                    </div>
-                  </td>
-                  <td className="border-y">
-                    <StationDelayHourChart
-                      stationData={stationDataNorth}
-                      day={debouncedChartDate}
-                      interval={settings.interval}
-                      yAxisOrientation="right"
-                      showPercentage={settings.showPercentage}
-                    />
-                  </td>
-                </tr>
-              )
-            }
-          )}
-        </tbody>
-      </table>
+      {validStationIds.length > 0 ? (
+        <table className="w-full table-auto border-collapse">
+          <thead>
+            <tr>
+              <th className="w-1/2">South</th>
+              <th className="w-auto whitespace-nowrap">Station</th>
+              <th className="w-1/2">North</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.keys(StationsByLine[settings.line]).map((stationId) => (
+              <StationDelayRow
+                key={stationId}
+                stationId={stationId}
+                chartDateFormatted={chartDateFormatted}
+                settings={settings}
+                southChartData={southChartData}
+                northChartData={northChartData}
+              />
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <NoDeparturesCard />
+      )}
     </div>
   )
 }

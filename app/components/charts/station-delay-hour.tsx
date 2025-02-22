@@ -1,10 +1,11 @@
+import React from "react"
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
 } from "~/components/ui/chart"
 import { Bucket, StationBucketList } from "~/types/history"
-import moment from "moment"
+import { format } from "date-fns"
 import { Area, AreaChart, YAxis } from "recharts"
 
 const chartConfig = {
@@ -63,32 +64,38 @@ interface ChartElement {
 interface DataPayload {
   avgDelay: number
   numDepartures: number
+  bucket: string
 }
 
-const CustomTooltip = ({
+interface CustomTooltipProps {
+  active?: boolean
+  elements?: ChartElement[]
+  showPercentage: boolean
+}
+
+const CustomTooltip: React.FC<CustomTooltipProps> = ({
   active,
   elements,
-  label,
   showPercentage,
-}: {
-  active: boolean | undefined
-  elements: ChartElement[] | undefined
-  label: string | undefined
-  showPercentage: boolean
 }) => {
-  if (active && elements && elements.length) {
-    return (
-      <div
-        style={{ position: "relative", zIndex: 9999 }}
-        className="rounded border bg-white p-2 shadow"
-      >
-        <p className="text-sm">{`Time: ${moment(label).format("HH:mm")}`}</p>
-        <p className="text-sm">{`# Departures: ${elements[0].payload?.numDepartures}`}</p>
-        <p className="text-sm">{`${showPercentage ? "% delayed" : "Avg Delay"}: ${Number(elements[0].value).toFixed(2)}`}</p>
-      </div>
-    )
+  if (!active || !elements?.length || !elements[0].payload) {
+    return null
   }
-  return null
+
+  const { bucket, numDepartures } = elements[0].payload
+  const value = Number(elements[0].value).toFixed(2)
+  const measureLabel = showPercentage ? "% delayed" : "Avg Delay"
+
+  return (
+    <div
+      style={{ position: "relative", zIndex: 9999 }}
+      className="rounded border bg-white p-2 shadow"
+    >
+      <p className="text-sm">{`Time: ${format(bucket, "HH:mm")}`}</p>
+      <p className="text-sm">{`# Departures: ${numDepartures}`}</p>
+      <p className="text-sm">{`${measureLabel}: ${value}`}</p>
+    </div>
+  )
 }
 
 export function StationDelayHourChart({
@@ -137,7 +144,6 @@ export function StationDelayHourChart({
             <CustomTooltip
               active={props.active}
               elements={props.payload}
-              label={props.label}
               showPercentage={showPercentage}
             />
           )}
