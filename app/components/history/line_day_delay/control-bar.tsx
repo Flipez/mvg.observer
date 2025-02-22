@@ -33,7 +33,6 @@ import { addDays, format } from "date-fns"
 import { CalendarIcon, MinusIcon, PlusIcon } from "lucide-react"
 import { Trans } from "react-i18next"
 
-
 export function DatePicker({
   settings,
   setSettings,
@@ -131,7 +130,9 @@ export function ShowRealtime({
             }))
           }
         />
-        <span><Trans>PITA.Realtime.Switch</Trans></span>
+        <span>
+          <Trans>PITA.Realtime.Switch</Trans>
+        </span>
       </div>
     </div>
   )
@@ -156,7 +157,9 @@ export function ShowPercentage({
           }))
         }
       />
-      <span><Trans>PITA.Percentage.Switch</Trans></span>
+      <span>
+        <Trans>PITA.Percentage.Switch</Trans>
+      </span>
     </div>
   )
 }
@@ -323,7 +326,9 @@ export function ControlBar({
     <div className="m-5 grid gap-4 md:grid-cols-1 lg:grid-cols-3">
       <Card>
         <CardHeader>
-          <CardTitle><Trans>PITA.Subject.Title</Trans></CardTitle>
+          <CardTitle>
+            <Trans>PITA.Subject.Title</Trans>
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <DatePicker settings={settings} setSettings={setSettings} />
@@ -339,7 +344,9 @@ export function ControlBar({
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle><Trans>PITA.Realtime.Title</Trans></CardTitle>
+          <CardTitle>
+            <Trans>PITA.Realtime.Title</Trans>
+          </CardTitle>
           <CardDescription>
             <Trans>PITA.Realtime.Description</Trans>
           </CardDescription>
@@ -350,7 +357,9 @@ export function ControlBar({
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle><Trans>PITA.Percentage.Title</Trans></CardTitle>
+          <CardTitle>
+            <Trans>PITA.Percentage.Title</Trans>
+          </CardTitle>
           <CardDescription>
             <Trans>PITA.Percentage.Description</Trans>
           </CardDescription>

@@ -66,12 +66,14 @@ const resources = {
         },
         Realtime: {
           Title: "Realtime Data",
-          Description: "The MVG data carries a realtime attribute. If set, the departure time is really a live timestamp. If this attribute is not set, the departure time might not reflect the real departure time.",
+          Description:
+            "The MVG data carries a realtime attribute. If set, the departure time is really a live timestamp. If this attribute is not set, the departure time might not reflect the real departure time.",
           Switch: "Realtime data only",
         },
         Percentage: {
           Title: "Analytics by Percentage",
-          Description: "Instead of showing the average delay in a given interval, the percentage of delayed subways can be displayed. The threshold at which a subway counts as delayed can be configured.",
+          Description:
+            "Instead of showing the average delay in a given interval, the percentage of delayed subways can be displayed. The threshold at which a subway counts as delayed can be configured.",
           Switch: "Enabled",
         },
       },
@@ -135,12 +137,14 @@ const resources = {
         },
         Realtime: {
           Title: "Echtzeitdaten",
-          Description: "Die MVG Daten enthalten ein 'realtime' Attribut. Wenn es gesetzt ist entsprechen die Abfahrtszeiten wirklich der Echtzeit. Ist es nicht gesetzt sind die Zeiten nicht immer der Realität entprechend",
+          Description:
+            "Die MVG Daten enthalten ein 'realtime' Attribut. Wenn es gesetzt ist entsprechen die Abfahrtszeiten wirklich der Echtzeit. Ist es nicht gesetzt sind die Zeiten nicht immer der Realität entprechend",
           Switch: "Nur Echtzeitdaten",
         },
         Percentage: {
           Title: "Prozentuale Analyse",
-          Description: "Anstatt der durchschnittlichen Verspätung in einem Interval wird der Prozentsatz der U-Bahnen angezeigt die mehr Verspätung als der Schwellenwert haben angezeigt.",
+          Description:
+            "Anstatt der durchschnittlichen Verspätung in einem Interval wird der Prozentsatz der U-Bahnen angezeigt die mehr Verspätung als der Schwellenwert haben angezeigt.",
           Switch: "Aktiv",
         },
       },

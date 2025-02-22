@@ -27,7 +27,7 @@ export function StationCard({ station, isUpdated }: StationCardProps) {
   return (
     <div
       className={cn(
-        "transform transition-all rounded-lg overflow-hidden box-border border-2 border-solid",
+        "box-border transform overflow-hidden rounded-lg border-2 border-solid transition-all",
         delayColor,
         isUpdated && "animate-flash-grow"
       )}
@@ -36,7 +36,7 @@ export function StationCard({ station, isUpdated }: StationCardProps) {
         <PopoverTrigger asChild className="w-full">
           <Button
             variant="ghost"
-            className="w-full text-xs whitespace-normal break-words"
+            className="w-full whitespace-normal break-words text-xs"
           >
             {station.friendlyName}
           </Button>
