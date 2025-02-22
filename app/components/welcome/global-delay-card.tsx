@@ -1,4 +1,7 @@
-import { formatDelay } from "~/components/departures/helper"
+import {
+  formatDelay,
+  stationWithMostDelay,
+} from "~/components/departures/helper"
 import {
   Card,
   CardContent,
@@ -6,9 +9,20 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card"
+import { StationList } from "~/types/departures"
 import { Trans } from "react-i18next"
 
-export function GlobalDelayCard({ globalDelay }: { globalDelay: number }) {
+import { HelpPopover } from "../help-popover"
+import { cn } from "~/lib/utils"
+
+export function GlobalDelayCard({
+  globalDelay,
+  stations,
+}: {
+  globalDelay: number
+  stations: StationList
+}) {
+  const mostDelayStation = stationWithMostDelay(stations)
   const delayColor =
     globalDelay <= 0.5
       ? "text-green-500"
@@ -24,22 +38,42 @@ export function GlobalDelayCard({ globalDelay }: { globalDelay: number }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          <Trans>Welcome.Card.Status.Title</Trans>
-        </CardTitle>
-        <CardDescription>
-          <Trans>Welcome.Card.Status.Description</Trans>
-        </CardDescription>
+        <div className="flex justify-between">
+          <CardTitle>
+            <Trans>Welcome.Card.Status.Title</Trans>
+          </CardTitle>
+          <HelpPopover>
+            <Trans
+              i18nKey="Welcome.Card.About.Content"
+              components={{
+                green: <span className="text-green-500" />,
+                yellow: <span className="text-yellow-500" />,
+                red: <span className="text-red-500" />,
+              }}
+            />
+          </HelpPopover>
+        </div>
       </CardHeader>
       <CardContent>
         <Trans
           i18nKey="Welcome.Card.Status.Content"
           values={{ delay: formatDelay(globalDelay), delayText: delayText }}
           components={{
-            delay: <span className={delayColor} />,
-            delayText: <span className={delayColor} />,
+            delay: <span className={cn(delayColor, 'font-bold')} />,
+            delayText: <span className={cn(delayColor, 'font-bold')} />,
           }}
         />
+        &nbsp;
+        {mostDelayStation && (
+            <Trans
+              i18nKey="Welcome.Card.Highscore.Content"
+              values={{
+                station: mostDelayStation.friendlyName,
+                delay: formatDelay(mostDelayStation.avgDelay),
+              }}
+              components={{ station: <b></b>, delay: <b></b> }}
+            />
+        )}
       </CardContent>
     </Card>
   )

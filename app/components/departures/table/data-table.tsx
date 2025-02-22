@@ -11,6 +11,7 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table"
+import { HelpPopover } from "~/components/help-popover"
 import { Input } from "~/components/ui/input"
 import {
   Table,
@@ -21,6 +22,7 @@ import {
   TableRow,
 } from "~/components/ui/table"
 import { t } from "i18next"
+import { Trans } from "react-i18next"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -51,7 +53,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="mx-5">
-      <div className="flex items-center py-4">
+      <div className="flex items-center justify-between py-4">
         <Input
           placeholder={t("Table.Filter")}
           value={
@@ -62,6 +64,11 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+        <div className="mr-5 mt-2 items-center">
+          <HelpPopover>
+            <Trans>Table.HelpText</Trans>
+          </HelpPopover>
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>

@@ -12,9 +12,7 @@ export function DepartureList({
 }) {
   if (departures.length === 0) {
     return (
-      <div className="text-center border p-4 m-5">
-        No departures available.
-      </div>
+      <div className="m-5 border p-4 text-center">No departures available.</div>
     )
   }
 
