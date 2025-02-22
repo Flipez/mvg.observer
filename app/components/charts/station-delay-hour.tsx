@@ -8,8 +8,6 @@ import { Bucket, StationBucketList } from "~/types/history"
 import { format } from "date-fns"
 import { Area, AreaChart, YAxis } from "recharts"
 
-import { ShowPercentage } from "../history/line_day_delay/control-bar"
-
 const chartConfig = {
   desktop: {
     label: "Desktop",
