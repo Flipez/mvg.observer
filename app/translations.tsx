@@ -76,6 +76,11 @@ const resources = {
             "Instead of showing the average delay in a given interval, the percentage of delayed subways can be displayed. The threshold at which a subway counts as delayed can be configured.",
           Switch: "Enabled",
         },
+        NoDepartures: {
+          Title: "No Departures found",
+          Description:
+            "This can have multiple reason. If you have selected the U7 or U8, please note that they only operate on specific times and days. If you only include Realtime Date, you might get unlucky and hit a day in which no such data is available.",
+        },
       },
     },
   },
@@ -115,6 +120,8 @@ const resources = {
         Columns: {
           Station: "Station",
           Departures: "Abfahrten",
+          Southbound: "Südwärts",
+          Northbound: "Nordwärts",
         },
         HelpText:
           "Die Tabelle zeigt die nächsten Abfahrten für jede Station, ähnlich wie das Grid, an.",
@@ -146,6 +153,11 @@ const resources = {
           Description:
             "Anstatt der durchschnittlichen Verspätung in einem Interval wird der Prozentsatz der U-Bahnen angezeigt die mehr Verspätung als der Schwellenwert haben angezeigt.",
           Switch: "Aktiv",
+        },
+        NoDepartures: {
+          Title: "Keine Abfahrten gefunden",
+          Description:
+            "Das kann verschiedene Gründe haben. Die U7 und U8 fahren zum Beispiel nur an bestimmten Tagen und zu bestimmten Zeiten. Manchmal sind auch keine Echtzeitdaten verfügbar, vielleicht hattest du Pecht und dies ist einer dieser Tage?",
         },
       },
     },

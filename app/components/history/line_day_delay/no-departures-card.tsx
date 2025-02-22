@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
 import { TramFront, X } from "lucide-react"
+import { Trans } from "react-i18next"
 
 export function NoDeparturesCard() {
   return (
@@ -15,15 +16,12 @@ export function NoDeparturesCard() {
                 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-red-200"
               />
             </div>
-            No Departures found
+            <Trans>PITA.NoDepartures.Title</Trans>
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center">
           <p className="w-1/2 text-center text-muted-foreground">
-            This can have multiple reason. If you have selected the U7 or U8,
-            please note that they only operate on specific times and days. If
-            you only include Realtime Date, you might get unlucky and hit a day
-            in which no such data is available.
+            <Trans>PITA.NoDepartures.Description</Trans>
           </p>
         </CardContent>
       </Card>
