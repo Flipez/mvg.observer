@@ -42,22 +42,51 @@ const resources = {
         Columns: {
           Station: "Station",
           Departures: "Departures",
+          Southbound: "Southbound",
+          Northbound: "Northbound",
         },
         HelpText:
           "The table displays the next departures for each station, similiar to the popup in the grid.",
       },
       Misc: {
         Delay: "delay",
+        Minute: "Minute",
+        Minutes: "Minutes",
         Departed: "departed",
         SecondsShort: "Sec",
         DeparturePopoverHelp:
           "Shows the next 8  departures and their departure time. The original departuretime plus delay will be shown when hovering the departure time.",
       },
+      PITA: {
+        Subject: {
+          Title: "Filter",
+          Date: "Date",
+          Line: "Subway Line",
+          Interval: "Interval",
+        },
+        Realtime: {
+          Title: "Realtime Data",
+          Description:
+            "The MVG data carries a realtime attribute. If set, the departure time is really a live timestamp. If this attribute is not set, the departure time might not reflect the real departure time.",
+          Switch: "Realtime data only",
+        },
+        Percentage: {
+          Title: "Analytics by Percentage",
+          Description:
+            "Instead of showing the average delay in a given interval, the percentage of delayed subways can be displayed. The threshold at which a subway counts as delayed can be configured.",
+          Switch: "Enabled",
+        },
+        NoDepartures: {
+          Title: "No Departures found",
+          Description:
+            "This can have multiple reason. If you have selected the U7 or U8, please note that they only operate on specific times and days. If you only include Realtime Date, you might get unlucky and hit a day in which no such data is available.",
+        },
+      },
     },
   },
   de: {
     translation: {
-      Title: "MVG Observierer",
+      Title: "MVG Observer",
       Description:
         "Ein inoffizieller Abfahrtsmonitor für die U-Bahnen in München",
       Tabs: {
@@ -67,7 +96,7 @@ const resources = {
       },
       Links: {
         Overview: "Übersicht",
-        PITA: "Punkt in der Zeit Auswertung",
+        PITA: "Point-in-Time Analyse",
       },
       Welcome: {
         Card: {
@@ -91,16 +120,45 @@ const resources = {
         Columns: {
           Station: "Station",
           Departures: "Abfahrten",
+          Southbound: "Südwärts",
+          Northbound: "Nordwärts",
         },
         HelpText:
           "Die Tabelle zeigt die nächsten Abfahrten für jede Station, ähnlich wie das Grid, an.",
       },
       Misc: {
         Delay: "Verspätung",
+        Minute: "Minute",
+        Minutes: "Minuten",
         Departed: "abgefahren",
         SecondsShort: "Sek",
         DeparturePopoverHelp:
           "Zeigt die nächsten 8 Abfahrten und die dazugehörige Abfahrtszeit an. Die ursprüngliche Abfahrtszeit plus Verspätung wird beim hovern über die Zeit angezeigt.",
+      },
+      PITA: {
+        Subject: {
+          Title: "Filter",
+          Date: "Datum",
+          Line: "U-Bahn Linie",
+          Interval: "Interval",
+        },
+        Realtime: {
+          Title: "Echtzeitdaten",
+          Description:
+            "Die MVG Daten enthalten ein 'realtime' Attribut. Wenn es gesetzt ist entsprechen die Abfahrtszeiten wirklich der Echtzeit. Ist es nicht gesetzt sind die Zeiten nicht immer der Realität entprechend",
+          Switch: "Nur Echtzeitdaten",
+        },
+        Percentage: {
+          Title: "Prozentuale Analyse",
+          Description:
+            "Anstatt der durchschnittlichen Verspätung in einem Interval wird der Prozentsatz der U-Bahnen angezeigt die mehr Verspätung als der Schwellenwert haben angezeigt.",
+          Switch: "Aktiv",
+        },
+        NoDepartures: {
+          Title: "Keine Abfahrten gefunden",
+          Description:
+            "Das kann verschiedene Gründe haben. Die U7 und U8 fahren zum Beispiel nur an bestimmten Tagen und zu bestimmten Zeiten. Manchmal sind auch keine Echtzeitdaten verfügbar, vielleicht hattest du Pecht und dies ist einer dieser Tage?",
+        },
       },
     },
   },

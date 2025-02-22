@@ -31,6 +31,7 @@ import { SubwayLine } from "~/types/departures"
 import { ChartSettings } from "~/types/history"
 import { addDays, format } from "date-fns"
 import { CalendarIcon, MinusIcon, PlusIcon } from "lucide-react"
+import { Trans } from "react-i18next"
 
 export function DatePicker({
   settings,
@@ -56,7 +57,7 @@ export function DatePicker({
   return (
     <div className="flex flex-col space-y-2">
       <Label htmlFor="datepicker" className="text-sm font-medium">
-        Date
+        <Trans>PITA.Subject.Date</Trans>
       </Label>
 
       <div className="flex items-center">
@@ -129,7 +130,9 @@ export function ShowRealtime({
             }))
           }
         />
-        <span>Only realtime data</span>
+        <span>
+          <Trans>PITA.Realtime.Switch</Trans>
+        </span>
       </div>
     </div>
   )
@@ -154,7 +157,9 @@ export function ShowPercentage({
           }))
         }
       />
-      <span>Enabled</span>
+      <span>
+        <Trans>PITA.Percentage.Switch</Trans>
+      </span>
     </div>
   )
 }
@@ -177,12 +182,12 @@ export function IntervalDropdown({
   return (
     <div className="flex flex-col space-y-2">
       <Label htmlFor="intervalpicker" className="text-sm font-medium">
-        Interval
+        <Trans>PITA.Subject.Interval</Trans>
       </Label>
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Button id="intervalpicker" variant="outline">
-            {settings.interval} Minutes
+            {settings.interval} <Trans>Misc.Minutes</Trans>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -279,7 +284,7 @@ function LineDropdown({
   return (
     <div className="flex flex-col space-y-2">
       <Label htmlFor="linepicker" className="text-sm font-medium">
-        Subway line
+        <Trans>PITA.Subject.Line</Trans>
       </Label>
       <DropdownMenu>
         <DropdownMenuTrigger asChild disabled={settings.selectedTab === "map"}>
@@ -321,7 +326,9 @@ export function ControlBar({
     <div className="m-5 grid gap-4 md:grid-cols-1 lg:grid-cols-3">
       <Card>
         <CardHeader>
-          <CardTitle>Subject Settings</CardTitle>
+          <CardTitle>
+            <Trans>PITA.Subject.Title</Trans>
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <DatePicker settings={settings} setSettings={setSettings} />
@@ -337,11 +344,11 @@ export function ControlBar({
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Realtime Data</CardTitle>
+          <CardTitle>
+            <Trans>PITA.Realtime.Title</Trans>
+          </CardTitle>
           <CardDescription>
-            The MVG data carries a realtime attribute. If set, the departure
-            time is really a live timestamp. If this attribute is not set, the
-            departure time might not reflect the real departure time.
+            <Trans>PITA.Realtime.Description</Trans>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -350,11 +357,11 @@ export function ControlBar({
       </Card>
       <Card>
         <CardHeader>
-          <CardTitle>Analytics by Percentage</CardTitle>
+          <CardTitle>
+            <Trans>PITA.Percentage.Title</Trans>
+          </CardTitle>
           <CardDescription>
-            Instead of showing the average delay in a given interval, the
-            percentage of delayed subways can be displayed. The threshold at
-            which a subway counts as delayed can be configured.
+            <Trans>PITA.Percentage.Description</Trans>
           </CardDescription>
         </CardHeader>
         <CardContent className="flex w-full justify-between">

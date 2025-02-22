@@ -11,7 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { StationsByLine } from "~/data/subway-lines"
 import { ChartSettings, StationBucketList } from "~/types/history"
 import { format } from "date-fns"
-import { Trans } from "react-i18next"
+import { ArrowDownFromLine, ArrowUpFromLine } from "lucide-react"
+import { Trans, useTranslation } from "react-i18next"
 
 interface StationDelayRowProps {
   stationId: string
@@ -88,6 +89,7 @@ export default function Pita() {
     showPercentage: false,
     selectedTab: "table",
   })
+  useTranslation()
 
   const chartDateFormatted = format(settings.chartDate, "yyyy-MM-dd")
 
@@ -168,9 +170,21 @@ export default function Pita() {
               <table className="w-full table-auto border-collapse">
                 <thead>
                   <tr>
-                    <th className="w-1/2">South</th>
+                    <th className="w-1/2">
+                      <div className="flex items-center justify-center gap-4">
+                        <ArrowDownFromLine />
+                        <Trans>Table.Columns.Southbound</Trans>
+                        <ArrowDownFromLine />
+                      </div>
+                    </th>
                     <th className="w-auto whitespace-nowrap">Station</th>
-                    <th className="w-1/2">North</th>
+                    <th className="w-1/2">
+                      <div className="flex items-center justify-center gap-4">
+                        <ArrowUpFromLine />
+                        <Trans>Table.Columns.Northbound</Trans>
+                        <ArrowUpFromLine />
+                      </div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
