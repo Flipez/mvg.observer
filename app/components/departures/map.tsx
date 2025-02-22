@@ -31,11 +31,18 @@ function Pin({ size = 12, color = "#fff" }: { size?: number; color?: string }) {
 
 function pinColor(station: Station) {
   const maxDelayDeparture = departureWithMostDelay(station)
-  return maxDelayDeparture.delayInMinutes <= 0
-    ? "#31C48D"
-    : maxDelayDeparture.delayInMinutes <= 5
-      ? "#FACA15"
-      : "#F05252"
+
+  const delay = maxDelayDeparture?.delayInMinutes
+  const delayColor =
+    delay === undefined
+      ? "#ffffff"
+      : delay <= 0
+        ? "#31C48D"
+        : delay <= 5
+          ? "#FACA15"
+          : "#F05252"
+
+  return delayColor
 }
 
 export function SubwayMap({

@@ -13,12 +13,16 @@ type StationCardProps = {
 
 export function StationCard({ station, isUpdated }: StationCardProps) {
   const maxDelayDeparture = departureWithMostDelay(station)
+
+  const delay = maxDelayDeparture?.delayInMinutes
   const delayColor =
-    maxDelayDeparture.delayInMinutes <= 0
-      ? "bg-green-100"
-      : maxDelayDeparture.delayInMinutes <= 5
-        ? "bg-yellow-100"
-        : "bg-red-100"
+    delay === undefined
+      ? "bg-white"
+      : delay <= 0
+        ? "bg-green-100"
+        : delay <= 5
+          ? "bg-yellow-100"
+          : "bg-red-100"
 
   return (
     <div

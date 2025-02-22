@@ -64,9 +64,12 @@ export function stationWithMostDelay(stations: StationList): Station | null {
   return max
 }
 
-export function departureWithMostDelay(station: Station): Departure {
-  const max = Object.values(station.departures).reduce((prev, current) =>
-    prev && prev.delayInMinutes > current.delayInMinutes ? prev : current
+export function departureWithMostDelay(station: Station): Departure | null {
+  const departures = Object.values(station.departures)
+
+  if (departures.length === 0) return null
+
+  return departures.reduce((max, departure) =>
+    departure.delayInMinutes > max.delayInMinutes ? departure : max
   )
-  return max
 }
