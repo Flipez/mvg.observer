@@ -1,4 +1,3 @@
-import type { MetaFunction } from "@remix-run/node"
 import { Analytics } from "@vercel/analytics/remix"
 import { DepartureGrid } from "~/components/departures/grid"
 import { SubwayMap } from "~/components/departures/map"
@@ -12,11 +11,6 @@ import { DataTable } from "../components/departures/table/data-table"
 import "../translations"
 
 import { Trans } from "react-i18next"
-
-export const meta: MetaFunction = () => [
-  { title: "MVGeht" },
-  { name: "description", content: "Geht's noch oder eher nicht mehr?" },
-]
 
 export default function Index() {
   const { stationList, updatedStation, globalDelay } = useDepartures()

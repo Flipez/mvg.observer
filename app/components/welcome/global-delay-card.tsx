@@ -2,17 +2,12 @@ import {
   formatDelay,
   stationWithMostDelay,
 } from "~/components/departures/helper"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
+import { cn } from "~/lib/utils"
 import { StationList } from "~/types/departures"
 import { Trans } from "react-i18next"
 
 import { HelpPopover } from "../help-popover"
-import { cn } from "~/lib/utils"
 
 export function GlobalDelayCard({
   globalDelay,
@@ -58,20 +53,20 @@ export function GlobalDelayCard({
           i18nKey="Welcome.Card.Status.Content"
           values={{ delay: formatDelay(globalDelay), delayText: delayText }}
           components={{
-            delay: <span className={cn(delayColor, 'font-bold')} />,
-            delayText: <span className={cn(delayColor, 'font-bold')} />,
+            delay: <span className={cn(delayColor, "font-bold")} />,
+            delayText: <span className={cn(delayColor, "font-bold")} />,
           }}
         />
         &nbsp;
         {mostDelayStation && (
-            <Trans
-              i18nKey="Welcome.Card.Highscore.Content"
-              values={{
-                station: mostDelayStation.friendlyName,
-                delay: formatDelay(mostDelayStation.avgDelay),
-              }}
-              components={{ station: <b></b>, delay: <b></b> }}
-            />
+          <Trans
+            i18nKey="Welcome.Card.Highscore.Content"
+            values={{
+              station: mostDelayStation.friendlyName,
+              delay: formatDelay(mostDelayStation.avgDelay),
+            }}
+            components={{ station: <b></b>, delay: <b></b> }}
+          />
         )}
       </CardContent>
     </Card>

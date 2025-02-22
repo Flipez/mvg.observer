@@ -29,10 +29,15 @@ function Pin({ size = 12, color = "#fff" }: { size?: number; color?: string }) {
   )
 }
 
-function pinColor(station: Station) {
-  const maxDelayDeparture = departureWithMostDelay(station)
+function pinColor(station: Station, historyMode: boolean) {
+  let delay
+  if (historyMode) {
+    delay = station.avgDelay
+  } else {
+    const maxDelayDeparture = departureWithMostDelay(station)
+    delay = maxDelayDeparture?.delayInMinutes
+  }
 
-  const delay = maxDelayDeparture?.delayInMinutes
   const delayColor =
     delay === undefined
       ? "#ffffff"
@@ -48,9 +53,11 @@ function pinColor(station: Station) {
 export function SubwayMap({
   stations,
   updatedStation,
+  historyMode = false,
 }: {
   stations: StationList
   updatedStation: string | null
+  historyMode?: boolean
 }) {
   const settings = {
     scrollZoom: false,
@@ -81,14 +88,14 @@ export function SubwayMap({
                   stationId === updatedStation && "animate-flash-grow"
                 )}
               >
-                <Pin color={pinColor(station)} />
+                <Pin color={pinColor(station, historyMode)} />
               </span>
             </PopoverTrigger>
             <DeparturesPopoverContent station={station} />
           </Popover>
         </Marker>
       )),
-    [stations, updatedStation]
+    [stations, updatedStation, historyMode]
   )
 
   const { width } = useWindowDimensions()

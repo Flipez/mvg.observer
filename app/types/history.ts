@@ -1,10 +1,11 @@
-import { SubwayLine } from "./departures"
+import { Coordinates, SubwayLine } from "./departures"
 
 export type StationBucketList = {
   station: string
   name: string
   stop: number
   buckets: Bucket[]
+  coordinates: Coordinates
 }
 
 export type Bucket = {
@@ -22,4 +23,5 @@ export interface ChartSettings {
   threshold: number
   threshold_label: string
   showPercentage: boolean
+  selectedTab: string
 }

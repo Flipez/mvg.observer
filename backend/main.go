@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"slices"
@@ -47,34 +46,56 @@ func main() {
 	db = connectClickhouse()
 
 	http.HandleFunc("/line_delay", lineDelayHandler)
+	http.HandleFunc("/global_delay", globalDelayGHandler)
 	http.HandleFunc("/events", eb.sseHandler)
 	log.Println("Server started on 127.0.0.1:8080")
 	log.Fatal(http.ListenAndServe("127.0.0.1:8080", nil))
 
 }
 
-func lineDelayHandler(w http.ResponseWriter, r *http.Request) {
-	dateStr := r.URL.Query().Get("date")
-	isSouth := r.URL.Query().Get("south")
-	interval := r.URL.Query().Get("interval")
-	realtime := r.URL.Query().Get("realtime")
-	label := r.URL.Query().Get("label")
-	threshold := r.URL.Query().Get("threshold")
-	if dateStr == "" || isSouth == "" || interval == "" || realtime == "" || label == "" || threshold == "" {
-		http.Error(w, "Missing date parameter", http.StatusBadRequest)
+func extractRequiredParams(r *http.Request, keys []string) (map[string]string, error) {
+	params := make(map[string]string, len(keys))
+	q := r.URL.Query()
+	for _, key := range keys {
+		value := q.Get(key)
+		if value == "" {
+			return nil, fmt.Errorf("missing parameter: %s", key)
+		}
+		params[key] = value
+	}
+	return params, nil
+}
+
+func writeGzippedJSON(w http.ResponseWriter, v interface{}) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Encoding", "gzip")
+	gz := gzip.NewWriter(w)
+	defer gz.Close()
+	return json.NewEncoder(gz).Encode(v)
+}
+
+func globalDelayGHandler(w http.ResponseWriter, r *http.Request) {
+	keys := []string{"date", "interval", "realtime", "threshold"}
+	params, err := extractRequiredParams(r, keys)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	requiredParams := []string{"date", "south", "interval", "realtime", "label", "threshold"}
-	params := make(map[string]string, len(requiredParams))
+	results := getGlobalDelay(params["date"], params["interval"], params["threshold"], params["realtime"], db)
+	if err := writeGzippedJSON(w, results); err != nil {
+		http.Error(w, "Error encoding JSON: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
 
-	for _, key := range requiredParams {
-		value := r.URL.Query().Get(key)
-		if value == "" {
-			http.Error(w, fmt.Sprintf("Missing parameter: %s", key), http.StatusBadRequest)
-			return
-		}
-		params[key] = value
+func lineDelayHandler(w http.ResponseWriter, r *http.Request) {
+	keys := []string{"date", "south", "interval", "realtime", "label", "threshold"}
+	params, err := extractRequiredParams(r, keys)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	results := getDelayForLine(
@@ -86,33 +107,19 @@ func lineDelayHandler(w http.ResponseWriter, r *http.Request) {
 		params["realtime"],
 		db,
 	)
-
-	var writer io.Writer = w
-	gz := gzip.NewWriter(w)
-	defer gz.Close()
-	writer = gz
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Encoding", "gzip")
-	if err := json.NewEncoder(writer).Encode(results); err != nil {
+	if err := writeGzippedJSON(w, results); err != nil {
 		http.Error(w, "Error encoding JSON: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
 func filterAndDedup(departures []Departure) []Departure {
-	subwayDepartures := slices.DeleteFunc(
-		departures,
-		func(d Departure) bool {
-			return !strings.HasPrefix(d.Label, "U")
-		},
-	)
-
+	subwayDepartures := slices.DeleteFunc(departures, func(d Departure) bool {
+		return !strings.HasPrefix(d.Label, "U")
+	})
 	if len(subwayDepartures) < 8 {
 		return subwayDepartures
 	}
-
 	return subwayDepartures[:8]
 }
 
