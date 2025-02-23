@@ -12,7 +12,7 @@ import "../translations"
 import { Trans } from "react-i18next"
 
 export default function Index() {
-  const { stationList, updatedStation, globalDelay } = useDepartures()
+  const { stationList, globalDelay } = useDepartures()
 
   return (
     <div className="mt-5">
@@ -30,16 +30,13 @@ export default function Index() {
         </TabsList>
         <TabsContent value="grid">
           <WelcomeBlock stations={stationList} globalDelay={globalDelay} />
-          <DepartureGrid
-            stations={stationList}
-            updatedStation={updatedStation}
-          />
+          <DepartureGrid stations={stationList} />
         </TabsContent>
         <TabsContent value="table">
           <DataTable columns={columns} data={Object.values(stationList)} />
         </TabsContent>
         <TabsContent value="map">
-          <SubwayMap stations={stationList} updatedStation={updatedStation} />
+          <SubwayMap stations={stationList} />
         </TabsContent>
       </Tabs>
     </div>

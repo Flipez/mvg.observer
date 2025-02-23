@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Station, StationList } from "~/types/departures"
 import { Map, Marker } from "react-map-gl/maplibre"
 
@@ -50,13 +50,48 @@ function pinColor(station: Station, historyMode: boolean) {
   return delayColor
 }
 
+function StationPin({
+  station,
+  historyMode,
+}: {
+  station: Station
+  historyMode: boolean
+}) {
+  const [shouldAnimate, setShouldAnimate] = useState(false)
+  const nextDeparture = station.departures[0]
+
+  useEffect(() => {
+    if (nextDeparture) {
+      if (Date.now() > nextDeparture.realtimeDepartureTime) {
+        setShouldAnimate(true)
+        const timer = setTimeout(() => setShouldAnimate(false), 1000)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [nextDeparture])
+
+  return (
+    <Popover>
+      <PopoverTrigger>
+        <span
+          className={cn(
+            "h-10 transform transition-all",
+            shouldAnimate && "animate-flash-grow"
+          )}
+        >
+          <Pin color={pinColor(station, historyMode)} />
+        </span>
+      </PopoverTrigger>
+      <DeparturesPopoverContent station={station} />
+    </Popover>
+  )
+}
+
 export function SubwayMap({
   stations,
-  updatedStation,
   historyMode = false,
 }: {
   stations: StationList
-  updatedStation: string | null
   historyMode?: boolean
 }) {
   const settings = {
@@ -73,29 +108,17 @@ export function SubwayMap({
 
   const pins = useMemo(
     () =>
-      Object.entries(stations).map(([stationId, station], index) => (
+      Object.entries(stations).map(([, station], index) => (
         <Marker
           key={`marker-${index}`}
           longitude={parseFloat(station.coordinates.longitude)}
           latitude={parseFloat(station.coordinates.latitude)}
           anchor="bottom"
         >
-          <Popover>
-            <PopoverTrigger>
-              <span
-                className={cn(
-                  "h-10 transform transition-all",
-                  stationId === updatedStation && "animate-flash-grow"
-                )}
-              >
-                <Pin color={pinColor(station, historyMode)} />
-              </span>
-            </PopoverTrigger>
-            <DeparturesPopoverContent station={station} />
-          </Popover>
+          <StationPin station={station} historyMode={historyMode} />
         </Marker>
       )),
-    [stations, updatedStation, historyMode]
+    [stations, historyMode]
   )
 
   const { width } = useWindowDimensions()

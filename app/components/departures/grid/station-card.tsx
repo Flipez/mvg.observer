@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import { Popover, PopoverTrigger } from "@radix-ui/react-popover"
 import { Button } from "~/components/ui/button"
 import { cn } from "~/lib/utils"
@@ -8,11 +9,11 @@ import { DeparturesPopoverContent } from "../popover-content"
 
 type StationCardProps = {
   station: Station
-  isUpdated: boolean
 }
 
-export function StationCard({ station, isUpdated }: StationCardProps) {
+export function StationCard({ station }: StationCardProps) {
   const maxDelayDeparture = departureWithMostDelay(station)
+  const nextDeparture = station.departures[0]
 
   const delay = maxDelayDeparture?.delayInMinutes
   const delayColor =
@@ -24,12 +25,24 @@ export function StationCard({ station, isUpdated }: StationCardProps) {
           ? "bg-yellow-100"
           : "bg-red-100"
 
+  const [shouldAnimate, setShouldAnimate] = useState(false)
+
+  useEffect(() => {
+    if (nextDeparture) {
+      if (Date.now() > nextDeparture.realtimeDepartureTime) {
+        setShouldAnimate(true)
+        const timer = setTimeout(() => setShouldAnimate(false), 1000)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [nextDeparture])
+
   return (
     <div
       className={cn(
         "box-border transform overflow-hidden rounded-lg border-2 border-solid transition-all",
         delayColor,
-        isUpdated && "animate-flash-grow"
+        shouldAnimate && "animate-flash-grow"
       )}
     >
       <Popover>

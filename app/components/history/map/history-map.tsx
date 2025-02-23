@@ -78,11 +78,7 @@ export const BucketSelector = ({
         />
       </div>
       <div className="mt-4">
-        <SubwayMap
-          stations={stationList}
-          updatedStation={null}
-          historyMode={true}
-        />
+        <SubwayMap stations={stationList} historyMode={true} />
       </div>
     </div>
   )
