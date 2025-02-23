@@ -29,7 +29,6 @@ function createDepartureId(departure: Omit<Departure, "id">): string {
 
 export function useDepartures() {
   const [stationList, setStationList] = useState<StationList>({})
-  const [updatedStation, setUpdatedStation] = useState<string | null>(null)
   const [globalDelay, setGlobalDelay] = useState<number>(0)
 
   const handleStationUpdate = useCallback((event: MessageEvent) => {
@@ -60,8 +59,6 @@ export function useDepartures() {
         coordinates,
       },
     }))
-
-    setUpdatedStation(stationId)
   }, [])
 
   useEffect(() => {
@@ -78,5 +75,5 @@ export function useDepartures() {
     }
   }, [handleStationUpdate])
 
-  return { stationList, updatedStation, globalDelay }
+  return { stationList, globalDelay }
 }
