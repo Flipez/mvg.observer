@@ -54,6 +54,13 @@ const resources = {
         HelpText:
           "The table displays the next departures for each station, similiar to the popup in the grid.",
       },
+      Occupancy: {
+        LOW: "Low",
+        MEDIUM: "Medium",
+        HIGH: "High",
+        UNKNOWN: "Unknown",
+        Occupancy: "Occupancy",
+      },
       Misc: {
         Delay: "delay",
         Minute: "Minute",
@@ -137,6 +144,13 @@ const resources = {
         },
         HelpText:
           "Die Tabelle zeigt die nächsten Abfahrten für jede Station, ähnlich wie das Grid, an.",
+      },
+      Occupancy: {
+        LOW: "Niedrig",
+        MEDIUM: "Mittel",
+        HIGH: "Hoch",
+        UNKNOWN: "Unbekannt",
+        Occupancy: "Auslastung",
       },
       Misc: {
         Delay: "Verspätung",
