@@ -40,6 +40,7 @@ export function DepartureEntry({
               className={cn("text-right", "font-semibold", delayColor)}
             >
               {relativeTime(departure.realtimeDepartureTime)}
+              {departure.occupancy}
             </TooltipTrigger>
             <TooltipContent className="text-xs">
               {formatTime(departure.plannedDepartureTime)}+

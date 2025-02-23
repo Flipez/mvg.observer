@@ -28,6 +28,7 @@ export type Departure = {
   label: SubwayLine
   delayInMinutes: number
   destination: string
+  occupancy: string
 }
 
 export type StationList = Record<string, Station>

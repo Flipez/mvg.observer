@@ -28,6 +28,7 @@ type Departure struct {
 	Label                 string `json:"label"`
 	DelayInMinutes        int    `json:"delayInMinutes"`
 	Destination           string `json:"destination"`
+	Occupancy             string `json:"occupancy"`
 }
 
 func main() {
