@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { Station, StationList } from "~/types/departures"
 import { Map, Marker } from "react-map-gl/maplibre"
 
