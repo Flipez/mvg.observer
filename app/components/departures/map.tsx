@@ -106,20 +106,16 @@ export function SubwayMap({
     cursor: "auto",
   }
 
-  const pins = useMemo(
-    () =>
-      Object.entries(stations).map(([, station], index) => (
-        <Marker
-          key={`marker-${index}`}
-          longitude={parseFloat(station.coordinates.longitude)}
-          latitude={parseFloat(station.coordinates.latitude)}
-          anchor="bottom"
-        >
-          <StationPin station={station} historyMode={historyMode} />
-        </Marker>
-      )),
-    [stations, historyMode]
-  )
+  const pins = Object.entries(stations).map(([, station], index) => (
+    <Marker
+      key={`marker-${index}`}
+      longitude={parseFloat(station.coordinates.longitude)}
+      latitude={parseFloat(station.coordinates.latitude)}
+      anchor="bottom"
+    >
+      <StationPin station={station} historyMode={historyMode} />
+    </Marker>
+  ))
 
   const { width } = useWindowDimensions()
   const mapZoom = width >= 1024 ? 11.35 : 10
