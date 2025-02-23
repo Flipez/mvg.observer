@@ -16,7 +16,7 @@ func connectClickhouse() driver.Conn {
 		Addr: []string{"clickhouse.auch.cool:9000"},
 		Auth: clickhouse.Auth{
 			Database: "mvg",
-			Username: "default",
+			Username: "mvgobserver",
 			Password: os.Getenv("CLICKHOUSE_PASSWORD"),
 		},
 	})
