@@ -45,6 +45,12 @@ const resources = {
           Southbound: "Southbound",
           Northbound: "Northbound",
         },
+        Tooltip: {
+          Time: "Time",
+          Departures: "Departures",
+          PercDelay: "Delayed",
+          AvgDelay: "Average Delay",
+        },
         HelpText:
           "The table displays the next departures for each station, similiar to the popup in the grid.",
       },
@@ -122,6 +128,12 @@ const resources = {
           Departures: "Abfahrten",
           Southbound: "Südwärts",
           Northbound: "Nordwärts",
+        },
+        Tooltip: {
+          Time: "Uhrzeit",
+          Departures: "Abfahrten",
+          PercDelay: "Verspätet",
+          AvgDelay: "Durchschn. Verspätung",
         },
         HelpText:
           "Die Tabelle zeigt die nächsten Abfahrten für jede Station, ähnlich wie das Grid, an.",

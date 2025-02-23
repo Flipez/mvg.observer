@@ -48,6 +48,7 @@ export function StationDelayRow({
             interval={settings.interval}
             yAxisOrientation="left"
             showPercentage={settings.showPercentage}
+            threshold={settings.threshold}
           />
         ) : (
           <div className="text-center text-sm">No data</div>
@@ -66,6 +67,7 @@ export function StationDelayRow({
             interval={settings.interval}
             yAxisOrientation="right"
             showPercentage={settings.showPercentage}
+            threshold={settings.threshold}
           />
         ) : (
           <div className="text-center text-sm">No data</div>
@@ -81,7 +83,7 @@ export default function Pita() {
   const [globalData, setGlobalData] = useState<StationBucketList[]>([])
   const [settings, setSettings] = useState<ChartSettings>({
     chartDate: new Date(2024, 1, 17), // parameters are (year, monthINDEX, day)
-    interval: 15,
+    interval: 20,
     realtime: true,
     line: "U6",
     threshold: 0,

@@ -6,7 +6,8 @@ import {
 } from "~/components/ui/chart"
 import { Bucket, StationBucketList } from "~/types/history"
 import { format } from "date-fns"
-import { Area, AreaChart, YAxis } from "recharts"
+import i18next, { t } from "i18next"
+import { Bar, BarChart, YAxis } from "recharts"
 
 const chartConfig = {
   desktop: {
@@ -71,12 +72,14 @@ interface CustomTooltipProps {
   active?: boolean
   elements?: ChartElement[]
   showPercentage: boolean
+  threshold: number
 }
 
 const CustomTooltip: React.FC<CustomTooltipProps> = ({
   active,
   elements,
   showPercentage,
+  threshold,
 }) => {
   if (!active || !elements?.length || !elements[0].payload) {
     return null
@@ -84,16 +87,23 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
 
   const { bucket, numDepartures } = elements[0].payload
   const value = Number(elements[0].value).toFixed(2)
-  const measureLabel = showPercentage ? "% delayed" : "Avg Delay"
+  const measureLabel = showPercentage
+    ? t("Table.Tooltip.PercDelay")
+    : t("Table.Tooltip.AvgDelay")
+  const measureUnit = showPercentage ? `% (> ${threshold} min)` : "min"
+  const timeFormatted =
+    i18next.language === "de"
+      ? format(bucket, "HH:mm") + " Uhr"
+      : format(bucket, "hh:mm aaa")
 
   return (
     <div
       style={{ position: "relative", zIndex: 9999 }}
       className="rounded border bg-white p-2 shadow"
     >
-      <p className="text-sm">{`Time: ${format(bucket, "HH:mm")}`}</p>
-      <p className="text-sm">{`# Departures: ${numDepartures}`}</p>
-      <p className="text-sm">{`${measureLabel}: ${value}`}</p>
+      <p className="text-sm">{`${t("Table.Tooltip.Time")}: ${timeFormatted}`}</p>
+      <p className="text-sm">{`${t("Table.Tooltip.Departures")}: ${numDepartures}`}</p>
+      <p className="text-sm">{`${measureLabel}: ${value} ${measureUnit}`}</p>
     </div>
   )
 }
@@ -104,12 +114,14 @@ export function StationDelayHourChart({
   interval,
   yAxisOrientation,
   showPercentage,
+  threshold,
 }: {
   stationData: StationBucketList
   day: string
   interval: number
   yAxisOrientation: "left" | "right"
   showPercentage: boolean
+  threshold: number
 }) {
   const startOfDay = new Date(`${day}T00:00:00`).getTime()
   const endOfDay = new Date(`${day}T00:00:00`)
@@ -127,16 +139,22 @@ export function StationDelayHourChart({
 
   return (
     <ChartContainer className="h-[35px] w-full" config={chartConfig}>
-      <AreaChart
+      <BarChart
         accessibilityLayer
         data={processedData}
+        barGap={0}
+        barCategoryGap={0.5}
         margin={{
           left: 0,
           right: 0,
-          top: 2,
-          bottom: 2,
+          top: 0,
+          bottom: 0,
         }}
       >
+        <YAxis
+          domain={[0, showPercentage ? 100 : 10]}
+          orientation={yAxisOrientation}
+        />
         <ChartTooltip
           cursor={false}
           /* eslint-disable react/prop-types */
@@ -145,23 +163,62 @@ export function StationDelayHourChart({
               active={props.active}
               elements={props.payload}
               showPercentage={showPercentage}
+              threshold={threshold}
             />
           )}
           wrapperStyle={{ zIndex: 9999 }}
         />
-        <YAxis
-          domain={[0, showPercentage ? 100 : 10]}
-          orientation={yAxisOrientation}
-        />
-        <Area
+        <Bar
           isAnimationActive={false}
           dataKey={showPercentage ? "percentageThreshold" : "avgDelay"}
           type="step"
-          fill="var(--color-desktop)"
-          fillOpacity={0.4}
-          stroke="var(--color-desktop)"
+          fill="#5063DF"
+          fillOpacity={0.9}
+          shape={(props) => <CustomBarShape {...props} chartHeight={35} />}
         />
-      </AreaChart>
+      </BarChart>
     </ChartContainer>
+  )
+}
+
+interface CustomBarShapeProps {
+  x: number
+  y: number
+  width: number
+  height: number
+  value: number | string | null
+  chartHeight: number
+}
+
+const CustomBarShape: React.FC<CustomBarShapeProps> = ({
+  x,
+  y,
+  width,
+  height,
+  value,
+  chartHeight,
+}) => {
+  // If value is null/undefined, render nothing.
+  if (value === null || value === undefined) return null
+
+  // If computed height is 0, force a minimal height for the foreground bar.
+  const minHeight = 0.0
+  const forcedHeight = height === 0 ? minHeight : height
+  // Adjust y so that the foreground bar remains anchored to the baseline.
+  const adjustedY = height === 0 ? y - minHeight : y
+
+  return (
+    <>
+      {/* Background spanning the full chart height */}
+      <rect x={x} y={0} width={width} height={chartHeight} fill="#eee" />
+      {/* Foreground bar rendered over the background */}
+      <rect
+        x={x}
+        y={adjustedY}
+        width={width}
+        height={forcedHeight}
+        fill="#5063DF"
+      />
+    </>
   )
 }
