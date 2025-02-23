@@ -1,6 +1,7 @@
 import { Departure, Station, StationList } from "~/types/departures"
 import { differenceInSeconds, format, fromUnixTime } from "date-fns"
 import { t } from "i18next"
+import { Tally1, Tally2, Tally3 } from "lucide-react"
 
 /**
  * Formats a delay in minutes into a human-readable string.
@@ -72,4 +73,18 @@ export function departureWithMostDelay(station: Station): Departure | null {
   return departures.reduce((max, departure) =>
     departure.delayInMinutes > max.delayInMinutes ? departure : max
   )
+}
+
+export function IconByOccupancy({ occupancy }: { occupancy: string }) {
+  switch (occupancy) {
+    case "LOW":
+      return (
+        <Tally1 color={"#31C48D"} style={{ transform: "rotate(-90deg)" }} />
+      )
+    case "MEDIUM":
+      return <Tally2 color="#FACA15" style={{ transform: "rotate(-90deg)" }} />
+    case "HIGH":
+      return <Tally3 color="#F05252" style={{ transform: "rotate(-90deg)" }} />
+    default:
+  }
 }

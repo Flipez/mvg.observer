@@ -1,6 +1,12 @@
-import { formatTime, relativeTime } from "~/components/departures/helper"
+import {
+  formatTime,
+  IconByOccupancy,
+  relativeTime,
+} from "~/components/departures/helper"
 import { cn } from "~/lib/utils"
 import { Departure } from "~/types/departures"
+import { MessageSquareWarning } from "lucide-react"
+import { Trans } from "react-i18next"
 
 import { SubwayLabel } from "../subway-label"
 import {
@@ -34,13 +40,28 @@ export function DepartureEntry({
       <div className="flex items-center">
         <SubwayLabel label={departure.label} />
         <div className="flex w-full justify-between">
-          <span className="mx-1 mr-4">{departure.destination}</span>
+          <span className="mx-1 mr-12 flex">
+            {departure.destination}
+            {departure.messages.length !== 0 && (
+              <span className="ml-1">
+                <Tooltip>
+                  <TooltipTrigger>
+                    <MessageSquareWarning color="orange" size={18} />
+                  </TooltipTrigger>
+                  <TooltipContent className="text-xs">
+                    {departure.messages.map((message, index) => (
+                      <div key={index}>{message}</div>
+                    ))}
+                  </TooltipContent>
+                </Tooltip>
+              </span>
+            )}
+          </span>
           <Tooltip>
             <TooltipTrigger
               className={cn("text-right", "font-semibold", delayColor)}
             >
               {relativeTime(departure.realtimeDepartureTime)}
-              {departure.occupancy}
             </TooltipTrigger>
             <TooltipContent className="text-xs">
               {formatTime(departure.plannedDepartureTime)}+
@@ -52,6 +73,17 @@ export function DepartureEntry({
             </TooltipContent>
           </Tooltip>
         </div>
+        <Tooltip>
+          <TooltipTrigger>
+            <div className="relative -top-1 mx-2 min-w-5">
+              <IconByOccupancy occupancy={departure.occupancy} />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent className="text-xs">
+            <Trans>Occupancy.Occupancy</Trans>:&nbsp;
+            <Trans>Occupancy.{departure.occupancy}</Trans>
+          </TooltipContent>
+        </Tooltip>
       </div>
     </TooltipProvider>
   )

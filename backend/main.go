@@ -23,12 +23,13 @@ const redisStreamName = "mvg-events"
 var db driver.Conn
 
 type Departure struct {
-	PlannedDepartureTime  int    `json:"plannedDepartureTime"`
-	RealtimeDepartureTime int    `json:"realtimeDepartureTime"`
-	Label                 string `json:"label"`
-	DelayInMinutes        int    `json:"delayInMinutes"`
-	Destination           string `json:"destination"`
-	Occupancy             string `json:"occupancy"`
+	PlannedDepartureTime  int      `json:"plannedDepartureTime"`
+	RealtimeDepartureTime int      `json:"realtimeDepartureTime"`
+	Label                 string   `json:"label"`
+	DelayInMinutes        int      `json:"delayInMinutes"`
+	Destination           string   `json:"destination"`
+	Occupancy             string   `json:"occupancy"`
+	Messages              []string `json:"messages"`
 }
 
 func main() {

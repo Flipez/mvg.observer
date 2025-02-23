@@ -29,6 +29,7 @@ export type Departure = {
   delayInMinutes: number
   destination: string
   occupancy: string
+  messages: string[]
 }
 
 export type StationList = Record<string, Station>
