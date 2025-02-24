@@ -10,9 +10,14 @@ import LanguageSwitcher from "./language-switcher"
 function useNavItems() {
   const { t } = useTranslation()
   return [
-    { label: t("Links.Overview"), link: "/" },
-    { label: t("Links.PITA"), link: "/pita" },
-    { label: t("Links.Metrics"), link: "/grafana" },
+    { label: t("Links.Overview"), link: "/", blank: false },
+    { label: t("Links.PITA"), link: "/pita", blank: false },
+    { label: t("Links.Metrics"), link: "/grafana", blank: false },
+    {
+      label: "Status",
+      link: "https://status.auch.cool/status/mvg",
+      blank: true,
+    },
   ]
 }
 
@@ -40,7 +45,13 @@ export default function MobileNav() {
                 setOpen(false)
               }}
             >
-              <Link to={item.link}>{item.label}</Link>
+              <Link
+                to={item.link}
+                target={item.blank ? "_blank" : ""}
+                rel={item.blank ? "noopener noreferrer" : ""}
+              >
+                {item.label}
+              </Link>
             </Button>
           ))}
         </div>
@@ -57,6 +68,8 @@ function MainNav() {
         <NavLink
           key={index}
           to={item.link}
+          target={item.blank ? "_blank" : ""}
+          rel={item.blank ? "noopener noreferrer" : ""}
           className={({ isActive }) =>
             `mx-4 underline decoration-2 hover:decoration-solid ${isActive ? "decoration-solid" : "decoration-dotted"}`
           }
