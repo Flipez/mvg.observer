@@ -50,6 +50,7 @@ func main() {
 	http.HandleFunc("/line_delay", lineDelayHandler)
 	http.HandleFunc("/global_delay", globalDelayGHandler)
 	http.HandleFunc("/events", eb.sseHandler)
+	http.HandleFunc("/health", healthHandler)
 	log.Println("Server started on 127.0.0.1:8080")
 	log.Fatal(http.ListenAndServe("127.0.0.1:8080", nil))
 
@@ -90,6 +91,10 @@ func globalDelayGHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error encoding JSON: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+func healthHandler(w http.ResponseWriter, _ *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "OK")
 }
 
 func lineDelayHandler(w http.ResponseWriter, r *http.Request) {
