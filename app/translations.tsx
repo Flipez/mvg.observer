@@ -19,6 +19,7 @@ const resources = {
       Links: {
         Overview: "Overview",
         PITA: "Point In Time Analytics",
+        Metrics: "Metrics",
       },
       Welcome: {
         Card: {
@@ -110,6 +111,7 @@ const resources = {
       Links: {
         Overview: "Übersicht",
         PITA: "Point-in-Time Analyse",
+        Metrics: "Metriken",
       },
       Welcome: {
         Card: {

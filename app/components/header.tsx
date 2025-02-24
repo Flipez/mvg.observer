@@ -12,6 +12,7 @@ function useNavItems() {
   return [
     { label: t("Links.Overview"), link: "/" },
     { label: t("Links.PITA"), link: "/pita" },
+    { label: t("Links.Metrics"), link: "/grafana" },
   ]
 }
 
