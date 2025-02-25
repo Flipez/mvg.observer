@@ -63,7 +63,7 @@ export function DepartureEntry({
               </span>
             )}
             <span className="mx-1">
-              {departure.realtime && (
+              {!departure.realtime && (
                 <Tooltip>
                   <TooltipTrigger>
                     <WifiOff size={18} color="#F05252" />
