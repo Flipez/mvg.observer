@@ -5,7 +5,7 @@ import {
 } from "~/components/departures/helper"
 import { cn } from "~/lib/utils"
 import { Departure } from "~/types/departures"
-import { MessageSquareWarning } from "lucide-react"
+import { MessageSquareWarning, WifiOff } from "lucide-react"
 import { Trans } from "react-i18next"
 
 import { SubwayLabel } from "../subway-label"
@@ -37,7 +37,13 @@ export function DepartureEntry({
 
   return (
     <TooltipProvider delayDuration={100}>
-      <div className="flex items-center">
+      <div
+        className={cn(
+          "flex",
+          "items-center",
+          departure.realtime ? "" : "opacity-70"
+        )}
+      >
         <SubwayLabel label={departure.label} />
         <div className="flex w-full justify-between">
           <span className="mx-1 mr-12 flex">
@@ -56,6 +62,18 @@ export function DepartureEntry({
                 </Tooltip>
               </span>
             )}
+            <span className="mx-1">
+              {departure.realtime && (
+                <Tooltip>
+                  <TooltipTrigger>
+                    <WifiOff size={18} color="#F05252" />
+                  </TooltipTrigger>
+                  <TooltipContent className="text-xs">
+                    <Trans>Misc.NoRealtimeData</Trans>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </span>
           </span>
           <Tooltip>
             <TooltipTrigger

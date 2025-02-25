@@ -49,6 +49,7 @@ export function useDepartures() {
     )
 
     const avgDelay = calculateAverageDelay(departuresWithId)
+    const lastUpdated = new Date()
 
     setStationList((prev) => ({
       ...prev,
@@ -57,6 +58,7 @@ export function useDepartures() {
         avgDelay,
         friendlyName,
         coordinates,
+        lastUpdated: lastUpdated,
       },
     }))
   }, [])

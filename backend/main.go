@@ -30,6 +30,7 @@ type Departure struct {
 	Destination           string   `json:"destination"`
 	Occupancy             string   `json:"occupancy"`
 	Messages              []string `json:"messages"`
+	Realtime              bool     `json:"realtime"`
 }
 
 func main() {
