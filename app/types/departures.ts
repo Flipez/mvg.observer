@@ -14,6 +14,7 @@ export type Station = {
   avgDelay: number
   friendlyName: string
   coordinates: Coordinates
+  lastUpdated: Date
 }
 
 export type Coordinates = {
@@ -30,6 +31,7 @@ export type Departure = {
   destination: string
   occupancy: string
   messages: string[]
+  realtime: boolean
 }
 
 export type StationList = Record<string, Station>

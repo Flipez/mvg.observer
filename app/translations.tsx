@@ -68,6 +68,8 @@ const resources = {
         Minutes: "Minutes",
         Departed: "departed",
         SecondsShort: "Sec",
+        LastRefresh: "Last refresh at",
+        NoRealtimeData: "No realtime data available",
         DeparturePopoverHelp:
           "Shows the next 8  departures and their departure time. The original departuretime plus delay will be shown when hovering the departure time.",
       },
@@ -160,6 +162,8 @@ const resources = {
         Minutes: "Minuten",
         Departed: "abgefahren",
         SecondsShort: "Sek",
+        LastRefresh: "Aktualisiert um",
+        NoRealtimeData: "Keine Echtzeitinformationen verfügbar",
         DeparturePopoverHelp:
           "Zeigt die nächsten 8 Abfahrten und die dazugehörige Abfahrtszeit an. Die ursprüngliche Abfahrtszeit plus Verspätung wird beim hovern über die Zeit angezeigt.",
       },
