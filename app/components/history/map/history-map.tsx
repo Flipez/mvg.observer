@@ -16,7 +16,8 @@ function getBucketForStation(buckets: Bucket[], selectedBucketDate: Date) {
 function buildStationList(
   stations: StationBucketList[],
   selectedBucketDate: Date,
-  friendlyNames: Record<string, string>
+  friendlyNames: Record<string, string>,
+  settings: ChartSettings
 ): StationList {
   const stationList: StationList = {}
   stations.forEach((stationData: StationBucketList) => {
@@ -33,6 +34,7 @@ function buildStationList(
         stationData.name ||
         "Unknown Station",
       coordinates: stationData.coordinates,
+      lastUpdated: settings.chartDate,
     }
   })
 
@@ -60,7 +62,12 @@ export const BucketSelector = ({
     setSelectedBucketDate(bucketTime)
   }
 
-  const stationList = buildStationList(stations, selectedBucketDate, All)
+  const stationList = buildStationList(
+    stations,
+    selectedBucketDate,
+    All,
+    settings
+  )
 
   return (
     <div className="space-y-2">
