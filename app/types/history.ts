@@ -21,7 +21,7 @@ export interface ChartSettings {
   realtime: boolean
   line: SubwayLine
   threshold: number
-  threshold_label: string
   showPercentage: boolean
   selectedTab: string
+  selectedBucketDate: Date
 }

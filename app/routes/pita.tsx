@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useSearchParams } from "@remix-run/react"
 import { StationDelayHourChart } from "~/components/charts/station-delay-hour"
 import { ControlBar } from "~/components/history/line_day_delay/control-bar"
 import {
@@ -9,6 +10,7 @@ import { NoDeparturesCard } from "~/components/history/line_day_delay/no-departu
 import { BucketSelector } from "~/components/history/map/history-map"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { StationsByLine } from "~/data/subway-lines"
+import { SubwayLine } from "~/types/departures"
 import { ChartSettings, StationBucketList } from "~/types/history"
 import { format } from "date-fns"
 import { ArrowDownFromLine, ArrowUpFromLine } from "lucide-react"
@@ -81,16 +83,42 @@ export default function Pita() {
   const [southChartData, setSouthChartData] = useState<StationBucketList[]>([])
   const [northChartData, setNorthChartData] = useState<StationBucketList[]>([])
   const [globalData, setGlobalData] = useState<StationBucketList[]>([])
-  const [settings, setSettings] = useState<ChartSettings>({
-    chartDate: new Date(2024, 1, 17), // parameters are (year, monthINDEX, day)
-    interval: 20,
-    realtime: true,
-    line: "U6",
-    threshold: 0,
-    threshold_label: "> 0 Minutes",
-    showPercentage: false,
-    selectedTab: "table",
-  })
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const getInitialSettings = (): ChartSettings => {
+    return {
+      chartDate: searchParams.get("d")
+        ? new Date(searchParams.get("d")!)
+        : new Date(2024, 1, 17),
+      interval: searchParams.get("i") ? Number(searchParams.get("i")) : 20,
+      realtime: searchParams.get("r") ? searchParams.get("r") === "1" : true,
+      line: (searchParams.get("l") as SubwayLine | null) ?? "U6",
+      threshold: searchParams.get("t") ? Number(searchParams.get("t")) : 0,
+      showPercentage: searchParams.get("p")
+        ? searchParams.get("p") === "1"
+        : false,
+      selectedTab: searchParams.get("s") || "table",
+      selectedBucketDate: searchParams.get("b")
+        ? new Date(`${searchParams.get("d")}T${searchParams.get("b")}`)
+        : new Date(2024, 1, 17),
+    }
+  }
+
+  const [settings, setSettings] = useState<ChartSettings>(getInitialSettings())
+
+  useEffect(() => {
+    setSearchParams({
+      d: format(settings.chartDate, "yyyy-MM-dd"),
+      i: settings.interval.toString(),
+      r: settings.realtime ? "1" : "0",
+      l: settings.line,
+      t: settings.threshold.toString(),
+      p: settings.showPercentage ? "1" : "0",
+      s: settings.selectedTab,
+      b: format(settings.selectedBucketDate, "HH:mm"),
+    })
+  }, [settings, setSearchParams])
+
   useTranslation()
 
   const chartDateFormatted = format(settings.chartDate, "yyyy-MM-dd")
@@ -148,27 +176,27 @@ export default function Pita() {
   return (
     <div className="container mx-auto">
       <ControlBar settings={settings} setSettings={setSettings} />
-      {validStationIds.length > 0 ? (
-        <div className="mt-5">
-          <Tabs
-            defaultValue="table"
-            value={settings.selectedTab}
-            onValueChange={(value) =>
-              setSettings((prev: ChartSettings) => ({
-                ...prev,
-                selectedTab: value,
-              }))
-            }
-          >
-            <TabsList className="mx-5 grid grid-cols-2">
-              <TabsTrigger value="table">
-                <Trans>Tabs.Table</Trans>
-              </TabsTrigger>
-              <TabsTrigger value="map">
-                <Trans>Tabs.Map</Trans>
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="table">
+      <div className="mt-5">
+        <Tabs
+          defaultValue="table"
+          value={settings.selectedTab}
+          onValueChange={(value) =>
+            setSettings((prev: ChartSettings) => ({
+              ...prev,
+              selectedTab: value,
+            }))
+          }
+        >
+          <TabsList className="mx-5 grid grid-cols-2">
+            <TabsTrigger value="table">
+              <Trans>Tabs.Table</Trans>
+            </TabsTrigger>
+            <TabsTrigger value="map">
+              <Trans>Tabs.Map</Trans>
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="table">
+            {validStationIds.length > 0 ? (
               <table className="w-full table-auto border-collapse">
                 <thead>
                   <tr>
@@ -204,15 +232,19 @@ export default function Pita() {
                   )}
                 </tbody>
               </table>
-            </TabsContent>
-            <TabsContent value="map">
-              <BucketSelector stations={globalData} settings={settings} />
-            </TabsContent>
-          </Tabs>
-        </div>
-      ) : (
-        <NoDeparturesCard />
-      )}
+            ) : (
+              <NoDeparturesCard />
+            )}
+          </TabsContent>
+          <TabsContent value="map">
+            <BucketSelector
+              stations={globalData}
+              settings={settings}
+              setSettings={setSettings}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   )
 }
