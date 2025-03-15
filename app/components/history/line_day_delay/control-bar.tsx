@@ -230,6 +230,11 @@ export function ThresholdDropdown({
     { value: 15, label: "15 Minutes" },
   ]
 
+  const getThresholdLabel = (threshold: number): string => {
+    const option = options.find((opt) => opt.value === threshold)
+    return option ? option.label : `${threshold} Minutes`
+  }
+
   return (
     <div>
       <DropdownMenu>
@@ -244,7 +249,7 @@ export function ThresholdDropdown({
               !settings.showPercentage || settings.selectedTab === "map"
             }
           >
-            {settings.threshold_label}
+            {getThresholdLabel(settings.threshold)}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -256,7 +261,6 @@ export function ThresholdDropdown({
                 setSettings((prev: ChartSettings) => ({
                   ...prev,
                   threshold: option.value,
-                  threshold_label: option.label,
                 }))
               }
             >
