@@ -116,7 +116,7 @@ func globalDelayGHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := writeGzippedJSON(w, results); err != nil {
-		http.Error(w, "Error encoding JSON: "+err.Error(), http.StatusInternalServerError)
+		log.Printf("Error encoding JSON: %v", err)
 		return
 	}
 }
@@ -156,7 +156,7 @@ func stationStatsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := writeGzippedJSON(w, results); err != nil {
-		http.Error(w, "Error encoding JSON: "+err.Error(), http.StatusInternalServerError)
+		log.Printf("Error encoding JSON: %v", err)
 		return
 	}
 }
@@ -187,7 +187,7 @@ func lineDelayHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := writeGzippedJSON(w, results); err != nil {
-		http.Error(w, "Error encoding JSON: "+err.Error(), http.StatusInternalServerError)
+		log.Printf("Error encoding JSON: %v", err)
 		return
 	}
 }

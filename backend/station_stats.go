@@ -96,7 +96,10 @@ func (s *StationStatsService) getBasicStats(ctx context.Context, stationID, star
 		SELECT 
 			avg(delayInMinutes) as avgDelay,
 			count() as totalDepartures,
-			(100.0 * countIf(delayInMinutes > 2)) / count() as delayPercentage
+			CASE 
+				WHEN count() = 0 THEN 0.0
+				ELSE (100.0 * countIf(delayInMinutes > 2)) / count()
+			END as delayPercentage
 		FROM mvg.responses_dedup 
 		WHERE station = ? 
 		AND plannedDepartureTime >= ? 
@@ -111,6 +114,11 @@ func (s *StationStatsService) getBasicStats(ctx context.Context, stationID, star
 		return basicStatsResult{}, fmt.Errorf("basic stats query failed: %w", err)
 	}
 	
+	// Handle NaN values that might still occur from avg() with no data
+	if result.TotalDepartures == 0 {
+		result.AvgDelay = 0.0
+		result.DelayPercentage = 0.0
+	}
 	
 	return result, nil
 }
