@@ -5,18 +5,18 @@ FROM node:18-alpine AS frontend-builder
 WORKDIR /app
 
 # Copy package files
-COPY package.json pnpm-lock.yaml ./
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
 
 # Install dependencies
 RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 # Copy frontend source
-COPY app ./app
-COPY public ./public
-COPY vite.config.ts ./
-COPY tsconfig.json ./
-COPY tailwind.config.ts ./
-COPY postcss.config.js ./
+COPY frontend/app ./app
+COPY frontend/public ./public
+COPY frontend/vite.config.ts ./
+COPY frontend/tsconfig.json ./
+COPY frontend/tailwind.config.ts ./
+COPY frontend/postcss.config.js ./
 
 # Build the frontend
 RUN pnpm build
