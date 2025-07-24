@@ -20,7 +20,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ["!**/.server", "!**/.client", "app/components/ui/"],
+    ignores: ["!**/.server", "!**/.client", "app/components/ui/", "build/", "backend/build/"],
   },
   ...compat.extends(
     "eslint:recommended",
