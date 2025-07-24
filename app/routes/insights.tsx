@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import {
   Card,
   CardContent,
@@ -17,8 +17,6 @@ import { DatePicker } from "~/components/ui/date-picker"
 import { AlertCircle, CalendarDays, Clock, TrendingUp } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import {
-  Area,
-  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
@@ -101,7 +99,7 @@ export default function Insights() {
   const [startDate, setStartDate] = useState<Date>(new Date(now.getFullYear() - 1, now.getMonth(), now.getDate()))
   const [endDate, setEndDate] = useState<Date>(now)
 
-  const fetchStationStats = async (stationId: string) => {
+  const fetchStationStats = useCallback(async (stationId: string) => {
     setLoading(true)
     try {
       const startDateStr = format(startDate, "yyyy-MM-dd")
@@ -120,13 +118,13 @@ export default function Insights() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [startDate, endDate])
 
   useEffect(() => {
     if (selectedStation) {
       fetchStationStats(selectedStation)
     }
-  }, [selectedStation, startDate, endDate])
+  }, [selectedStation, fetchStationStats])
 
   const delayColors = ["#22c55e", "#facc15", "#f97316", "#ef4444", "#991b1b"]
   
@@ -142,7 +140,7 @@ export default function Insights() {
     "U8": "#ED6720", // U8 uses U3 color as primary
   }
 
-  const handleLegendClick = (data: any) => {
+  const handleLegendClick = (data: { value: string }) => {
     const line = data.value
     setHiddenLines(prev => {
       const newHidden = new Set(prev)
@@ -210,7 +208,7 @@ export default function Insights() {
 
       {loading && isInitialLoad && (
         <div className="flex h-64 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
+          <div className="size-8 animate-spin rounded-full border-b-2 border-primary"></div>
         </div>
       )}
 
@@ -219,7 +217,7 @@ export default function Insights() {
           {loading && !isInitialLoad && (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/80 backdrop-blur-sm">
               <div className="flex items-center gap-2 rounded-lg bg-card p-4 shadow-lg">
-                <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-primary"></div>
+                <div className="size-4 animate-spin rounded-full border-b-2 border-primary"></div>
                 <span className="text-sm text-muted-foreground">Loading...</span>
               </div>
             </div>
@@ -230,7 +228,7 @@ export default function Insights() {
                 <CardTitle className="text-sm font-medium">
                   {t("Insights.Cards.AverageDelay")}
                 </CardTitle>
-                <Clock className="h-4 w-4 text-muted-foreground" />
+                <Clock className="size-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
@@ -244,7 +242,7 @@ export default function Insights() {
                 <CardTitle className="text-sm font-medium">
                   {t("Insights.Cards.TotalDepartures")}
                 </CardTitle>
-                <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                <CalendarDays className="size-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
@@ -258,7 +256,7 @@ export default function Insights() {
                 <CardTitle className="text-sm font-medium">
                   {t("Insights.Cards.DelayRate")}
                 </CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                <TrendingUp className="size-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
@@ -270,7 +268,7 @@ export default function Insights() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{t("Insights.Cards.Station")}</CardTitle>
-                <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                <AlertCircle className="size-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-lg font-medium">
@@ -278,7 +276,7 @@ export default function Insights() {
                     const stationName = friendlyNames[selectedStation as keyof typeof friendlyNames]
                     const displayData = getStationDisplayData(selectedStation, stationName)
                     return (
-                      <div className="flex items-center gap-2 flex-wrap">
+                      <div className="flex flex-wrap items-center gap-2">
                         {displayData.lines.map((line) => (
                           <SubwayLabel key={line} label={line} />
                         ))}
@@ -313,7 +311,7 @@ export default function Insights() {
                         }}
                       />
                       <Tooltip 
-                        formatter={(value: any, name: string) => [
+                        formatter={(value: number, name: string) => [
                           `${Number(value).toFixed(2)} min`, 
                           name
                         ]}
@@ -364,7 +362,7 @@ export default function Insights() {
                         }}
                       />
                       <Tooltip 
-                        formatter={(value: any, name: string) => [
+                        formatter={(value: number, name: string) => [
                           `${Number(value).toFixed(2)} min`, 
                           name
                         ]}
@@ -409,7 +407,7 @@ export default function Insights() {
                       <XAxis dataKey="month" />
                       <YAxis />
                       <Tooltip 
-                        formatter={(value: any, name: string) => [
+                        formatter={(value: number, name: string) => [
                           `${Number(value).toLocaleString()} departures`, 
                           name
                         ]}
@@ -465,7 +463,7 @@ export default function Insights() {
                         ))}
                       </Pie>
                       <Tooltip 
-                        formatter={(value: any, name: string) => [
+                        formatter={(value: number, name: string) => [
                           `${Number(value).toLocaleString()} departures`, 
                           name
                         ]}
@@ -488,7 +486,7 @@ export default function Insights() {
         <Card>
           <CardContent className="flex h-64 items-center justify-center">
             <div className="space-y-2 text-center">
-              <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground" />
+              <AlertCircle className="mx-auto size-12 text-muted-foreground" />
               <p className="text-lg font-medium">
                 {t("Insights.SelectStation.Title")}
               </p>

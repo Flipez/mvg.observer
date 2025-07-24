@@ -4,7 +4,6 @@ export function getApiBaseUrl(): string {
   // In development (when running vite dev), use the proxy
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname
-    const port = window.location.port
     
     // Check if we're running on localhost with a dev server (typically port 5173 or 3000)
     if (hostname === "localhost" || hostname === "127.0.0.1") {
