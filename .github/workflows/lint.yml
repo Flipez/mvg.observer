@@ -9,6 +9,10 @@ jobs:
       with:
         version: 10
     - name: Install modules
-      run: pnpm install
+      run: |
+        cd frontend
+        pnpm install
     - name: Run ESLint
-      run: pnpm run lint
+      run: |
+        cd frontend
+        pnpm run lint
