@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import { SubwayLabel } from "~/components/subway-label"
 import {
   Card,
   CardContent,
@@ -6,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card"
+import { DatePicker } from "~/components/ui/date-picker"
 import {
   Select,
   SelectContent,
@@ -13,7 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select"
-import { DatePicker } from "~/components/ui/date-picker"
+import { getStationStatsUrl } from "~/lib/api"
+import { getStationDisplayData } from "~/utils/station-lines"
+import { format } from "date-fns"
 import { AlertCircle, CalendarDays, Clock, TrendingUp } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import {
@@ -31,10 +35,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts"
-import { getStationStatsUrl } from "~/lib/api"
-import { format } from "date-fns"
-import { getStationDisplayData } from "~/utils/station-lines"
-import { SubwayLabel } from "~/components/subway-label"
 
 const friendlyNames = {
   "de:09162:1": "Karlsplatz (Stachus)",
@@ -93,32 +93,43 @@ export default function Insights() {
   const [loading, setLoading] = useState(false)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
   const [hiddenLines, setHiddenLines] = useState<Set<string>>(new Set())
-  
+
   // Date range state - default to last year
   const now = new Date()
-  const [startDate, setStartDate] = useState<Date>(new Date(now.getFullYear() - 1, now.getMonth(), now.getDate()))
+  const [startDate, setStartDate] = useState<Date>(
+    new Date(now.getFullYear() - 1, now.getMonth(), now.getDate())
+  )
   const [endDate, setEndDate] = useState<Date>(now)
 
-  const fetchStationStats = useCallback(async (stationId: string) => {
-    setLoading(true)
-    try {
-      const startDateStr = format(startDate, "yyyy-MM-dd")
-      const endDateStr = format(endDate, "yyyy-MM-dd")
-      const response = await fetch(getStationStatsUrl(stationId, startDateStr, endDateStr))
-      if (response.ok) {
-        const data = await response.json()
-        console.log("Station stats response:", data)
-        setStationStats(data)
-        setIsInitialLoad(false)
-      } else {
-        console.error("Failed to fetch station stats:", response.status, response.statusText)
+  const fetchStationStats = useCallback(
+    async (stationId: string) => {
+      setLoading(true)
+      try {
+        const startDateStr = format(startDate, "yyyy-MM-dd")
+        const endDateStr = format(endDate, "yyyy-MM-dd")
+        const response = await fetch(
+          getStationStatsUrl(stationId, startDateStr, endDateStr)
+        )
+        if (response.ok) {
+          const data = await response.json()
+          console.log("Station stats response:", data)
+          setStationStats(data)
+          setIsInitialLoad(false)
+        } else {
+          console.error(
+            "Failed to fetch station stats:",
+            response.status,
+            response.statusText
+          )
+        }
+      } catch (error) {
+        console.error("Error fetching station stats:", error)
+      } finally {
+        setLoading(false)
       }
-    } catch (error) {
-      console.error("Error fetching station stats:", error)
-    } finally {
-      setLoading(false)
-    }
-  }, [startDate, endDate])
+    },
+    [startDate, endDate]
+  )
 
   useEffect(() => {
     if (selectedStation) {
@@ -127,22 +138,22 @@ export default function Insights() {
   }, [selectedStation, fetchStationStats])
 
   const delayColors = ["#22c55e", "#facc15", "#f97316", "#ef4444", "#991b1b"]
-  
+
   // Subway line colors matching the existing system
   const subwayLineColors: Record<string, string> = {
-    "U1": "#3C7333",
-    "U2": "#C3022D", 
-    "U3": "#ED6720",
-    "U4": "#00AB85",
-    "U5": "#BD7B00",
-    "U6": "#0065B0",
-    "U7": "#C3022D", // U7 uses U2 color as primary
-    "U8": "#ED6720", // U8 uses U3 color as primary
+    U1: "#3C7333",
+    U2: "#C3022D",
+    U3: "#ED6720",
+    U4: "#00AB85",
+    U5: "#BD7B00",
+    U6: "#0065B0",
+    U7: "#C3022D", // U7 uses U2 color as primary
+    U8: "#ED6720", // U8 uses U3 color as primary
   }
 
   const handleLegendClick = (data: { value: string }) => {
     const line = data.value
-    setHiddenLines(prev => {
+    setHiddenLines((prev) => {
       const newHidden = new Set(prev)
       if (newHidden.has(line)) {
         newHidden.delete(line)
@@ -154,24 +165,26 @@ export default function Insights() {
   }
 
   // Create legend payload that includes all lines regardless of visibility
-  const legendPayload = Object.entries(subwayLineColors).map(([line, color]) => ({
-    value: line,
-    type: 'line',
-    color: hiddenLines.has(line) ? '#cccccc' : color,
-    inactive: hiddenLines.has(line)
-  }))
+  const legendPayload = Object.entries(subwayLineColors).map(
+    ([line, color]) => ({
+      value: line,
+      type: "line",
+      color: hiddenLines.has(line) ? "#cccccc" : color,
+      inactive: hiddenLines.has(line),
+    })
+  )
 
   return (
     <div className="container mx-auto space-y-6 p-6">
       <div className="flex flex-col space-y-4">
         <h1 className="text-3xl font-bold">{t("Insights.Title")}</h1>
-        <p className="text-muted-foreground">
-          {t("Insights.Description")}
-        </p>
+        <p className="text-muted-foreground">{t("Insights.Description")}</p>
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
           <div className="flex flex-col space-y-2">
-            <label className="text-sm font-medium">{t("Insights.Station.Label")}</label>
+            <label className="text-sm font-medium">
+              {t("Insights.Station.Label")}
+            </label>
             <Select value={selectedStation} onValueChange={setSelectedStation}>
               <SelectTrigger className="w-80">
                 <SelectValue placeholder={t("Insights.Station.Placeholder")} />
@@ -185,18 +198,22 @@ export default function Insights() {
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="flex flex-col space-y-2">
-            <label className="text-sm font-medium">{t("Insights.DateRange.StartDate")}</label>
+            <label className="text-sm font-medium">
+              {t("Insights.DateRange.StartDate")}
+            </label>
             <DatePicker
               date={startDate}
               onSelect={(date) => date && setStartDate(date)}
               placeholder={t("Insights.DateRange.StartDatePlaceholder")}
             />
           </div>
-          
+
           <div className="flex flex-col space-y-2">
-            <label className="text-sm font-medium">{t("Insights.DateRange.EndDate")}</label>
+            <label className="text-sm font-medium">
+              {t("Insights.DateRange.EndDate")}
+            </label>
             <DatePicker
               date={endDate}
               onSelect={(date) => date && setEndDate(date)}
@@ -218,7 +235,9 @@ export default function Insights() {
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/80 backdrop-blur-sm">
               <div className="flex items-center gap-2 rounded-lg bg-card p-4 shadow-lg">
                 <div className="size-4 animate-spin rounded-full border-b-2 border-primary"></div>
-                <span className="text-sm text-muted-foreground">Loading...</span>
+                <span className="text-sm text-muted-foreground">
+                  Loading...
+                </span>
               </div>
             </div>
           )}
@@ -267,14 +286,22 @@ export default function Insights() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{t("Insights.Cards.Station")}</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  {t("Insights.Cards.Station")}
+                </CardTitle>
                 <AlertCircle className="size-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-lg font-medium">
                   {(() => {
-                    const stationName = friendlyNames[selectedStation as keyof typeof friendlyNames]
-                    const displayData = getStationDisplayData(selectedStation, stationName)
+                    const stationName =
+                      friendlyNames[
+                        selectedStation as keyof typeof friendlyNames
+                      ]
+                    const displayData = getStationDisplayData(
+                      selectedStation,
+                      stationName
+                    )
                     return (
                       <div className="flex flex-wrap items-center gap-2">
                         {displayData.lines.map((line) => (
@@ -292,13 +319,16 @@ export default function Insights() {
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>{t("Insights.Charts.MonthlyDelayTrends.Title")}</CardTitle>
+                <CardTitle>
+                  {t("Insights.Charts.MonthlyDelayTrends.Title")}
+                </CardTitle>
                 <CardDescription>
                   {t("Insights.Charts.MonthlyDelayTrends.Description")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {stationStats.monthlyStats && stationStats.monthlyStats.length > 0 ? (
+                {stationStats.monthlyStats &&
+                stationStats.monthlyStats.length > 0 ? (
                   <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={stationStats.monthlyStats}>
                       <CartesianGrid strokeDasharray="3 3" />
@@ -310,13 +340,16 @@ export default function Insights() {
                           position: "insideLeft",
                         }}
                       />
-                      <Tooltip 
+                      <Tooltip
                         formatter={(value: number, name: string) => [
-                          `${Number(value).toFixed(2)} min`, 
-                          name
+                          `${Number(value).toFixed(2)} min`,
+                          name,
                         ]}
                       />
-                      <Legend onClick={handleLegendClick} payload={legendPayload} />
+                      <Legend
+                        onClick={handleLegendClick}
+                        payload={legendPayload}
+                      />
                       {/* Individual subway line trends */}
                       {Object.entries(subwayLineColors).map(([line, color]) => (
                         <Line
@@ -343,13 +376,16 @@ export default function Insights() {
 
             <Card>
               <CardHeader>
-                <CardTitle>{t("Insights.Charts.HourlyDelayPatterns.Title")}</CardTitle>
+                <CardTitle>
+                  {t("Insights.Charts.HourlyDelayPatterns.Title")}
+                </CardTitle>
                 <CardDescription>
                   {t("Insights.Charts.HourlyDelayPatterns.Description")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {stationStats.hourlyStats && stationStats.hourlyStats.length > 0 ? (
+                {stationStats.hourlyStats &&
+                stationStats.hourlyStats.length > 0 ? (
                   <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={stationStats.hourlyStats}>
                       <CartesianGrid strokeDasharray="3 3" />
@@ -361,13 +397,16 @@ export default function Insights() {
                           position: "insideLeft",
                         }}
                       />
-                      <Tooltip 
+                      <Tooltip
                         formatter={(value: number, name: string) => [
-                          `${Number(value).toFixed(2)} min`, 
-                          name
+                          `${Number(value).toFixed(2)} min`,
+                          name,
                         ]}
                       />
-                      <Legend onClick={handleLegendClick} payload={legendPayload} />
+                      <Legend
+                        onClick={handleLegendClick}
+                        payload={legendPayload}
+                      />
                       {/* Individual lines for each subway line */}
                       {Object.entries(subwayLineColors).map(([line, color]) => (
                         <Line
@@ -394,25 +433,31 @@ export default function Insights() {
 
             <Card>
               <CardHeader>
-                <CardTitle>{t("Insights.Charts.DepartureVolume.Title")}</CardTitle>
+                <CardTitle>
+                  {t("Insights.Charts.DepartureVolume.Title")}
+                </CardTitle>
                 <CardDescription>
                   {t("Insights.Charts.DepartureVolume.Description")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {stationStats.monthlyStats && stationStats.monthlyStats.length > 0 ? (
+                {stationStats.monthlyStats &&
+                stationStats.monthlyStats.length > 0 ? (
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={stationStats.monthlyStats}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
                       <YAxis />
-                      <Tooltip 
+                      <Tooltip
                         formatter={(value: number, name: string) => [
-                          `${Number(value).toLocaleString()} departures`, 
-                          name
+                          `${Number(value).toLocaleString()} departures`,
+                          name,
                         ]}
                       />
-                      <Legend onClick={handleLegendClick} payload={legendPayload} />
+                      <Legend
+                        onClick={handleLegendClick}
+                        payload={legendPayload}
+                      />
                       {/* Stacked bars for each subway line */}
                       {Object.entries(subwayLineColors).map(([line, color]) => (
                         <Bar
@@ -436,13 +481,16 @@ export default function Insights() {
 
             <Card>
               <CardHeader>
-                <CardTitle>{t("Insights.Charts.DelayDistribution.Title")}</CardTitle>
+                <CardTitle>
+                  {t("Insights.Charts.DelayDistribution.Title")}
+                </CardTitle>
                 <CardDescription>
                   {t("Insights.Charts.DelayDistribution.Description")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {stationStats.delayDistribution && stationStats.delayDistribution.length > 0 ? (
+                {stationStats.delayDistribution &&
+                stationStats.delayDistribution.length > 0 ? (
                   <ResponsiveContainer width="100%" height={300}>
                     <PieChart>
                       <Pie
@@ -462,10 +510,10 @@ export default function Insights() {
                           />
                         ))}
                       </Pie>
-                      <Tooltip 
+                      <Tooltip
                         formatter={(value: number, name: string) => [
-                          `${Number(value).toLocaleString()} departures`, 
-                          name
+                          `${Number(value).toLocaleString()} departures`,
+                          name,
                         ]}
                       />
                       <Legend />

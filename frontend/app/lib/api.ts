@@ -4,18 +4,21 @@ export function getApiBaseUrl(): string {
   // In development (when running vite dev), use the proxy
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname
-    
+
     // Check if we're running on localhost with a dev server (typically port 5173 or 3000)
     if (hostname === "localhost" || hostname === "127.0.0.1") {
       return "/api"
     }
   }
-  
+
   // Server-side or production environment
-  if (typeof process !== "undefined" && process.env.NODE_ENV === "development") {
+  if (
+    typeof process !== "undefined" &&
+    process.env.NODE_ENV === "development"
+  ) {
     return "http://127.0.0.1:8080/api"
   }
-  
+
   // In production, the Go server serves both static files and API at /api
   return "/api"
 }
@@ -24,18 +27,22 @@ export function getSSEUrl(): string {
   return `${getApiBaseUrl()}/events`
 }
 
-export function getStationStatsUrl(stationId: string, startDate?: string, endDate?: string): string {
+export function getStationStatsUrl(
+  stationId: string,
+  startDate?: string,
+  endDate?: string
+): string {
   const params = new URLSearchParams({
     station: stationId,
   })
-  
+
   if (startDate) {
-    params.set('startDate', startDate)
+    params.set("startDate", startDate)
   }
   if (endDate) {
-    params.set('endDate', endDate)
+    params.set("endDate", endDate)
   }
-  
+
   return `${getApiBaseUrl()}/station_stats?${params.toString()}`
 }
 

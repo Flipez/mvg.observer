@@ -19,6 +19,8 @@ MVG Observer is a real-time departure monitoring application for Munich's subway
 - **Type checking**: `npm run typecheck`
 - **Code formatting**: `npm run pretty`
 
+**IMPORTANT**: Always run `pnpm lint` and `pnpm pretty` after making code changes to ensure code quality and consistent formatting.
+
 ### Backend (Go)
 - **Run Go server**: `go run ./backend/`
 - **Build Go binary**: `go build -o mvg-observer ./backend/`

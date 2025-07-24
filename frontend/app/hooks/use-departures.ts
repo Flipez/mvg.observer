@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
+import { getSSEUrl } from "~/lib/api"
 import type { Departure, StationList } from "~/types/departures"
 import { EventSource } from "eventsource"
-import { getSSEUrl } from "~/lib/api"
 
 function calculateAverageDelay(departures: Departure[]): number {
   if (!departures.length) return 0

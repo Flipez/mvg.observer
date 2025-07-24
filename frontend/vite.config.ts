@@ -30,12 +30,16 @@ export default defineConfig({
       output: {
         // Prevent file names from starting with underscore (Go embed ignores them)
         entryFileNames: (chunkInfo) => {
-          const name = chunkInfo.name.startsWith('_') ? chunkInfo.name.slice(1) : chunkInfo.name;
-          return `assets/${name}-[hash].js`;
+          const name = chunkInfo.name.startsWith("_")
+            ? chunkInfo.name.slice(1)
+            : chunkInfo.name
+          return `assets/${name}-[hash].js`
         },
         chunkFileNames: (chunkInfo) => {
-          const name = chunkInfo.name.startsWith('_') ? chunkInfo.name.slice(1) : chunkInfo.name;
-          return `assets/${name}-[hash].js`;
+          const name = chunkInfo.name.startsWith("_")
+            ? chunkInfo.name.slice(1)
+            : chunkInfo.name
+          return `assets/${name}-[hash].js`
         },
       },
     },

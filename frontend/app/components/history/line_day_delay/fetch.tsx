@@ -1,6 +1,6 @@
+import { getGlobalDelayUrl, getLineDelayUrl } from "~/lib/api"
 import { ChartSettings } from "~/types/history"
 import { format } from "date-fns"
-import { getLineDelayUrl, getGlobalDelayUrl } from "~/lib/api"
 
 export async function fetchLineDelay(
   chartDateFormatted: string,
@@ -15,7 +15,7 @@ export async function fetchLineDelay(
     label: settings.line,
     threshold: settings.threshold.toString(),
   })
-  
+
   const response = await fetch(url)
   const data = await response.json()
   return data

@@ -81,7 +81,9 @@ function MainNav() {
         >
           {({ isActive }) => (
             <>
-              <span className={`underline decoration-2 hover:decoration-solid ${isActive ? "decoration-solid" : "decoration-dotted"}`}>
+              <span
+                className={`underline decoration-2 hover:decoration-solid ${isActive ? "decoration-solid" : "decoration-dotted"}`}
+              >
                 {item.label}
               </span>
               {item.link === "/insights" && (
