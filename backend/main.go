@@ -98,15 +98,15 @@ func writeGzippedJSON(w http.ResponseWriter, v interface{}) error {
 }
 
 func globalDelayGHandler(w http.ResponseWriter, r *http.Request) {
-	if clickhouseService == nil {
-		http.Error(w, "Database service unavailable", http.StatusServiceUnavailable)
-		return
-	}
-	
 	keys := []string{"date", "interval", "realtime", "threshold"}
 	params, err := extractRequiredParams(r, keys)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if clickhouseService == nil {
+		http.Error(w, "Database service unavailable", http.StatusServiceUnavailable)
 		return
 	}
 
@@ -162,15 +162,15 @@ func stationStatsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func lineDelayHandler(w http.ResponseWriter, r *http.Request) {
-	if clickhouseService == nil {
-		http.Error(w, "Database service unavailable", http.StatusServiceUnavailable)
-		return
-	}
-	
 	keys := []string{"date", "south", "interval", "realtime", "label", "threshold"}
 	params, err := extractRequiredParams(r, keys)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if clickhouseService == nil {
+		http.Error(w, "Database service unavailable", http.StatusServiceUnavailable)
 		return
 	}
 
