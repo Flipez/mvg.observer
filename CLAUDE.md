@@ -46,7 +46,7 @@ MVG Observer is a real-time departure monitoring application for Munich's subway
 - **Frontend**: Remix, React, TypeScript, Tailwind CSS, Radix UI, MapLibre GL
 - **Backend**: Go, ClickHouse, Redis
 - **Real-time**: Server-Sent Events (SSE) with Redis streams
-- **Deployment**: Designed for Vercel (frontend) with separate Go backend
+- **Deployment**: Frontend and backend can be deployed separately
 
 ## Data Types
 - Departures include delay information, occupancy, realtime status

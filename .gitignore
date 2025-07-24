@@ -1,8 +1,10 @@
 node_modules
 
 /.cache
-/build
+
 .env
 
+build/
+frontend/build
 backend/build
 backend/mvg-observer
