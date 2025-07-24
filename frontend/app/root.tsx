@@ -6,11 +6,9 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react"
-import { SpeedInsights } from "@vercel/speed-insights/remix"
 
 import "./tailwind.css"
 
-import { Analytics } from "@vercel/analytics/remix"
 import { useTranslation } from "react-i18next"
 
 import { Header } from "./components/header"
@@ -59,8 +57,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </footer>
           </div>
         </div>
-        <Analytics />
-        <SpeedInsights />
         <ScrollRestoration />
         <Scripts />
       </body>
