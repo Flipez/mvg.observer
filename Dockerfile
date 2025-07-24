@@ -1,6 +1,6 @@
 # Multi-stage Dockerfile for MVG Observer
 # Stage 1: Build the frontend
-FROM node:18-alpine AS frontend-builder
+FROM node:24-alpine AS frontend-builder
 
 WORKDIR /app
 
@@ -22,7 +22,7 @@ COPY frontend/postcss.config.js ./
 RUN pnpm build
 
 # Stage 2: Build the backend
-FROM golang:1.23-alpine AS backend-builder
+FROM golang:1.24-alpine AS backend-builder
 
 WORKDIR /app
 
@@ -42,15 +42,16 @@ COPY backend/ ./
 COPY --from=frontend-builder /app/build ./build
 
 # Build the Go binary with embedded static files
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o mvg-observer .
+RUN GOOS=linux go build -ldflags="-w -s" -o mvg-observer .
 
 # Stage 3: Final runtime image
-FROM alpine:latest
+#FROM alpine:latest
+FROM scratch
 
 # Install runtime dependencies
-RUN apk --no-cache add ca-certificates tzdata
+#RUN apk --no-cache add ca-certificates tzdata
 
-WORKDIR /root/
+#WORKDIR /root/
 
 # Copy the binary from builder stage
 COPY --from=backend-builder /app/mvg-observer .
