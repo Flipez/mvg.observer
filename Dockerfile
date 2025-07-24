@@ -45,11 +45,7 @@ COPY --from=frontend-builder /app/build ./build
 RUN GOOS=linux go build -ldflags="-w -s" -o mvg-observer .
 
 # Stage 3: Final runtime image
-#FROM alpine:latest
 FROM scratch
-
-# Install runtime dependencies
-#RUN apk --no-cache add ca-certificates tzdata
 
 #WORKDIR /root/
 
