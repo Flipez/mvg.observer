@@ -11,6 +11,7 @@ function useNavItems() {
   const { t } = useTranslation()
   return [
     { label: t("Links.Overview"), link: "/", blank: false },
+    { label: t("Links.Insights"), link: "/insights", blank: false },
     { label: t("Links.PITA"), link: "/pita", blank: false },
     { label: t("Links.Metrics"), link: "/grafana", blank: false },
     {
@@ -49,8 +50,14 @@ export default function MobileNav() {
                 to={item.link}
                 target={item.blank ? "_blank" : ""}
                 rel={item.blank ? "noopener noreferrer" : ""}
+                className="flex items-center gap-2"
               >
                 {item.label}
+                {item.link === "/insights" && (
+                  <span className="rounded-full bg-mvg px-2 py-0.5 text-xs font-medium text-white">
+                    NEW
+                  </span>
+                )}
               </Link>
             </Button>
           ))}
@@ -70,11 +77,20 @@ function MainNav() {
           to={item.link}
           target={item.blank ? "_blank" : ""}
           rel={item.blank ? "noopener noreferrer" : ""}
-          className={({ isActive }) =>
-            `mx-4 underline decoration-2 hover:decoration-solid ${isActive ? "decoration-solid" : "decoration-dotted"}`
-          }
+          className="mx-4 flex items-center gap-2"
         >
-          {item.label}
+          {({ isActive }) => (
+            <>
+              <span className={`underline decoration-2 hover:decoration-solid ${isActive ? "decoration-solid" : "decoration-dotted"}`}>
+                {item.label}
+              </span>
+              {item.link === "/insights" && (
+                <span className="rounded-full bg-mvg px-2 py-0.5 text-xs font-medium text-white">
+                  NEW
+                </span>
+              )}
+            </>
+          )}
         </NavLink>
       ))}
     </div>

@@ -1,0 +1,42 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Development files
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules
+backend/vendor
+
+# Build outputs (will be built inside container)
+build
+dist
+*.log
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation
+README.md
+CLAUDE.md
+backend/README_CLICKHOUSE_REFACTORING.md
+
+# Test files
+*_test.go
+*test.go
+test_helpers.go

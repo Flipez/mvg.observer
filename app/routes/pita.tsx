@@ -149,12 +149,7 @@ export default function Pita() {
     fetchData()
   }, [
     chartDateFormatted,
-    settings.chartDate,
-    settings.interval,
-    settings.realtime,
-    settings.line,
-    settings.threshold,
-    settings.selectedTab,
+    settings,
   ])
 
   let validStationIds = []
