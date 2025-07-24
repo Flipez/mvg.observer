@@ -147,10 +147,7 @@ export default function Pita() {
       }
     }
     fetchData()
-  }, [
-    chartDateFormatted,
-    settings,
-  ])
+  }, [chartDateFormatted, settings])
 
   let validStationIds = []
   if (southChartData && northChartData) {

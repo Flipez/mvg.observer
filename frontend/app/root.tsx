@@ -45,7 +45,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
         {process.env.NODE_ENV === "production" && (
-          <script defer src="https://stats.auch.cool/script.js" data-website-id="f86708ed-aa40-44b3-9dc3-cbbc71a4d1e2"></script>
+          <script
+            defer
+            src="https://stats.auch.cool/script.js"
+            data-website-id="f86708ed-aa40-44b3-9dc3-cbbc71a4d1e2"
+          ></script>
         )}
       </head>
       <body>
