@@ -1,49 +1,36 @@
 import { ChartSettings } from "~/types/history"
 import { format } from "date-fns"
+import { getLineDelayUrl, getGlobalDelayUrl } from "~/lib/api"
 
 export async function fetchLineDelay(
   chartDateFormatted: string,
   settings: ChartSettings,
   south: number
 ) {
-  let url: string
-  if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
-    url = "http://localhost:8080/line_delay"
-  } else {
-    url = "https://api.mvgeht.de/line_delay"
-  }
-  const response = await fetch(
-    `${url}?
-        south=${south}
-        &date=${encodeURIComponent(chartDateFormatted)}
-        &interval=${settings.interval}
-        &label=${settings.line}
-        &realtime=${settings.realtime ? 1 : 0}
-        &threshold=${settings.threshold}
-    `.replace(/\s+/g, "")
-  )
-
+  const url = getLineDelayUrl({
+    date: chartDateFormatted,
+    south: south.toString(),
+    interval: settings.interval.toString(),
+    realtime: settings.realtime ? "1" : "0",
+    label: settings.line,
+    threshold: settings.threshold.toString(),
+  })
+  
+  const response = await fetch(url)
   const data = await response.json()
   return data
 }
 
 export async function fetchGlobalDelay(settings: ChartSettings) {
-  let url: string
-  if (!process.env.NODE_ENV || process.env.NODE_ENV === "development") {
-    url = "http://localhost:8080/global_delay"
-  } else {
-    url = "https://api.mvgeht.de/global_delay"
-  }
   const chartDateFormatted = format(settings.chartDate, "yyyy-MM-dd")
-  const response = await fetch(
-    `${url}?
-        &date=${encodeURIComponent(chartDateFormatted)}
-        &interval=${settings.interval}
-        &realtime=${settings.realtime ? 1 : 0}
-        &threshold=${settings.threshold}
-    `.replace(/\s+/g, "")
-  )
+  const url = getGlobalDelayUrl({
+    date: chartDateFormatted,
+    interval: settings.interval.toString(),
+    realtime: settings.realtime ? "1" : "0",
+    threshold: settings.threshold.toString(),
+  })
 
+  const response = await fetch(url)
   const data = await response.json()
   return data
 }

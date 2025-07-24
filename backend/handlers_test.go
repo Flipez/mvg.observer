@@ -114,10 +114,14 @@ func TestGlobalDelayHandler(t *testing.T) {
 	mockRows.On("Err").Return(nil)
 	mockRows.On("Close").Return(nil)
 
-	// Temporarily replace the global db variable
-	originalDB := db
-	db = mockConn
-	defer func() { db = originalDB }()
+	// Temporarily replace the global clickhouseService variable
+	originalService := clickhouseService
+	clickhouseService = &ClickHouseService{
+		conn: mockConn,
+		stationStats: NewStationStatsService(mockConn),
+		lineQueries: NewLineQueryService(mockConn),
+	}
+	defer func() { clickhouseService = originalService }()
 
 	// Test successful request
 	req := httptest.NewRequest("GET", "/global_delay?date=2023-12-25&interval=60&realtime=1&threshold=5", nil)
@@ -164,10 +168,14 @@ func TestLineDelayHandler(t *testing.T) {
 	mockRows.On("Err").Return(nil)
 	mockRows.On("Close").Return(nil)
 
-	// Temporarily replace the global db variable
-	originalDB := db
-	db = mockConn
-	defer func() { db = originalDB }()
+	// Temporarily replace the global clickhouseService variable
+	originalService := clickhouseService
+	clickhouseService = &ClickHouseService{
+		conn: mockConn,
+		stationStats: NewStationStatsService(mockConn),
+		lineQueries: NewLineQueryService(mockConn),
+	}
+	defer func() { clickhouseService = originalService }()
 
 	// Test successful request
 	req := httptest.NewRequest("GET", "/line_delay?date=2023-12-25&south=1&interval=60&realtime=1&label=U1&threshold=5", nil)
@@ -312,10 +320,14 @@ func TestEventBroadcasterSSEHandler(t *testing.T) {
 func TestHTTPServerIntegration(t *testing.T) {
 	// This test would require setting up a test server
 	// For now, we'll test the handler registration
-	originalDB := db
+	originalService := clickhouseService
 	mockConn := &MockDriver{}
-	db = mockConn
-	defer func() { db = originalDB }()
+	clickhouseService = &ClickHouseService{
+		conn: mockConn,
+		stationStats: NewStationStatsService(mockConn),
+		lineQueries: NewLineQueryService(mockConn),
+	}
+	defer func() { clickhouseService = originalService }()
 
 	// Test that handlers are properly registered by making requests
 	testCases := []struct {

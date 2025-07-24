@@ -11,6 +11,7 @@ declare module "@remix-run/node" {
 export default defineConfig({
   plugins: [
     remix({
+      ssr: false, // Enable SPA mode
       future: {
         v3_fetcherPersist: true,
         v3_relativeSplatPath: true,
@@ -21,4 +22,31 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
+  build: {
+    outDir: "build/client",
+    assetsDir: "assets",
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        // Prevent file names from starting with underscore (Go embed ignores them)
+        entryFileNames: (chunkInfo) => {
+          const name = chunkInfo.name.startsWith('_') ? chunkInfo.name.slice(1) : chunkInfo.name;
+          return `assets/${name}-[hash].js`;
+        },
+        chunkFileNames: (chunkInfo) => {
+          const name = chunkInfo.name.startsWith('_') ? chunkInfo.name.slice(1) : chunkInfo.name;
+          return `assets/${name}-[hash].js`;
+        },
+      },
+    },
+  },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://127.0.0.1:8080",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
 })

@@ -18,6 +18,7 @@ const resources = {
       },
       Links: {
         Overview: "Overview",
+        Insights: "Insights",
         PITA: "Point In Time Analytics",
         Metrics: "Metrics",
       },
@@ -98,6 +99,54 @@ const resources = {
             "This can have multiple reason. If you have selected the U7 or U8, please note that they only operate on specific times and days. If you only include Realtime Date, you might get unlucky and hit a day in which no such data is available.",
         },
       },
+      Insights: {
+        Title: "Station Insights",
+        Description:
+          "Analyze station performance and delay patterns for your selected time period",
+        Station: {
+          Label: "Station",
+          Placeholder: "Select a station",
+        },
+        DateRange: {
+          StartDate: "Start Date",
+          EndDate: "End Date",
+          StartDatePlaceholder: "Select start date",
+          EndDatePlaceholder: "Select end date",
+        },
+        Cards: {
+          AverageDelay: "Average Delay",
+          TotalDepartures: "Total Departures",
+          DelayRate: "Delay Rate",
+          Station: "Station",
+        },
+        Charts: {
+          MonthlyDelayTrends: {
+            Title: "Monthly Delay Trends",
+            Description: "Average delays by month over the last year",
+            NoData: "No monthly data available",
+          },
+          HourlyDelayPatterns: {
+            Title: "Hourly Delay Patterns",
+            Description: "Average delays throughout the day",
+            NoData: "No hourly data available",
+          },
+          DepartureVolume: {
+            Title: "Departure Volume by Month",
+            Description: "Number of departures recorded each month",
+            NoData: "No monthly departure data available",
+          },
+          DelayDistribution: {
+            Title: "Delay Distribution",
+            Description: "Breakdown of delays by severity",
+            NoData: "No delay distribution data available",
+          },
+        },
+        SelectStation: {
+          Title: "Select a station to view insights",
+          Description:
+            "Choose a station from the dropdown above to see detailed statistics and trends",
+        },
+      },
     },
   },
   de: {
@@ -112,6 +161,7 @@ const resources = {
       },
       Links: {
         Overview: "Übersicht",
+        Insights: "Einblicke",
         PITA: "Point-in-Time Analyse",
         Metrics: "Metriken",
       },
@@ -190,6 +240,55 @@ const resources = {
           Title: "Keine Abfahrten gefunden",
           Description:
             "Das kann verschiedene Gründe haben. Die U7 und U8 fahren zum Beispiel nur an bestimmten Tagen und zu bestimmten Zeiten. Manchmal sind auch keine Echtzeitdaten verfügbar, vielleicht hattest du Pecht und dies ist einer dieser Tage?",
+        },
+      },
+      Insights: {
+        Title: "Stations Insights",
+        Description:
+          "Daten und Statistiken im gewählten Zeitraum auf Basis einer einzelnen Station",
+        Station: {
+          Label: "Station",
+          Placeholder: "Station auswählen",
+        },
+        DateRange: {
+          StartDate: "Startdatum",
+          EndDate: "Enddatum",
+          StartDatePlaceholder: "Startdatum auswählen",
+          EndDatePlaceholder: "Enddatum auswählen",
+        },
+        Cards: {
+          AverageDelay: "Durchschnittliche Verspätung",
+          TotalDepartures: "Gesamte Abfahrten",
+          DelayRate: "Verspätungsrate",
+          Station: "Station",
+        },
+        Charts: {
+          MonthlyDelayTrends: {
+            Title: "Monatliche Verspätungstrends",
+            Description:
+              "Durchschnittliche Verspätungen nach Monaten im letzten Jahr",
+            NoData: "Keine monatlichen Daten verfügbar",
+          },
+          HourlyDelayPatterns: {
+            Title: "Stündliche Verspätungsmuster",
+            Description: "Durchschnittliche Verspätungen über den Tag verteilt",
+            NoData: "Keine stündlichen Daten verfügbar",
+          },
+          DepartureVolume: {
+            Title: "Abfahrtsvolumen nach Monaten",
+            Description: "Anzahl der aufgezeichneten Abfahrten pro Monat",
+            NoData: "Keine monatlichen Abfahrtsdaten verfügbar",
+          },
+          DelayDistribution: {
+            Title: "Verspätungsverteilung",
+            Description: "Aufschlüsselung der Verspätungen nach Schweregrad",
+            NoData: "Keine Verspätungsverteilungsdaten verfügbar",
+          },
+        },
+        SelectStation: {
+          Title: "Station auswählen, um Einblicke zu sehen",
+          Description:
+            "Wähle eine Station aus dem Dropdown oben aus, um detaillierte Statistiken und Trends zu sehen",
         },
       },
     },

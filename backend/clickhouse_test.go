@@ -180,7 +180,9 @@ func TestGetDayRange(t *testing.T) {
 			start, end, err := getDayRange(tt.input)
 			
 			if tt.expectError {
-				assert.Error(t, err)
+				if err == nil {
+				t.Errorf("Expected error but got none")
+			}
 				assert.Empty(t, start)
 				assert.Empty(t, end)
 			} else {
@@ -211,7 +213,12 @@ func TestGetGlobalDelay(t *testing.T) {
 	mockRows.On("Err").Return(nil)
 	mockRows.On("Close").Return(nil)
 
-	results := getGlobalDelay("2023-12-25", "60", "5", "1", mockConn)
+	service := &ClickHouseService{
+		conn: mockConn,
+		lineQueries: NewLineQueryService(mockConn),
+	}
+	results, err := service.LineQueries().GetGlobalDelay("2023-12-25", "60", "5", "1")
+	assert.NoError(t, err)
 
 	assert.Len(t, results, 2)
 	assert.Equal(t, "de:09162:1", results[0].Station)
@@ -241,7 +248,12 @@ func TestGetDelayForLine(t *testing.T) {
 	mockRows.On("Err").Return(nil)
 	mockRows.On("Close").Return(nil)
 
-	results := getDelayForLine("2023-12-25", "60", "5", "U1", "1", "1", mockConn)
+	service := &ClickHouseService{
+		conn: mockConn,
+		lineQueries: NewLineQueryService(mockConn),
+	}
+	results, err := service.LineQueries().GetDelayForLine("2023-12-25", "60", "5", "U1", "1", "1")
+	assert.NoError(t, err)
 
 	assert.Len(t, results, 2)
 	assert.Equal(t, "de:09162:1", results[0].Station)
@@ -285,6 +297,13 @@ func BenchmarkGetGlobalDelayParsing(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		getGlobalDelay("2023-12-25", "60", "5", "1", mockConn)
+		service := &ClickHouseService{
+			conn: mockConn,
+			lineQueries: NewLineQueryService(mockConn),
+		}
+		_, err := service.LineQueries().GetGlobalDelay("2023-12-25", "60", "5", "1")
+		if err == nil {
+			b.Errorf("Expected error but got none")
+		}
 	}
 }

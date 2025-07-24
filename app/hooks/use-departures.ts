@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import type { Departure, StationList } from "~/types/departures"
 import { EventSource } from "eventsource"
-
-const SSE_URL = "https://api.mvgeht.de/events"
+import { getSSEUrl } from "~/lib/api"
 
 function calculateAverageDelay(departures: Departure[]): number {
   if (!departures.length) return 0
@@ -68,7 +67,7 @@ export function useDepartures() {
   }, [stationList])
 
   useEffect(() => {
-    const sse = new EventSource(SSE_URL)
+    const sse = new EventSource(getSSEUrl())
     sse.onmessage = handleStationUpdate
 
     return () => {

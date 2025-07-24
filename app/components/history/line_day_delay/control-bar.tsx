@@ -85,7 +85,7 @@ export function DatePicker({
               mode="single"
               hidden={[
                 {
-                  before: new Date(2024, 1, 17)
+                  before: new Date(2024, 1, 17),
                 },
               ]}
               selected={settings.chartDate}

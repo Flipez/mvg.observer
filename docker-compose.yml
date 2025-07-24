@@ -1,0 +1,42 @@
+services:
+  mvg-observer:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - CLICKHOUSE_HOST=clickhouse.auch.cool
+      - CLICKHOUSE_PORT=9000
+      - CLICKHOUSE_DATABASE=mvg
+      - CLICKHOUSE_USERNAME=mvgobserver
+      - CLICKHOUSE_PASSWORD=oA9DkHZw9M8gMdjd3yYy
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8080/api/health",
+        ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+volumes:
+  redis_data:
