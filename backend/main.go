@@ -134,7 +134,7 @@ func filterAndDedup(departures []Departure) []Departure {
 type EventBroadcaster struct {
 	mu          *sync.Mutex
 	writers     map[string]http.ResponseWriter
-	redisClient *redis.Client
+	redisClient RedisClientInterface
 }
 
 func (eb *EventBroadcaster) redisEventProcessor(ctx context.Context) {
