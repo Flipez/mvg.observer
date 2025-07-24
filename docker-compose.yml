@@ -1,18 +1,14 @@
 services:
   mvg-observer:
-    build: .
-    ports:
-      - "8080:8080"
+    image: ghcr.io/flipez/mvg.observer:latest
+    network_mode: host
     environment:
       - CLICKHOUSE_HOST=clickhouse.auch.cool
       - CLICKHOUSE_PORT=9000
       - CLICKHOUSE_DATABASE=mvg
       - CLICKHOUSE_USERNAME=mvgobserver
-      - CLICKHOUSE_PASSWORD=oA9DkHZw9M8gMdjd3yYy
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    depends_on:
-      - redis
+      - CLICKHOUSE_PASSWORD=
+      - REDIS_ADDR=127.0.0.1:6379
     restart: unless-stopped
     healthcheck:
       test:
@@ -28,15 +24,3 @@ services:
       timeout: 3s
       retries: 3
       start_period: 40s
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    restart: unless-stopped
-    command: redis-server --appendonly yes
-
-volumes:
-  redis_data:
