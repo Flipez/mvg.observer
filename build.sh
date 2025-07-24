@@ -8,7 +8,7 @@ echo "Building frontend..."
 pnpm build
 
 echo "Copying frontend build to backend directory..."
-rm -rf backend/build
+rm -rf backend/build/client
 cp -r build backend/
 
 echo "Building Go binary..."
