@@ -23,12 +23,17 @@ jobs:
         with:
           node-version: "18"
           cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
 
       - name: Install frontend dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          cd frontend
+          pnpm install --frozen-lockfile
 
       - name: Build frontend
-        run: pnpm build
+        run: |
+          cd frontend
+          pnpm build
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -38,7 +43,7 @@ jobs:
 
       - name: Test Go build
         run: |
-          cp -r build backend/
+          cp -r frontend/build backend/
           cd backend
           go build -o mvg-observer .
 
