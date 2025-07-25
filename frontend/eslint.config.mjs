@@ -28,6 +28,17 @@ export default [
     "prettier"
   ),
   {
+    files: ["**/*.{js,jsx,ts,tsx}"],
+    settings: {
+      tailwindcss: {
+        config: "./tailwind.config.ts"
+      }
+    },
+    rules: {
+      "tailwindcss/no-custom-classname": "warn"
+    }
+  },
+  {
     languageOptions: {
       globals: {
         ...globals.browser,
