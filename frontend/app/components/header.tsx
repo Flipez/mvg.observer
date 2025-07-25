@@ -19,6 +19,7 @@ function useNavItems() {
       link: "https://status.auch.cool/status/mvg",
       blank: true,
     },
+    { label: "About", link: "/about", blank: false },
   ]
 }
 
