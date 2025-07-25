@@ -47,7 +47,7 @@ func main() {
 		mu:      new(sync.Mutex),
 		writers: make(map[string]http.ResponseWriter),
 		redisClient: redis.NewClient(&redis.Options{
-			Addr: "127.0.0.1:6379",
+			Addr: fmt.Sprintf("%s:%s", getEnv("REDIS_HOST", "127.0.0.1"), getEnv("REDIS_PORT", "6379")),
 		}),
 	}
 	go eb.redisEventProcessor(ctx)
@@ -325,12 +325,8 @@ func setupStaticFileServer() {
 		return
 	}
 
-	// Create a custom mux to handle static files with correct MIME types
-	mux := http.NewServeMux()
-	
-	// Handle static assets with proper MIME types
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		
+	// Create a custom handler for SPA routing
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		// Skip API routes
 		if strings.HasPrefix(r.URL.Path, "/api/") {
 			http.NotFound(w, r)
@@ -344,10 +340,9 @@ func setupStaticFileServer() {
 			path = "index.html"
 		}
 		
-		
 		// Check if file exists in embedded filesystem
 		if fileInfo, err := fs.Stat(frontendFS, path); err == nil && !fileInfo.IsDir() {
-			// File exists, serve it with correct MIME type
+			// File exists, serve it
 			file, err := frontendFS.Open(path)
 			if err != nil {
 				log.Printf("Error opening file %s: %v", path, err)
@@ -356,44 +351,6 @@ func setupStaticFileServer() {
 			}
 			defer file.Close()
 			
-			// Determine MIME type
-			ext := filepath.Ext(path)
-			var contentType string
-			
-			switch ext {
-			case ".js":
-				contentType = "application/javascript; charset=utf-8"
-			case ".mjs":
-				contentType = "application/javascript; charset=utf-8"  
-			case ".css":
-				contentType = "text/css; charset=utf-8"
-			case ".json":
-				contentType = "application/json; charset=utf-8"
-			case ".html":
-				contentType = "text/html; charset=utf-8"
-			case ".png":
-				contentType = "image/png"
-			case ".jpg", ".jpeg":
-				contentType = "image/jpeg"
-			case ".gif":
-				contentType = "image/gif"
-			case ".svg":
-				contentType = "image/svg+xml"
-			case ".woff":
-				contentType = "font/woff"
-			case ".woff2":
-				contentType = "font/woff2"
-			case ".ttf":
-				contentType = "font/ttf"
-			case ".wasm":
-				contentType = "application/wasm"
-			default:
-				contentType = "application/octet-stream"
-			}
-			
-			// Set headers before writing response
-			w.Header().Set("Content-Type", contentType)
-			
 			// Set caching headers for assets
 			if strings.HasPrefix(path, "assets/") {
 				w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
@@ -401,12 +358,8 @@ func setupStaticFileServer() {
 				w.Header().Set("Cache-Control", "public, max-age=0, must-revalidate")
 			}
 			
-			
-			// Copy file content
-			_, err = io.Copy(w, file)
-			if err != nil {
-				log.Printf("Error copying file %s: %v", path, err)
-			}
+			// Use http.ServeContent which handles MIME type detection automatically
+			http.ServeContent(w, r, path, time.Time{}, file.(io.ReadSeeker))
 			return
 		}
 		
@@ -417,10 +370,8 @@ func setupStaticFileServer() {
 			// Serve index.html for SPA routes
 			if indexFile, err := frontendFS.Open("index.html"); err == nil {
 				defer indexFile.Close()
-				w.Header().Set("Content-Type", "text/html; charset=utf-8")
 				w.Header().Set("Cache-Control", "public, max-age=0, must-revalidate")
-				
-				io.Copy(w, indexFile)
+				http.ServeContent(w, r, "index.html", time.Time{}, indexFile.(io.ReadSeeker))
 				return
 			}
 		}
@@ -428,7 +379,4 @@ func setupStaticFileServer() {
 		// For other file extensions, return 404
 		http.NotFound(w, r)
 	})
-	
-	// This replaces the default handler
-	http.Handle("/", mux)
 }
