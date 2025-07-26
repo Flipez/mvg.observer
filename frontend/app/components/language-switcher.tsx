@@ -15,11 +15,30 @@ import i18n from "~/translations"
 import { GlobeIcon } from "lucide-react"
 
 export default function LanguageSwitcher() {
-  const [selectedLanguage, setSelectedLanguage] = useState("de")
+  const [selectedLanguage, setSelectedLanguage] = useState(
+    i18n.language || "de"
+  )
 
   useEffect(() => {
-    i18n.changeLanguage(selectedLanguage)
-  }, [selectedLanguage])
+    // Initialize with current i18n language
+    setSelectedLanguage(i18n.language || "de")
+
+    // Listen for language changes from i18n
+    const handleLanguageChange = (lng: string) => {
+      setSelectedLanguage(lng)
+    }
+
+    i18n.on("languageChanged", handleLanguageChange)
+
+    return () => {
+      i18n.off("languageChanged", handleLanguageChange)
+    }
+  }, [])
+
+  const handleLanguageChange = (language: string) => {
+    setSelectedLanguage(language)
+    i18n.changeLanguage(language)
+  }
 
   return (
     <div>
@@ -34,10 +53,10 @@ export default function LanguageSwitcher() {
           <DropdownMenuLabel>Select Language</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={() => setSelectedLanguage("en")}>
+            <DropdownMenuItem onClick={() => handleLanguageChange("en")}>
               <span>English</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setSelectedLanguage("de")}>
+            <DropdownMenuItem onClick={() => handleLanguageChange("de")}>
               <span>Deutsch</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>

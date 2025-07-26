@@ -6,11 +6,14 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react"
+import { I18nextProvider } from "react-i18next"
+import { useEffect, useState } from "react"
 
 import "./tailwind.css"
 
 import { Footer } from "./components/footer"
 import { Header } from "./components/header"
+import i18n from "./translations"
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -33,6 +36,35 @@ export const meta: MetaFunction = () => [
   },
 ]
 
+function I18nWrapper({ children }: { children: React.ReactNode }) {
+  const [i18nReady, setI18nReady] = useState(false)
+
+  useEffect(() => {
+    const checkI18nReady = () => {
+      if (i18n.isInitialized) {
+        setI18nReady(true)
+      } else {
+        // Wait for i18n to be initialized
+        i18n.on('initialized', () => {
+          setI18nReady(true)
+        })
+      }
+    }
+
+    checkI18nReady()
+  }, [])
+
+  if (!i18nReady) {
+    return <div>Loading...</div>
+  }
+
+  return (
+    <I18nextProvider i18n={i18n}>
+      {children}
+    </I18nextProvider>
+  )
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -50,11 +82,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         )}
       </head>
       <body>
-        <div className="flex min-h-screen flex-col">
-          <Header />
-          <div className="container mx-auto grow">{children}</div>
-          <Footer />
-        </div>
+        <I18nWrapper>
+          <div className="flex min-h-screen flex-col">
+            <Header />
+            <div className="container mx-auto grow">{children}</div>
+            <Footer />
+          </div>
+        </I18nWrapper>
         <ScrollRestoration />
         <Scripts />
       </body>
