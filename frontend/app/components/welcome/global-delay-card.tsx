@@ -24,14 +24,14 @@ export function GlobalDelayCard({
       : globalDelay <= 2.5
         ? "text-yellow-500"
         : "text-red-500"
-  
+
   // Use translated delay text
   const getDelayText = () => {
     if (globalDelay <= 0.5) return "sehr gut" // This could be moved to translations too
     if (globalDelay <= 2.5) return "ganz ok"
     return "nicht so gut"
   }
-  
+
   const delayText = getDelayText()
   return (
     <Card>

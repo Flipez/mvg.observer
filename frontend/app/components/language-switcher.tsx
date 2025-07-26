@@ -44,7 +44,11 @@ export default function LanguageSwitcher() {
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            className="flex items-center gap-2"
+            data-testid="language-switcher"
+          >
             <GlobeIcon />
             <span className="font-medium">{selectedLanguage}</span>
           </Button>
