@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select"
+import { All } from "~/data/subway-lines"
 import { getStationStatsUrl } from "~/lib/api"
 import { getStationDisplayData } from "~/utils/station-lines"
 import { format } from "date-fns"
@@ -35,29 +36,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts"
-
-const friendlyNames = {
-  "de:09162:1": "Karlsplatz (Stachus)",
-  "de:09162:2": "Marienplatz",
-  "de:09162:5": "München, Ostbahnhof",
-  "de:09162:6": "Hauptbahnhof Bahnhofsplatz",
-  "de:09162:30": "Poccistraße",
-  "de:09162:40": "Goetheplatz",
-  "de:09162:50": "Sendlinger Tor",
-  "de:09162:60": "Odeonsplatz",
-  "de:09162:70": "Universität",
-  "de:09162:80": "Giselastraße",
-  "de:09162:110": "Königsplatz",
-  "de:09162:120": "Theresienstraße",
-  "de:09162:130": "Josephsplatz",
-  "de:09162:140": "Hohenzollernplatz",
-  "de:09162:150": "Fraunhoferstraße",
-  "de:09162:160": "Kolumbusplatz",
-  "de:09162:170": "Stiglmaierplatz",
-  "de:09162:180": "Maillingerstraße",
-  "de:09162:190": "Rotkreuzplatz",
-  "de:09162:200": "Westfriedhof",
-}
 
 interface LineStats {
   avgDelay: number
@@ -190,7 +168,7 @@ export default function Insights() {
                 <SelectValue placeholder={t("Insights.Station.Placeholder")} />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(friendlyNames).map(([id, name]) => (
+                {Object.entries(All).map(([id, name]) => (
                   <SelectItem key={id} value={id}>
                     {name}
                   </SelectItem>
@@ -294,10 +272,7 @@ export default function Insights() {
               <CardContent>
                 <div className="text-lg font-medium">
                   {(() => {
-                    const stationName =
-                      friendlyNames[
-                        selectedStation as keyof typeof friendlyNames
-                      ]
+                    const stationName = All[selectedStation as keyof typeof All]
                     const displayData = getStationDisplayData(
                       selectedStation,
                       stationName
