@@ -193,6 +193,7 @@ export default function Insights() {
                   role="combobox"
                   aria-expanded={isPopoverOpen}
                   className="w-80 justify-between"
+                  data-testid="station-dropdown"
                 >
                   {selectedStation
                     ? All[selectedStation as keyof typeof All] ||

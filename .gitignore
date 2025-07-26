@@ -8,3 +8,8 @@ build/
 frontend/build
 backend/build
 backend/mvg-observer
+
+# Playwright test artifacts
+frontend/test-results/
+frontend/playwright-report/
+frontend/playwright/.cache/
