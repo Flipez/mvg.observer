@@ -50,12 +50,36 @@ jobs:
           cd frontend
           pnpm build
 
+      - name: Start dev server in background
+        run: |
+          cd frontend
+          pnpm dev &
+          echo $! > dev-server.pid
+        env:
+          CI: true
+
+      - name: Wait for dev server to be ready
+        run: |
+          cd frontend
+          timeout 60 bash -c 'until curl -s http://localhost:5173 > /dev/null; do sleep 1; done'
+        env:
+          CI: true
+
       - name: Run E2E tests
         run: |
           cd frontend
-          pnpm test:e2e
+          pnpm test:e2e:no-server
         env:
           CI: true
+
+      - name: Stop dev server
+        if: always()
+        run: |
+          cd frontend
+          if [ -f dev-server.pid ]; then
+            kill $(cat dev-server.pid) || true
+            rm dev-server.pid
+          fi
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
