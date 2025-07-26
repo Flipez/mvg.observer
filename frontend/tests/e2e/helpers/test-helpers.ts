@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test';
+import { expect, Page } from "@playwright/test"
 
 /**
  * Helper functions for E2E tests
@@ -11,28 +11,30 @@ export class TestHelpers {
    * Wait for the app to fully load
    */
   async waitForAppLoad() {
-    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForLoadState("domcontentloaded")
     // Wait for MVG Observer title to be visible
-    await expect(this.page.locator('text=MVG Observer')).toBeVisible();
+    await expect(this.page.locator("text=MVG Observer")).toBeVisible()
   }
 
   /**
    * Switch language using the language switcher
    */
-  async switchLanguage(language: 'English' | 'Deutsch') {
-    const languageSwitcher = this.page.locator('button[data-testid="language-switcher"]');
-    await languageSwitcher.click();
-    await this.page.locator(`[role="menuitem"]:has-text("${language}")`).click();
-    await this.page.waitForTimeout(1000); // Wait for language change
+  async switchLanguage(language: "English" | "Deutsch") {
+    const languageSwitcher = this.page.locator(
+      'button[data-testid="language-switcher"]'
+    )
+    await languageSwitcher.click()
+    await this.page.locator(`[role="menuitem"]:has-text("${language}")`).click()
+    await this.page.waitForTimeout(1000) // Wait for language change
   }
 
   /**
    * Navigate to a specific tab on the homepage
    */
-  async navigateToTab(tab: 'Matrix' | 'Table' | 'Tabelle' | 'Map' | 'Karte') {
-    const tabButton = this.page.locator(`button:has-text("${tab}")`);
-    await tabButton.click();
-    await expect(tabButton).toHaveAttribute('data-state', 'active');
+  async navigateToTab(tab: "Matrix" | "Table" | "Tabelle" | "Map" | "Karte") {
+    const tabButton = this.page.locator(`button:has-text("${tab}")`)
+    await tabButton.click()
+    await expect(tabButton).toHaveAttribute("data-state", "active")
   }
 
   /**
@@ -40,17 +42,19 @@ export class TestHelpers {
    */
   async selectStation(stationName: string) {
     // Open dropdown
-    await this.page.locator('button[role="combobox"]').click();
-    
+    await this.page.locator('button[role="combobox"]').click()
+
     // Search for station
-    const searchInput = this.page.locator('input[placeholder*="Search"]');
-    await searchInput.fill(stationName);
-    
+    const searchInput = this.page.locator('input[placeholder*="Search"]')
+    await searchInput.fill(stationName)
+
     // Select station
-    await this.page.locator(`button:has-text("${stationName}")`).click();
-    
+    await this.page.locator(`button:has-text("${stationName}")`).click()
+
     // Verify selection
-    await expect(this.page.locator(`button[role="combobox"]:has-text("${stationName}")`)).toBeVisible();
+    await expect(
+      this.page.locator(`button[role="combobox"]:has-text("${stationName}")`)
+    ).toBeVisible()
   }
 
   /**
@@ -58,11 +62,13 @@ export class TestHelpers {
    */
   async isLanguageGerman(): Promise<boolean> {
     try {
-      const languageSwitcherText = this.page.locator('button[data-testid="language-switcher"] span');
-      const text = await languageSwitcherText.textContent();
-      return text?.includes('de') || false;
+      const languageSwitcherText = this.page.locator(
+        'button[data-testid="language-switcher"] span'
+      )
+      const text = await languageSwitcherText.textContent()
+      return text?.includes("de") || false
     } catch {
-      return false;
+      return false
     }
   }
 
@@ -71,11 +77,13 @@ export class TestHelpers {
    */
   async isLanguageEnglish(): Promise<boolean> {
     try {
-      const languageSwitcherText = this.page.locator('button[data-testid="language-switcher"] span');
-      const text = await languageSwitcherText.textContent();
-      return text?.includes('en') || false;
+      const languageSwitcherText = this.page.locator(
+        'button[data-testid="language-switcher"] span'
+      )
+      const text = await languageSwitcherText.textContent()
+      return text?.includes("en") || false
     } catch {
-      return false;
+      return false
     }
   }
 
@@ -83,10 +91,10 @@ export class TestHelpers {
    * Take a screenshot with a descriptive name
    */
   async takeScreenshot(name: string) {
-    await this.page.screenshot({ 
+    await this.page.screenshot({
       path: `test-results/screenshots/${name}-${Date.now()}.png`,
-      fullPage: true 
-    });
+      fullPage: true,
+    })
   }
 
   /**
@@ -94,20 +102,29 @@ export class TestHelpers {
    */
   async waitForLoading() {
     // Wait for any loading spinners or skeleton elements to disappear
-    await this.page.waitForFunction(() => {
-      const loadingElements = document.querySelectorAll('[data-testid="loading"], .animate-spin, .skeleton');
-      return loadingElements.length === 0;
-    }, { timeout: 10000 }).catch(() => {
-      // Ignore timeout, continue with test
-    });
+    await this.page
+      .waitForFunction(
+        () => {
+          const loadingElements = document.querySelectorAll(
+            '[data-testid="loading"], .animate-spin, .skeleton'
+          )
+          return loadingElements.length === 0
+        },
+        { timeout: 10000 }
+      )
+      .catch(() => {
+        // Ignore timeout, continue with test
+      })
   }
 
   /**
    * Check if mobile menu is visible (for responsive tests)
    */
   async isMobileMenuVisible(): Promise<boolean> {
-    const mobileMenuButton = this.page.locator('button:has(svg)', { hasText: /menu/i });
-    return await mobileMenuButton.isVisible();
+    const mobileMenuButton = this.page.locator("button:has(svg)", {
+      hasText: /menu/i,
+    })
+    return await mobileMenuButton.isVisible()
   }
 
   /**
@@ -115,13 +132,13 @@ export class TestHelpers {
    */
   async checkBasicAccessibility() {
     // Check that main content has proper heading structure
-    const h1Elements = this.page.locator('h1');
-    await expect(h1Elements.first()).toBeVisible();
-    
+    const h1Elements = this.page.locator("h1")
+    await expect(h1Elements.first()).toBeVisible()
+
     // Check that interactive elements are keyboard accessible
-    await this.page.keyboard.press('Tab');
-    const focusedElement = this.page.locator(':focus');
-    await expect(focusedElement).toBeVisible();
+    await this.page.keyboard.press("Tab")
+    const focusedElement = this.page.locator(":focus")
+    await expect(focusedElement).toBeVisible()
   }
 }
 
@@ -130,23 +147,23 @@ export class TestHelpers {
  */
 export const TEST_DATA = {
   stations: {
-    marienplatz: 'Marienplatz',
-    hauptbahnhof: 'Hauptbahnhof Bahnhofsplatz',
-    karlsplatz: 'Karlsplatz (Stachus)',
-    odeonsplatz: 'Odeonsplatz'
+    marienplatz: "Marienplatz",
+    hauptbahnhof: "Hauptbahnhof Bahnhofsplatz",
+    karlsplatz: "Karlsplatz (Stachus)",
+    odeonsplatz: "Odeonsplatz",
   },
   languages: {
-    english: 'English',
-    german: 'Deutsch'
+    english: "English",
+    german: "Deutsch",
   },
   tabs: {
-    matrix: 'Matrix',
-    table: 'Table',
-    tableDE: 'Tabelle',
-    map: 'Map',
-    mapDE: 'Karte'
-  }
-};
+    matrix: "Matrix",
+    table: "Table",
+    tableDE: "Tabelle",
+    map: "Map",
+    mapDE: "Karte",
+  },
+}
 
 /**
  * Custom assertions
@@ -158,20 +175,26 @@ export class CustomAssertions {
    * Assert that a station is properly selected in the insights dropdown
    */
   async assertStationSelected(stationName: string) {
-    await expect(this.page.locator(`button[role="combobox"]:has-text("${stationName}")`)).toBeVisible();
+    await expect(
+      this.page.locator(`button[role="combobox"]:has-text("${stationName}")`)
+    ).toBeVisible()
   }
 
   /**
    * Assert that the language has changed by checking the language switcher button
    */
-  async assertLanguageIs(language: 'English' | 'Deutsch') {
-    const languageSwitcherText = this.page.locator('button[data-testid="language-switcher"] span');
-    if (language === 'English') {
-      await expect(languageSwitcherText).toContainText('en');
-      await expect(this.page.locator('button:has-text("Matrix")')).toBeVisible();
+  async assertLanguageIs(language: "English" | "Deutsch") {
+    const languageSwitcherText = this.page.locator(
+      'button[data-testid="language-switcher"] span'
+    )
+    if (language === "English") {
+      await expect(languageSwitcherText).toContainText("en")
+      await expect(this.page.locator('button:has-text("Matrix")')).toBeVisible()
     } else {
-      await expect(languageSwitcherText).toContainText('de');
-      await expect(this.page.locator('button:has-text("Tabelle")')).toBeVisible();
+      await expect(languageSwitcherText).toContainText("de")
+      await expect(
+        this.page.locator('button:has-text("Tabelle")')
+      ).toBeVisible()
     }
   }
 
@@ -179,7 +202,7 @@ export class CustomAssertions {
    * Assert that a tab is currently active
    */
   async assertTabActive(tabName: string) {
-    const tab = this.page.locator(`button:has-text("${tabName}")`);
-    await expect(tab).toHaveAttribute('data-state', 'active');
+    const tab = this.page.locator(`button:has-text("${tabName}")`)
+    await expect(tab).toHaveAttribute("data-state", "active")
   }
 }

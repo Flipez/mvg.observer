@@ -44,8 +44,8 @@ export default function LanguageSwitcher() {
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="flex items-center gap-2"
             data-testid="language-switcher"
           >

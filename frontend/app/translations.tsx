@@ -320,6 +320,7 @@ i18n
 if (typeof window !== "undefined") {
   const detectedLng = i18n.services.languageDetector.detect()
   if (detectedLng && detectedLng !== i18n.language) {
+    // eslint-disable-next-line import/no-named-as-default-member
     i18n.changeLanguage(detectedLng)
   }
 }
