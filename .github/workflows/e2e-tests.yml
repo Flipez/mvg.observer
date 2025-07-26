@@ -38,7 +38,7 @@ jobs:
       
     - name: Install Playwright Browsers
       working-directory: ./frontend
-      run: pnpm exec playwright install chromium
+      run: pnpm exec playwright install --with-deps
       
     - name: Build frontend
       working-directory: ./frontend
