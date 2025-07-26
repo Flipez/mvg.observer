@@ -72,6 +72,12 @@ export default function Insights() {
   const [isInitialLoad, setIsInitialLoad] = useState(true)
   const [hiddenLines, setHiddenLines] = useState<Set<string>>(new Set())
 
+  // Filter out non-Munich stations
+  const excludedStations = ["de:06412:10", "de:09564:510"] // Frankfurt Hbf, Nürnberg Hbf
+  const filteredStations = Object.fromEntries(
+    Object.entries(All).filter(([id]) => !excludedStations.includes(id))
+  )
+
   // Date range state - default to last year
   const now = new Date()
   const [startDate, setStartDate] = useState<Date>(
@@ -168,7 +174,7 @@ export default function Insights() {
                 <SelectValue placeholder={t("Insights.Station.Placeholder")} />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(All).map(([id, name]) => (
+                {Object.entries(filteredStations).map(([id, name]) => (
                   <SelectItem key={id} value={id}>
                     {name}
                   </SelectItem>
