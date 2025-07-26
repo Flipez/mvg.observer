@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 import { SubwayLabel } from "~/components/subway-label"
+import { Button } from "~/components/ui/button"
 import {
   Card,
   CardContent,
@@ -8,17 +9,25 @@ import {
   CardTitle,
 } from "~/components/ui/card"
 import { DatePicker } from "~/components/ui/date-picker"
+import { Input } from "~/components/ui/input"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select"
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover"
+import { All } from "~/data/subway-lines"
 import { getStationStatsUrl } from "~/lib/api"
 import { getStationDisplayData } from "~/utils/station-lines"
 import { format } from "date-fns"
-import { AlertCircle, CalendarDays, Clock, TrendingUp } from "lucide-react"
+import {
+  AlertCircle,
+  CalendarDays,
+  Check,
+  ChevronDown,
+  Clock,
+  Search,
+  TrendingUp,
+} from "lucide-react"
 import { useTranslation } from "react-i18next"
 import {
   Bar,
@@ -35,29 +44,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts"
-
-const friendlyNames = {
-  "de:09162:1": "Karlsplatz (Stachus)",
-  "de:09162:2": "Marienplatz",
-  "de:09162:5": "München, Ostbahnhof",
-  "de:09162:6": "Hauptbahnhof Bahnhofsplatz",
-  "de:09162:30": "Poccistraße",
-  "de:09162:40": "Goetheplatz",
-  "de:09162:50": "Sendlinger Tor",
-  "de:09162:60": "Odeonsplatz",
-  "de:09162:70": "Universität",
-  "de:09162:80": "Giselastraße",
-  "de:09162:110": "Königsplatz",
-  "de:09162:120": "Theresienstraße",
-  "de:09162:130": "Josephsplatz",
-  "de:09162:140": "Hohenzollernplatz",
-  "de:09162:150": "Fraunhoferstraße",
-  "de:09162:160": "Kolumbusplatz",
-  "de:09162:170": "Stiglmaierplatz",
-  "de:09162:180": "Maillingerstraße",
-  "de:09162:190": "Rotkreuzplatz",
-  "de:09162:200": "Westfriedhof",
-}
 
 interface LineStats {
   avgDelay: number
@@ -93,6 +79,21 @@ export default function Insights() {
   const [loading, setLoading] = useState(false)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
   const [hiddenLines, setHiddenLines] = useState<Set<string>>(new Set())
+  const [searchTerm, setSearchTerm] = useState<string>("")
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false)
+
+  // Filter out non-Munich stations
+  const excludedStations = ["de:06412:10", "de:09564:510"] // Frankfurt Hbf, Nürnberg Hbf
+  const filteredStations = Object.fromEntries(
+    Object.entries(All).filter(([id]) => !excludedStations.includes(id))
+  )
+
+  // Filter stations based on search term
+  const searchFilteredStations = Object.fromEntries(
+    Object.entries(filteredStations).filter(([, name]) =>
+      name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  )
 
   // Date range state - default to last year
   const now = new Date()
@@ -185,18 +186,62 @@ export default function Insights() {
             <label className="text-sm font-medium">
               {t("Insights.Station.Label")}
             </label>
-            <Select value={selectedStation} onValueChange={setSelectedStation}>
-              <SelectTrigger className="w-80">
-                <SelectValue placeholder={t("Insights.Station.Placeholder")} />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(friendlyNames).map(([id, name]) => (
-                  <SelectItem key={id} value={id}>
-                    {name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={isPopoverOpen}
+                  className="w-80 justify-between"
+                >
+                  {selectedStation
+                    ? All[selectedStation as keyof typeof All] ||
+                      t("Insights.Station.Placeholder")
+                    : t("Insights.Station.Placeholder")}
+                  <ChevronDown className="ml-2 size-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-0">
+                <div className="p-1">
+                  <div className="relative">
+                    <Search className="absolute left-2 top-2 size-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search stations..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="h-8 pl-8"
+                    />
+                  </div>
+                </div>
+                <div className="max-h-60 overflow-auto">
+                  {Object.entries(searchFilteredStations).length > 0 ? (
+                    Object.entries(searchFilteredStations).map(([id, name]) => (
+                      <button
+                        key={id}
+                        type="button"
+                        className="relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        onClick={() => {
+                          setSelectedStation(id)
+                          setIsPopoverOpen(false)
+                          setSearchTerm("")
+                        }}
+                      >
+                        <Check
+                          className={`mr-2 size-4 ${
+                            selectedStation === id ? "opacity-100" : "opacity-0"
+                          }`}
+                        />
+                        {name}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="py-2 text-center text-sm text-muted-foreground">
+                      No stations found
+                    </div>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="flex flex-col space-y-2">
@@ -294,10 +339,7 @@ export default function Insights() {
               <CardContent>
                 <div className="text-lg font-medium">
                   {(() => {
-                    const stationName =
-                      friendlyNames[
-                        selectedStation as keyof typeof friendlyNames
-                      ]
+                    const stationName = All[selectedStation as keyof typeof All]
                     const displayData = getStationDisplayData(
                       selectedStation,
                       stationName

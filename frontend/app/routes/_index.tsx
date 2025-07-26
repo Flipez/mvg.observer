@@ -3,16 +3,14 @@ import { SubwayMap } from "~/components/departures/map"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { WelcomeBlock } from "~/components/welcome"
 import { useDepartures } from "~/hooks/use-departures"
+import { Trans, useTranslation } from "react-i18next"
 
 import { columns } from "../components/departures/table/columns"
 import { DataTable } from "../components/departures/table/data-table"
 
-import "../translations"
-
-import { Trans } from "react-i18next"
-
 export default function Index() {
   const { stationList, globalDelay } = useDepartures()
+  useTranslation() // This ensures the component re-renders on language change
 
   return (
     <div className="mt-5">

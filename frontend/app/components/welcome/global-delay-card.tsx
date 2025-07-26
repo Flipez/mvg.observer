@@ -5,7 +5,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
 import { cn } from "~/lib/utils"
 import { StationList } from "~/types/departures"
-import { Trans } from "react-i18next"
+import { Trans, useTranslation } from "react-i18next"
 
 import { HelpPopover } from "../help-popover"
 
@@ -16,6 +16,7 @@ export function GlobalDelayCard({
   globalDelay: number
   stations: StationList
 }) {
+  useTranslation() // Ensure re-render on language change
   const mostDelayStation = stationWithMostDelay(stations)
   const delayColor =
     globalDelay <= 0.5
@@ -23,12 +24,15 @@ export function GlobalDelayCard({
       : globalDelay <= 2.5
         ? "text-yellow-500"
         : "text-red-500"
-  const delayText =
-    globalDelay <= 0.5
-      ? "sehr gut"
-      : globalDelay <= 2.5
-        ? "ganz ok"
-        : "nicht so gut"
+  
+  // Use translated delay text
+  const getDelayText = () => {
+    if (globalDelay <= 0.5) return "sehr gut" // This could be moved to translations too
+    if (globalDelay <= 2.5) return "ganz ok"
+    return "nicht so gut"
+  }
+  
+  const delayText = getDelayText()
   return (
     <Card>
       <CardHeader>

@@ -295,6 +295,7 @@ const resources = {
   },
 }
 
+// Simple SPA mode configuration since SSR is disabled
 // eslint-disable-next-line import/no-named-as-default-member
 i18n
   .use(LanguageDetector)
@@ -302,10 +303,25 @@ i18n
   .init({
     resources,
     fallbackLng: "de",
-
+    lng: "de", // Set initial language to prevent mismatch
+    detection: {
+      order: ["localStorage", "navigator", "htmlTag"],
+      caches: ["localStorage"],
+    },
     interpolation: {
       escapeValue: false, // react already safes from xss
     },
+    react: {
+      useSuspense: false,
+    },
   })
+
+// After initialization, detect and change language if needed
+if (typeof window !== "undefined") {
+  const detectedLng = i18n.services.languageDetector.detect()
+  if (detectedLng && detectedLng !== i18n.language) {
+    i18n.changeLanguage(detectedLng)
+  }
+}
 
 export default i18n

@@ -31,12 +31,12 @@ export default [
     files: ["**/*.{js,jsx,ts,tsx}"],
     settings: {
       tailwindcss: {
-        config: "./tailwind.config.ts"
-      }
+        config: "./tailwind.config.ts",
+      },
     },
     rules: {
-      "tailwindcss/no-custom-classname": "warn"
-    }
+      "tailwindcss/no-custom-classname": "warn",
+    },
   },
   {
     languageOptions: {
